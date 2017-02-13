@@ -39,6 +39,7 @@ public class Principal extends javax.swing.JFrame{
         }
     }
     
+    //Agrega paneles al Principal
     public void agregaEquipo(Clientes c){
         panel.add(new Pc_info(c.getNombre(),c.conexion(),c.getDireccion()));
     }    
@@ -47,7 +48,7 @@ public class Principal extends javax.swing.JFrame{
         return logo;
     }
    
-    
+    //fondo de la ventana
     public void ColocarImagen(String img) {
         Background p = new Background(300, 400, "src/iconos/" + img);
         this.add(p, BorderLayout.CENTER);

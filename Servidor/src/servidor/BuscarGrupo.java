@@ -45,13 +45,16 @@ public class BuscarGrupo extends Principal {
             Logger.getLogger(BuscarGrupo.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    //obtiene la configuracion
     public ArchivoConf getConf() {
         return conf;
     }
 
+    //guarda cambios en la configuracion del servidor
     public void setConf(ArchivoConf conf) {
         BuscarGrupo.conf = conf;
     }
+    //metodo que se llama para iniciar el seridor
     public void iniciarServidor()
     {
         cliente=new Clientes().cargarClientes();
@@ -72,12 +75,14 @@ public class BuscarGrupo extends Principal {
             confPrincipal=this.getConf();
         }
     }
+    /*metodo que inicia los hilos de busqueda y escuha
+    para buscar un grupo multicast libre*/
     public void inicarHilos()
     {
             escucha.start();
             System.out.println("Se creo el hilo correctamente");
     }
-    public void buscarGrupo()
+    public void buscarGrupo()//?
     {
         nombreServ();
         inicarHilos();
@@ -124,17 +129,19 @@ public class BuscarGrupo extends Principal {
         nombre=leer.next();
         conf.setNombreServ(nombre);
     }
-    public void contestar()
+    public void contestar()//**
     {
         try {
-            byte buf[]="servidor,".getBytes();
-            DatagramPacket info=new DatagramPacket(buf, buf.length,ia,1000);
-            puerto.send(info);
+            byte buf[]="servidor,".getBytes();//preapra el mensaje 
+            DatagramPacket info=new DatagramPacket(buf, buf.length,ia,1000); // lo agrega al paquete
+            puerto.send(info);//lo envia
         } catch (IOException ex) {
             Logger.getLogger(BuscarGrupo.class.getName()).log(Level.SEVERE, null, ex);
         }
         
     }
+    /*metodo que contesta a usuarios que solicitan informacion 
+    parametros ip del usuario que solicito la informacion*/
     public void contestarCliente(InetAddress direccion)
     {
         try {
@@ -160,7 +167,7 @@ public class BuscarGrupo extends Principal {
                         dp=new DatagramPacket(buf,buf.length );
                         System.out.println("esperando respuesta");
                         puerto.receive(dp);
-                        if(!(dp.getAddress().getHostAddress().equals(miIp.getHostAddress())))
+                        if(!(dp.getAddress().getHostAddress().equals(miIp.getHostAddress())))//evita la respuesta de nuestra misma pc
                         {   
                             String mensaje=new String(dp.getData());
                             mensaje=mensaje.trim();
@@ -168,28 +175,25 @@ public class BuscarGrupo extends Principal {
                             System.out.println(mensaje);
                             switch(aux)
                             {
-                                case "?":
+                                case "?"://Cuando otro servidor pregunta por si el grupo esta libre
                                     contestar();
                                     break;
-                                case "servidor":
+                                case "servidor"://resive respuesta del servdor obtiene nombre y direccion
                                     libre=false;
                                     System.err.println("****** grupo Ocupado ->"+InetAddress.getByName("224.0.0."+ip));
                                     System.err.println("Grupo ocupado por la direccion ip: "+dp.getAddress().getHostAddress());
                                     break;
-                                case "info":
+                                case "info"://cuando el cliente solicita informacion del servidor (IP y nombre)
                                     contestarCliente(dp.getAddress());
                                     break;
-                                case "cliente":
+                                case "cliente"://cuando un nuevo usuario se une al grupo
                                     System.out.println("Nuevo usuario en el servidor :D");
                                     guardarCliente(mensaje);
                                     break;
-                                case "Tareas":
+                                case "Tareas"://cuando se resiven las tareas solicitadas al cliente
                                     System.out.println("entro a Procesos");
                                     String tareas=mensaje.substring(mensaje.indexOf(",")+1,mensaje.length());
                                     new Tareas(separarTareas(tareas),dp.getAddress());
-                                    break;
-                                default:
-                                   
                                     break;
                             } 
                         }
@@ -203,22 +207,24 @@ public class BuscarGrupo extends Principal {
                     Logger.getLogger(BuscarGrupo.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-        };
-    private void guardarCliente(String mensaje)
+        };//**
+    private void guardarCliente(String mensaje)//**
     {
         StringTokenizer token=new StringTokenizer(mensaje,",");
         int pos=0;
         String datos[]=new String[4];
+        //separamos los datos resividos
         while(token.hasMoreTokens())
         {
             datos[pos]=token.nextToken();
             pos++;
         }
+        // creamos un nuevo objeto cliente
         Clientes c=new Clientes();
         c.setNombre(datos[1]);
         c.setDireccion(datos[2]);
         c.setHostname(datos[3]);
-        if(!verificarCliente(datos[3]))
+        if(!verificarCliente(datos[3]))//verificamos que el usuario no este ya registrado
         {
             cliente.add(c);
             c.crearArchivoLista(cliente);
@@ -228,6 +234,7 @@ public class BuscarGrupo extends Principal {
             System.out.println("El usuario ya esta registrado");
     }
     }
+    //veficacion del cliente si existe o no
     private boolean verificarCliente(String host)
     {
         boolean existe=false;
@@ -239,6 +246,7 @@ public class BuscarGrupo extends Principal {
         }
         return (existe);
     }
+    //separa las tareas enviadas por el usuario
     private ArrayList<String []> separarTareas(String tareas)
     {
         ArrayList<String []> lista=new ArrayList<>();

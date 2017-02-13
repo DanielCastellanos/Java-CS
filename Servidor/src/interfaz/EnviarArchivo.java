@@ -23,7 +23,7 @@ public class EnviarArchivo extends javax.swing.JFrame{
     boolean individual=false;
     String nombre,ip;
     String ruta;
-    
+    //metodo de envio a un solo usuario
     public EnviarArchivo(String ip) {
         initComponents();
         this.setVisible(true);
@@ -32,6 +32,7 @@ public class EnviarArchivo extends javax.swing.JFrame{
         this.setTitle("Enviar Archivo");
         this.ip=ip;
     }
+    //envio a varios usarios
     public EnviarArchivo(String nombre,String ip) {
         initComponents();
         this.setVisible(true);
@@ -81,7 +82,7 @@ public class EnviarArchivo extends javax.swing.JFrame{
             }
         }
         orden.enviarArchivo(ruta,ip);
-    }
+    }//Zuno
 
     Thread archivo=new Thread();
     

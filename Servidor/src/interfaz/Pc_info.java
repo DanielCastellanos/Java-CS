@@ -19,6 +19,7 @@ public class Pc_info extends javax.swing.JPanel {
     private String hostname;
     Principal p;
     Ordenes ordenes=new Ordenes();
+    //constructor recive toda la infomacion del usario 
     public Pc_info(String nombre , String icono,String hostname) {
         initComponents();
         Color color = new Color(255, 255, 255, 255);

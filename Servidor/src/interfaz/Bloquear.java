@@ -175,6 +175,7 @@ public class Bloquear extends javax.swing.JFrame {
     }//GEN-LAST:event_tiempoMouseClicked
 
     private void aceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aceptarActionPerformed
+        //Bloqueo sin contraseña
         if (!login.isSelected()) {
             try {
                 if ((Integer.parseInt(tiempo.getText()) > 12 && combo.getSelectedIndex() == 1) || (Integer.parseInt(tiempo.getText()) > 720 && combo.getSelectedIndex() == 0)) {
@@ -195,7 +196,9 @@ public class Bloquear extends javax.swing.JFrame {
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "El valor '" + tiempo.getText() + "' no es un valor numérico", "Error", JOptionPane.ERROR_MESSAGE);
             }
-        } else {
+        }
+        //bloqueo con contraseña
+        else {
             if(individual)
             {
                 
