@@ -29,6 +29,7 @@ public class Principal extends javax.swing.JFrame{
         this.setIconImage(logo);
         this.setTitle("Java Control Software");
         panelScroll.getVerticalScrollBar().setUnitIncrement(10);
+        AppSystemTray sTray= new AppSystemTray(logo, this);
         llenarPanel(clientes.cargarClientes());  //<---------------------------------------------Aqui va el array list que le mandas con los clientes
     }
     //Recibe un arraylist de Strings
@@ -130,7 +131,7 @@ public class Principal extends javax.swing.JFrame{
         });
         popUp.add(Tareas);
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setBackground(new java.awt.Color(255, 0, 0));
 
         panelScroll.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
