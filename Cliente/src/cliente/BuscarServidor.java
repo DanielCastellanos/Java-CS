@@ -1,10 +1,14 @@
 package cliente;
 
 import bloqueo.FrameBlocked;
+import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
@@ -22,7 +26,7 @@ public class BuscarServidor
   String nombre,dir,hostname,grupo;
   byte infServ[]="info,".getBytes();
   InetAddress direccion;
-  Thread hilo;
+  Thread hilo,nuevoArchivo;
   ArchivoConf configuracion=new ArchivoConf();
   Ordenes orden=new Ordenes();
   Timer t=new Timer();
@@ -32,6 +36,7 @@ public class BuscarServidor
       try {
           puerto=new MulticastSocket(1001);
           hilo=new Thread(escucha);
+          nuevoArchivo=new Thread(archivo);
       } catch (IOException ex) {
           Logger.getLogger(BuscarServidor.class.getName()).log(Level.SEVERE, null, ex);
       }
@@ -54,7 +59,8 @@ public class BuscarServidor
   }
   public void inicarHilo()
   {
-          hilo.run();
+          hilo.start();
+          nuevoArchivo.start();
   }
   
   public void buscarServidor()
@@ -234,4 +240,31 @@ public class BuscarServidor
           Logger.getLogger(BuscarServidor.class.getName()).log(Level.SEVERE, null, ex);
       }
   }
+  Runnable archivo=new Runnable() {
+
+      @Override
+      public void run() {
+          while(true)
+          {
+          try {
+              System.out.println("Esperando Archivo");
+            ServerSocket ss=new ServerSocket(4400);
+            Socket socket;
+            socket=ss.accept();
+            DataInputStream archivo=new DataInputStream(socket.getInputStream());
+            String nombre=archivo.readUTF();
+            int tamaño=archivo.readInt();
+              System.out.println(nombre+"----"+tamaño);
+            byte buffer[]=new byte[tamaño];
+            archivo.readFully(buffer, 0, buffer.length);
+            RandomAccessFile salida=new RandomAccessFile(nombre,"rw");
+            salida.write(buffer, 0, buffer.length);
+            salida.close();
+            socket.close();
+              System.out.println("archivo resivido");
+        } catch (Exception e) {
+        }
+          }
+      }
+  };
 }

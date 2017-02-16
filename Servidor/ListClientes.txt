@@ -1,1 +1,1 @@
-Nombre=Pc-01, Direccion=192.168.1.80, Nombre-Pc=Ricardo-PC#Nombre=PC-Acer, Direccion=192.168.43.27, Nombre-Pc=MyAcerPC#
+Nombre=Panfilo, Direccion=192.168.1.67, Nombre-Pc=vorago-PC#

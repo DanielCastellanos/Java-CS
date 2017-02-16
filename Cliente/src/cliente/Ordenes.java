@@ -1,11 +1,11 @@
 package cliente;
 
 import bloqueo.FrameBlocked;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
+import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
@@ -107,6 +107,21 @@ FrameBlocked pantallaInicio=new FrameBlocked();
     }
     
     public void archivo(){
-        
+        try {
+            ServerSocket ss=new ServerSocket(4400);
+            Socket socket;
+            socket=ss.accept();
+            DataInputStream archivo=new DataInputStream(socket.getInputStream());
+            String nombre=archivo.readUTF();
+            int tamaño=archivo.readInt();
+            byte buffer[]=new byte[tamaño];
+            archivo.read(buffer, 0, buffer.length);
+            RandomAccessFile salida=new RandomAccessFile(nombre,"rw");
+            salida.write(buffer, 0, buffer.length);
+            salida.close();
+            socket.close();
+            ss.close();
+        } catch (Exception e) {
+        }
     }
 }
