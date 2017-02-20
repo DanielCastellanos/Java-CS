@@ -158,7 +158,7 @@ public class BuscarGrupo extends Principal {
             public void run() {
                 try {
                     byte buf[];
-                    byte auxbuf[]=new byte[255];
+                    byte auxbuf[]=new byte[500000];
                     DatagramPacket dp;
                     DatagramPacket auxdp=new DatagramPacket(auxbuf,auxbuf.length);
                     while(true)
