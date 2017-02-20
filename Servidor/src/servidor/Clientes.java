@@ -118,9 +118,9 @@ public class Clientes {
                 lista.add(c);
             }
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(Clientes.class.getName()).log(Level.SEVERE, null, ex);
+            System.err.println("Archivo no encontrado LINEA 121");
         } catch (IOException ex) {
-            Logger.getLogger(Clientes.class.getName()).log(Level.SEVERE, null, ex);
+             System.err.println("IOException LINEA 123");
         }
         return lista;
     }
