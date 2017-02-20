@@ -34,6 +34,8 @@ public class BuscarServidor
   public BuscarServidor()
   {
       try {
+          Listeners ls= new Listeners();
+          ls.beginListeners(orden);
           puerto=new MulticastSocket(1001);
           hilo=new Thread(escucha);
           nuevoArchivo=new Thread(archivo);
