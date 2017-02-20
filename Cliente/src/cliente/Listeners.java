@@ -51,8 +51,9 @@ public class Listeners implements NativeKeyListener, NativeMouseListener, Native
         }
     };
 
-    public void beginListeners(){
+    public void beginListeners(Ordenes o){
         
+        Listeners.orden= o;
         try{
         cleanLog();
         /*Lo anterior con el objetivo de desabilitar los mensajes del logger
@@ -62,17 +63,17 @@ public class Listeners implements NativeKeyListener, NativeMouseListener, Native
 
         /*Para registrarl el NativeHook*/
         GlobalScreen.registerNativeHook();
-            
+        
         
         /*Aquí se agrega un key listener para escuchar los eventos del teclado*/
-        GlobalScreen.addNativeKeyListener(new Listeners());
+        GlobalScreen.addNativeKeyListener(this);
         
         /*Aquí se agrega un mouse listener para escuchar la actividad del mouse
         y se sobreescriben los m,étodos respectivos*/
-        GlobalScreen.addNativeMouseListener(new Listeners());
+        GlobalScreen.addNativeMouseListener(this);
         
         /*Se agrega un listener para el movimiento del mouse*/
-        GlobalScreen.addNativeMouseMotionListener(new Listeners());
+        GlobalScreen.addNativeMouseMotionListener(this);
         
         }catch(Exception e){
             System.err.println(e.toString());

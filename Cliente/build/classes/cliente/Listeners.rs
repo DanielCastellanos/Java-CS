@@ -1,2 +1,0 @@
-cliente.aviso
-cliente.Listeners
