@@ -12,6 +12,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Robot;
 import java.awt.Toolkit;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.BorderFactory;
@@ -32,35 +33,11 @@ public class FrameBlocked extends javax.swing.JFrame {
         initComponents();
         revisaConeccion();                                          //Revisa si hay conexión a internet
         carga();
-        //inicioCuenta();
+        
     //Carga el keylistener y llama keepfocus
     }
     ////////////////////////////////////////////
     
-   
-    //Timer para cambiar avisos//////////////////////////////////////////////////////////////////////////////////////////¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿
-    TimerTask task = new TimerTask() {
-
-        @Override
-        public void run() {
-            int cont = 2;
-                if (cont == 1) {
-                    cont = 2;
-                } else {
-                    cont = 1;
-                }
-            colocarImagen(cont + "");
-            
-        }
-    };
-
-    //Metodo para comenzar el timer
-    public void inicioCuenta(){
-     timer = new Timer();
-     timer.schedule(task, 10, 10000);
-     // Empezamos dentro de 10ms y luego lanzamos la tarea cada 1000ms
-    }
-
     //Keylistener para detectar los atajos de teclado y evitar que salgan del bloqueo
         KeyListener listen = new KeyListener() {
 
@@ -101,13 +78,15 @@ public class FrameBlocked extends javax.swing.JFrame {
     {
         this.setVisible(true);
         panel.setVisible(false);
+        estilos();
     }
     
     //Coloca la imagen de fondo, mantiene el focus en el panel e inicia el keylistener
     private void carga()
     {
         
-        colocarImagen("1.jpg");
+        Random r=new Random();
+        colocarImagen((r.nextInt(2)+1) + ".jpg");
         this.setExtendedState(MAXIMIZED_BOTH);    //maximizado
         this.setAlwaysOnTop(true);                //siempre al frente       
         new KeepFocus(this).block();              //Envia este frame y lo pone al frente cada 50 milisegundos para evitar perder el focus
@@ -163,13 +142,16 @@ public class FrameBlocked extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setBackground(new java.awt.Color(0, 0, 0));
 
-        panel.setBackground(new java.awt.Color(153, 153, 153));
+        panel.setBackground(new java.awt.Color(51, 102, 255));
+        panel.setToolTipText("");
         panel.setFocusable(false);
 
         jLabel1.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(240, 240, 240));
         jLabel1.setText("Código:");
 
         lblPassword.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        lblPassword.setForeground(new java.awt.Color(240, 240, 240));
         lblPassword.setText("NIP:");
 
         user.setPreferredSize(new java.awt.Dimension(196, 28));
@@ -210,9 +192,8 @@ public class FrameBlocked extends javax.swing.JFrame {
                         .addComponent(jButton1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(entrar, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(pass)
-                        .addComponent(user, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(pass, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(user, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(50, 50, 50))
         );
         panelLayout.setVerticalGroup(
@@ -322,7 +303,7 @@ public class FrameBlocked extends javax.swing.JFrame {
     
     //modifica apariencia del panel de usuario y contraseña
     public void estilos(){
-        Color c=new Color(150,150,150,127);
+        Color c=new Color(50,183,216);
         Color a=new Color(235,37,37,150);
         panel.setBackground(c);
         panel.setBorder( BorderFactory.createLineBorder(a, 3, true));
