@@ -18,7 +18,6 @@ public class ListaTareas {
     private BufferedReader s;
     private final String[] filtroNombre={"explorer.exe", "conhost.exe",
                             "unsecapp.exe", "csrss.exe", "taskhostex.exe"};
-    
     public ArrayList<Tarea> escribirLista(){
         
         try{
@@ -113,6 +112,8 @@ public class ListaTareas {
                 
                 if(lista.get(i).getNombreImagen().equals(filtroNombre[j])){
                     //System.out.println("----------------encontrado");
+                    lista.remove(lista.get(i));
+                }else if(lista.get(i).getTituloVentana().equals("N/D")){
                     lista.remove(lista.get(i));
                 }
             }
