@@ -12,6 +12,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Robot;
 import java.awt.Toolkit;
+import java.util.Timer;
+import java.util.TimerTask;
 import javax.swing.BorderFactory;
 
 public class FrameBlocked extends javax.swing.JFrame {
@@ -20,6 +22,7 @@ public class FrameBlocked extends javax.swing.JFrame {
     Robot shortcutKiller;
     public boolean inter = false;
     public static int ancho;
+    Timer timer;
     ////////////CONSTRUCTOR/////////////////////
     public FrameBlocked()
     {
@@ -28,10 +31,36 @@ public class FrameBlocked extends javax.swing.JFrame {
         tamaño();                                                   //Obtiene tamaño de pantalla
         initComponents();
         revisaConeccion();                                          //Revisa si hay conexión a internet
-        carga();                                                    //Carga el keylistener y llama keepfocus
+        carga();
+        //inicioCuenta();
+    //Carga el keylistener y llama keepfocus
     }
     ////////////////////////////////////////////
+    
    
+    //Timer para cambiar avisos//////////////////////////////////////////////////////////////////////////////////////////¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿
+    TimerTask task = new TimerTask() {
+
+        @Override
+        public void run() {
+            int cont = 2;
+                if (cont == 1) {
+                    cont = 2;
+                } else {
+                    cont = 1;
+                }
+            colocarImagen(cont + "");
+            
+        }
+    };
+
+    //Metodo para comenzar el timer
+    public void inicioCuenta(){
+     timer = new Timer();
+     timer.schedule(task, 10, 10000);
+     // Empezamos dentro de 10ms y luego lanzamos la tarea cada 1000ms
+    }
+
     //Keylistener para detectar los atajos de teclado y evitar que salgan del bloqueo
         KeyListener listen = new KeyListener() {
 
@@ -78,7 +107,7 @@ public class FrameBlocked extends javax.swing.JFrame {
     private void carga()
     {
         
-        ColocarImagen("fondo.jpg");
+        colocarImagen("1.jpg");
         this.setExtendedState(MAXIMIZED_BOTH);    //maximizado
         this.setAlwaysOnTop(true);                //siempre al frente       
         new KeepFocus(this).block();              //Envia este frame y lo pone al frente cada 50 milisegundos para evitar perder el focus
@@ -269,7 +298,7 @@ public class FrameBlocked extends javax.swing.JFrame {
         }
     }
         //envia la imagen deseada a background
-    public void ColocarImagen(String img) {
+    public void colocarImagen(String img) {
         Background p = new Background(ancho, alto, "src/images/" + img);
         this.add(p, BorderLayout.CENTER);
         p.repaint();
