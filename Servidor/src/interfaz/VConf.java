@@ -1,7 +1,16 @@
 package interfaz;
 
+import java.io.IOException;
+import java.io.RandomAccessFile;
+
 public class VConf extends javax.swing.JFrame {
     public VConf() {
+        try{
+            RandomAccessFile conFile = new RandomAccessFile("rw","configuracion.txt");
+            
+        }catch(IOException e){
+            System.err.println(e.toString());
+        }
         initComponents();
     }
     @SuppressWarnings("unchecked")
