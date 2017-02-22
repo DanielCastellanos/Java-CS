@@ -13,6 +13,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -124,9 +125,7 @@ public class BuscarGrupo extends Principal {
     };
     public void nombreServ()
     {
-        Scanner leer=new Scanner(System.in);
-        System.out.println("ingresa el nombre del servidor");
-        nombre=leer.next();
+        nombre=JOptionPane.showInputDialog(null, "Escriba un nombre para el equipo");
         conf.setNombreServ(nombre);
     }
     public void contestar()//**

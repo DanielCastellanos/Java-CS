@@ -38,7 +38,7 @@ public class ArchivoConf {
             }
              escribir=new RandomAccessFile(configuracion, "rw");
                 escribir.write(StandardCharsets.UTF_8.encode("#nombre="+nombreServ+
-                                  "\n#Grupo="+grupo).array());
+                                  "\r\n#Grupo="+grupo).array());
             escribir.close();
         } catch (FileNotFoundException ex) {
             Logger.getLogger(ArchivoConf.class.getName()).log(Level.SEVERE, null, ex);
