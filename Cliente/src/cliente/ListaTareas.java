@@ -73,7 +73,7 @@ public class ListaTareas {
         return lista;
     }
     
-    private Tarea crearElemento(String[] datos){
+    private Tarea crearElemento(String[] datos){        /*Ese método crea los elementos Tarea, asignando los datos correspondientes a dicho objeto*/
         
         Tarea nElemento = new Tarea();
         if(datos[0]!= null && datos.length==9){
@@ -88,14 +88,15 @@ public class ListaTareas {
         return null;
     }
     
-    public void imprimirTareas(){
+    public void imprimirTareas(){       /*Método para imprimir los procesos en consola, usado solo para pruebas*/
         for(Tarea t: lista){
             t.imprimir();
             System.out.println("");
         }
     }
     
-    public String getListaToString(){
+    public String getListaToString(){           /*Devuelve un String organizado con delimitadores que contiene información
+                                                de los procesos del sistema*/
         
         char delim='#';
         String l = "";
@@ -106,15 +107,22 @@ public class ListaTareas {
     }
     
     private void filtrarTareas(){
-        for(int i=0; i<lista.size(); i++){
-            //System.out.println("revisando elemento "+lista.indexOf(lista.get(i)));
-            for (int j = 0; j < filtroNombre.length; j++) {
-                
-                if(lista.get(i).getNombreImagen().equals(filtroNombre[j])){
-                    //System.out.println("----------------encontrado");
-                    lista.remove(lista.get(i));
-                }else if(lista.get(i).getTituloVentana().equals("N/D")){
-                    lista.remove(lista.get(i));
+        
+        for(int i=0; i<lista.size(); i++){                  //Itera a travéz de las posiciones de la lista
+            
+            for (int j = 0; j < filtroNombre.length; j++) {     /*Itera los elementos de la lista ade filtrado, se filtrará por el nombre
+                                                                 de imagen del proceso*/
+                if(lista.get(i).getNombreImagen().equals(filtroNombre[j])){     /*Si el nombre en el arreglo de filtrado es igual
+                                                                                al nombre de imagen del proceso...*/
+                    lista.remove(lista.get(i));                 /*remueve el elemento de la lista de procesos que se mostrarán*/
+                    i=(i==0)?i:i-1;                             /*Se decrementa el contrador de la lista después de eliminar un elemento para
+                                                                mantener la congruencia en el ciclo, pero solo si i no tiene el valor de 0*/
+                }else if(lista.get(i).getTituloVentana().equals("N/D")){    /*Si el título de ventana del proceso no existe 
+                                                                            muestra la cadena N/D, asi que si el proceso tiene esta cadena 
+                                                                            tampoco lo mostraremos*/
+                    lista.remove(lista.get(i));                     /*Elimina de el elemento aquí y posteriormente se vuelve a decrementar el
+                                                                    contador si no vale 0 actualmente*/
+                    i=(i==0)?i:i-1;
                 }
             }
         }
