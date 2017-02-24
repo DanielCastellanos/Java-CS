@@ -2,18 +2,22 @@ package interfaz;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.charset.StandardCharsets;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 public class VConf extends javax.swing.JFrame {
     
     //class variables
     private String name;
     private String group;
-    
+    RandomAccessFile conFile;
     //Constructor
     public VConf() {
         
         try{
-            RandomAccessFile conFile = new RandomAccessFile("Configuracion.txt","rw");      //Lee archivo de configuración con RandomAccessFile
+            conFile = new RandomAccessFile("Configuracion.txt","rw");      //Lee archivo de configuración con RandomAccessFile
             
             if(conFile.length() > 0 ){
                 
@@ -23,6 +27,8 @@ public class VConf extends javax.swing.JFrame {
             }
         }catch(IOException e){
             System.err.println(e.toString());
+            this.dispose();
+            JOptionPane.showMessageDialog(null, "Error al cargar configuración");
         }
         initComponents();
         nameField.setText(name);
@@ -136,10 +142,23 @@ public class VConf extends javax.swing.JFrame {
 
         System.out.println(nameField.getName());
         String n= nameField.getText();
+        boolean modify= false;
         
         if(!n.equals(name)){
-            
+            modify= true;
+            name= n;
         }
+        
+        if(modify){
+            try {
+                conFile.setLength(0);
+                conFile.write(StandardCharsets.UTF_8.encode("#nombre="+name+
+                                  "\r\n#Grupo="+group).array());
+            } catch (IOException ex) {
+                System.err.println(ex.toString());
+            }
+        } 
+        
     }//GEN-LAST:event_btnCambiosActionPerformed
 
    
