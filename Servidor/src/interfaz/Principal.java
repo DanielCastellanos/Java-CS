@@ -66,8 +66,9 @@ public class Principal extends javax.swing.JFrame{
         Bloquear = new javax.swing.JMenuItem();
         desbloquear = new javax.swing.JMenuItem();
         reiniciar = new javax.swing.JMenuItem();
-        Salir = new javax.swing.JMenuItem();
         Tareas = new javax.swing.JMenuItem();
+        configuracion = new javax.swing.JMenuItem();
+        Salir = new javax.swing.JMenuItem();
         panelScroll = new javax.swing.JScrollPane();
         panel = new javax.swing.JPanel();
         opciones = new javax.swing.JButton();
@@ -115,14 +116,6 @@ public class Principal extends javax.swing.JFrame{
         });
         popUp.add(reiniciar);
 
-        Salir.setText("Salir");
-        Salir.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                SalirActionPerformed(evt);
-            }
-        });
-        popUp.add(Salir);
-
         Tareas.setText("Obtener Procesos");
         Tareas.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -130,6 +123,22 @@ public class Principal extends javax.swing.JFrame{
             }
         });
         popUp.add(Tareas);
+
+        configuracion.setText("Configuración");
+        configuracion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                configuracionActionPerformed(evt);
+            }
+        });
+        popUp.add(configuracion);
+
+        Salir.setText("Salir");
+        Salir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SalirActionPerformed(evt);
+            }
+        });
+        popUp.add(Salir);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setBackground(new java.awt.Color(255, 0, 0));
@@ -230,6 +239,11 @@ public class Principal extends javax.swing.JFrame{
     private void TareasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TareasActionPerformed
         orden.pedirProcesos(confPrincipal.getGrupo());
     }//GEN-LAST:event_TareasActionPerformed
+
+    private void configuracionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_configuracionActionPerformed
+
+        new VConf().setVisible(true);
+    }//GEN-LAST:event_configuracionActionPerformed
     
     
     public static void main(String args[]) {
@@ -271,6 +285,7 @@ public class Principal extends javax.swing.JFrame{
     private javax.swing.JMenuItem Enviar;
     private javax.swing.JMenuItem Salir;
     private javax.swing.JMenuItem Tareas;
+    private javax.swing.JMenuItem configuracion;
     private javax.swing.JMenuItem desbloquear;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JButton opciones;

@@ -141,7 +141,7 @@ public class BuscarServidor
                           break;
                       case "archivo":
                               String archivo=mensaje.substring(mensaje.indexOf(",")+1, mensaje.length());
-                              orden.nuveoArchivo(archivo,dp.getData());
+                              orden.nuevoArchivo(archivo,dp.getData());
                           break;
                       case "apagarAuto":
                           tiempo=obtenerTiempo(mensaje);
