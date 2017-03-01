@@ -29,7 +29,7 @@ public class EnviarArchivo extends javax.swing.JFrame{
         this.setVisible(true);
         this.setLocationRelativeTo(null);
         this.setIconImage(Principal.getLogo());
-        this.setTitle("Enviar Archivo");
+        this.setTitle("Enviar a todos los equipos dentro del grupo");
         this.ip=ip;
     }
     //envio a varios usarios
@@ -38,8 +38,7 @@ public class EnviarArchivo extends javax.swing.JFrame{
         this.setVisible(true);
         this.setLocationRelativeTo(null);
         this.setIconImage(Principal.getLogo());
-        this.setTitle("Enviar Archivo");
-        this.aviso.setText("Enviar archivos a "+nombre);
+        this.setTitle("Enviar Archivo a "+nombre);
         this.nombre=nombre;
         this.ip=ip;
     }
@@ -100,7 +99,6 @@ public class EnviarArchivo extends javax.swing.JFrame{
         detalles = new javax.swing.JTextArea();
         aceptar = new javax.swing.JButton();
         cancelar = new javax.swing.JButton();
-        aviso = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -126,8 +124,11 @@ public class EnviarArchivo extends javax.swing.JFrame{
         });
 
         cancelar.setText("Cancelar");
-
-        aviso.setText("Enviar a todos los equipos dentro del grupo");
+        cancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -142,19 +143,14 @@ public class EnviarArchivo extends javax.swing.JFrame{
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 103, Short.MAX_VALUE)
                         .addComponent(cancelar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(aceptar))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(aviso, javax.swing.GroupLayout.PREFERRED_SIZE, 315, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addComponent(aceptar)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(aviso)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(aceptar)
@@ -171,7 +167,8 @@ public class EnviarArchivo extends javax.swing.JFrame{
         String ext = null;
         f = agregarFiltros(f);
         f.setMultiSelectionEnabled(true);
-        if (f.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+        
+        if (f.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             
             archivosTem = f.getSelectedFiles();
             String aux;
@@ -206,6 +203,10 @@ public class EnviarArchivo extends javax.swing.JFrame{
             Logger.getLogger(EnviarArchivo.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_aceptarActionPerformed
+
+    private void cancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelarActionPerformed
+         this.dispose();
+    }//GEN-LAST:event_cancelarActionPerformed
     
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
@@ -241,7 +242,6 @@ public class EnviarArchivo extends javax.swing.JFrame{
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton aceptar;
-    private javax.swing.JLabel aviso;
     private javax.swing.JButton cancelar;
     private javax.swing.JTextArea detalles;
     private javax.swing.JScrollPane jScrollPane1;

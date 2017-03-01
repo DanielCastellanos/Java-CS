@@ -46,7 +46,7 @@ public class proceso extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
 
-        MatarProceso.setText("jMenuItem1");
+        MatarProceso.setText("Eliminar Proceso");
         MatarProceso.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 MatarProcesoActionPerformed(evt);
@@ -81,9 +81,9 @@ public class proceso extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(titulo, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(memoria))
-                .addGap(61, 61, 61)
+                    .addComponent(memoria, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(titulo, javax.swing.GroupLayout.PREFERRED_SIZE, 341, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel2)
                     .addComponent(jLabel1))
@@ -91,7 +91,7 @@ public class proceso extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(pid)
                     .addComponent(nombreImagen))
-                .addContainerGap(64, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -120,6 +120,7 @@ public class proceso extends javax.swing.JPanel {
 
     private void MatarProcesoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MatarProcesoActionPerformed
         orden.matar(ip,pid.getText());
+        Tareas.eliminarPanel(this);
     }//GEN-LAST:event_MatarProcesoActionPerformed
 
 

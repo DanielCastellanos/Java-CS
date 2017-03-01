@@ -117,6 +117,9 @@
   </Layout>
   <SubComponents>
     <Component class="javax.swing.JCheckBox" name="check1">
+      <Properties>
+        <Property name="selected" type="boolean" value="true"/>
+      </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="check1ActionPerformed"/>
       </Events>

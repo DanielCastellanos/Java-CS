@@ -61,6 +61,7 @@ public class Apagar extends javax.swing.JFrame {
             }
         });
 
+        check1.setSelected(true);
         check1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 check1ActionPerformed(evt);

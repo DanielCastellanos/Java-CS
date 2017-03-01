@@ -157,12 +157,10 @@ public class BuscarGrupo extends Principal {
             public void run() {
                 try {
                     byte buf[];
-                    byte auxbuf[]=new byte[500000];
                     DatagramPacket dp;
-                    DatagramPacket auxdp=new DatagramPacket(auxbuf,auxbuf.length);
                     while(true)
                     {
-                        buf=auxbuf;
+                        buf=new byte[500000];
                         dp=new DatagramPacket(buf,buf.length );
                         System.out.println("esperando respuesta");
                         puerto.receive(dp);
