@@ -246,13 +246,13 @@ public class BuscarServidor
 
       @Override
       public void run() {
+          try {
+          System.out.println("Esperando Archivo");
+            ServerSocket ss=new ServerSocket(4400);
           while(true)
           {
-          try {
-              System.out.println("Esperando Archivo");
-            ServerSocket ss=new ServerSocket(4400);
-            Socket socket;
-            socket=ss.accept();
+          
+            Socket socket=ss.accept();
             DataInputStream archivo=new DataInputStream(socket.getInputStream());
             String nombre=archivo.readUTF();
             int tamaño=archivo.readInt();
@@ -264,9 +264,9 @@ public class BuscarServidor
             salida.close();
             socket.close();
               System.out.println("archivo resivido");
+          }
         } catch (Exception e) {
         }
-          }
       }
   };
 }

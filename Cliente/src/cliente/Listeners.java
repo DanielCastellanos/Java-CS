@@ -43,6 +43,7 @@ public class Listeners implements NativeKeyListener, NativeMouseListener, Native
                 System.out.println("apagado");
             }else if(Listeners.secs == Listeners.limite-Listeners.tiempoLogin){         //si falta un tiempo
                 orden.login();
+                av.dispose();
                 System.out.println("login");
             }else if(Listeners.secs == Listeners.limite - Listeners.tiempoLogin - 30){   //antes de eso
                 System.out.println("esta entrando");
