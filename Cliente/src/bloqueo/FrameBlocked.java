@@ -141,7 +141,7 @@ public class FrameBlocked extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setBackground(new java.awt.Color(0, 0, 0));
 
-        panel.setBackground(new java.awt.Color(51, 102, 255));
+        panel.setBackground(new java.awt.Color(153, 153, 153));
         panel.setToolTipText("");
         panel.setFocusable(false);
 
@@ -302,7 +302,7 @@ public class FrameBlocked extends javax.swing.JFrame {
     
     //modifica apariencia del panel de usuario y contraseña
     public void estilos(){
-        Color c=new Color(50,183,216);
+        Color c=new Color(145,145,145);
         Color a=new Color(235,37,37,150);
         panel.setBackground(c);
         panel.setBorder( BorderFactory.createLineBorder(a, 3, true));
