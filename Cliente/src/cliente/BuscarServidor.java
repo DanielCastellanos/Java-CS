@@ -1,6 +1,4 @@
 package cliente;
-
-import bloqueo.FrameBlocked;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -49,7 +47,7 @@ public class BuscarServidor
       {
           try {
               puerto.joinGroup(InetAddress.getByName(configuracion.getGrupo()));
-              this.inicarHilo();
+              this.iniciarHilo();
           } catch (IOException ex) {
               Logger.getLogger(BuscarServidor.class.getName()).log(Level.SEVERE, null, ex);
           }
@@ -59,7 +57,7 @@ public class BuscarServidor
           this.buscarServidor();
       }
   }
-  public void inicarHilo()
+  public void iniciarHilo()
   {
           hilo.start();
           nuevoArchivo.start();
@@ -70,7 +68,7 @@ public class BuscarServidor
       
       datos();//*****Buscar donde va XD
       t.schedule(tt,0,50);
-      inicarHilo();
+      iniciarHilo();
       
       
   }
@@ -136,7 +134,7 @@ public class BuscarServidor
                           extDatosServ(mensaje);
                           break;
                       case "apagar":
-                          System.out.println("El sistema se apagara");
+                          System.out.println("El sistema se apagará");
                           //orden.apagar();
                           break;
                       case "archivo":
@@ -145,11 +143,11 @@ public class BuscarServidor
                           break;
                       case "apagarAuto":
                           tiempo=obtenerTiempo(mensaje);
-                          System.out.println("El sistema se apagara en "+tiempo);
+                          System.out.println("El sistema se apagará en "+tiempo);
                           //orden.apagarAutomatico(tiempo);
                           break;
                       case "reiniciar":
-                          System.out.println("El sistema se reiniciaraO");
+                          System.out.println("El sistema se reiniciaráO");
                           //orden.reiniciar();
                           break;
                       case "login":
@@ -263,7 +261,7 @@ public class BuscarServidor
             salida.write(buffer, 0, buffer.length);
             salida.close();
             socket.close();
-              System.out.println("archivo resivido");
+              System.out.println("archivo recibido");
           }
         } catch (Exception e) {
         }

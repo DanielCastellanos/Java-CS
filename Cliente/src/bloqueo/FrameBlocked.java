@@ -14,7 +14,6 @@ import java.awt.Robot;
 import java.awt.Toolkit;
 import java.util.Random;
 import java.util.Timer;
-import java.util.TimerTask;
 import javax.swing.BorderFactory;
 
 public class FrameBlocked extends javax.swing.JFrame {
