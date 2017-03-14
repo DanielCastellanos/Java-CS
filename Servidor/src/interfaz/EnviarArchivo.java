@@ -166,6 +166,8 @@ public class EnviarArchivo extends javax.swing.JFrame{
         JFileChooser f = new JFileChooser();
         String ext = null;
         f = agregarFiltros(f);
+        f.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        f.setFileFilter(f.getAcceptAllFileFilter());
         f.setMultiSelectionEnabled(true);
         
         if (f.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {

@@ -55,22 +55,6 @@ public class Clientes {
         }
         return host;
     }
-    public String conexion()
-    {
-        String con="off";
-        try {
-            System.out.println(hostname);
-            if(InetAddress.getByName(hostname).isReachable(3000))
-            {
-                con="on";
-            }
-        } catch (UnknownHostException ex) {
-            System.out.println("Usuario no encontrado");
-        } catch (IOException ex) {
-            System.out.println("Usuario no encontrado");
-        }
-        return con;
-    }
     public void crearArchivoLista(ArrayList<Clientes> clientes) {
         try {
             File lista = new File("ListClientes.txt");

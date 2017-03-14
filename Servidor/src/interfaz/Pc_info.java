@@ -7,6 +7,10 @@ package interfaz;
 
 import java.awt.Color;
 import java.awt.Image;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import servidor.Ordenes;
@@ -18,21 +22,41 @@ public class Pc_info extends javax.swing.JPanel {
     private String nombre = "Nombre";
     private String hostname;
     Principal p;
+    Socket conexion;
     Ordenes ordenes=new Ordenes();
     //constructor recive toda la infomacion del usario 
-    public Pc_info(String nombre , String icono,String hostname) {
+    public Pc_info(String nombre ,String hostname) {
         initComponents();
         Color color = new Color(255, 255, 255, 255);
         this.setBackground(color);
         this.nombre=nombre;
         this.hostname=hostname;
-        if (icono.equals("on")) {
-        estado.setIcon(verde);
-        }else {
-        estado.setIcon(rojo);
-        }
         label.setText(nombre);
         iconos();
+    }
+    public void conexion()
+    {
+        try {
+            conexion=new Socket();
+            //intentamos la coneccion a la direccion ip y puerto con un tiempo maximo de 200milisegundos
+            conexion.connect(new InetSocketAddress(InetAddress.getByName(hostname), 4400),200);
+            //si hay connecion con el destino colocamos el icono verde
+            estado.setIcon(verde);
+            
+        } catch (IOException e) {
+            //si el tiempo de conexion se agoto ponemos el inono rojo
+            estado.setIcon(rojo);
+        }
+        //al final cerramos el Socket
+        finally
+        {
+            try {
+                
+                conexion.close();
+            } catch (IOException ex) {
+                System.err.println("Error al cerrar coneccion en Pc_info Linea 52");
+            }
+        }
     }
     public void estadoRojo() {
         label.setIcon(rojo);

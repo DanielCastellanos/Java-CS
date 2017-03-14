@@ -1,13 +1,15 @@
 
 package interfaz;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import servidor.ArchivoConf;
-import servidor.BuscarGrupo;
 import servidor.Clientes;
 import servidor.Ordenes;
 
@@ -17,6 +19,7 @@ public class Principal extends javax.swing.JFrame{
     int height=Toolkit.getDefaultToolkit().getScreenSize().height;
     Ordenes orden=new Ordenes();
     Clientes clientes=new Clientes();
+    Timer t;
     public ArchivoConf confPrincipal=new ArchivoConf();
     public static Image logo=new ImageIcon(new ImageIcon("src/iconos/logo chico.png").getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH)).getImage();
     public Principal() {
@@ -29,8 +32,10 @@ public class Principal extends javax.swing.JFrame{
         this.setIconImage(logo);
         this.setTitle("Java Control Software");
         panelScroll.getVerticalScrollBar().setUnitIncrement(10);
-        AppSystemTray sTray= new AppSystemTray(logo, this);
         llenarPanel(clientes.cargarClientes());  //<---------------------------------------------Aqui va el array list que le mandas con los clientes
+        //Timer con el cual verificaremos la coneccion con los clientes
+        t=new Timer();
+        t.schedule(verificarCon, 5000, 5000);
     }
     //Recibe un arraylist de Strings
     public void llenarPanel(ArrayList<Clientes> clientes){
@@ -41,9 +46,9 @@ public class Principal extends javax.swing.JFrame{
     }
     
     //Agrega paneles al Principal
-    public void agregaEquipo(Clientes c){
-        panel.add(new Pc_info(c.getNombre(),c.conexion(),c.getDireccion()));
-    }    
+    public static void agregaEquipo(Clientes c){
+        panel.add(new Pc_info(c.getNombre(),c.getDireccion()));
+    }
     
     public static Image getLogo() {
         return logo;
@@ -55,7 +60,17 @@ public class Principal extends javax.swing.JFrame{
         this.add(p, BorderLayout.CENTER);
         p.repaint();
     }
-    
+    //Tarea para verificar conexion
+    TimerTask verificarCon=new TimerTask()
+    {
+        @Override
+        public void run() {
+            Component[]paneles=panel.getComponents();
+            for (Component panel : paneles) {
+                ((Pc_info)panel).conexion();
+            }
+        }
+    };
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -289,7 +304,7 @@ public class Principal extends javax.swing.JFrame{
     private javax.swing.JMenuItem desbloquear;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JButton opciones;
-    private javax.swing.JPanel panel;
+    private static javax.swing.JPanel panel;
     private javax.swing.JScrollPane panelScroll;
     private javax.swing.JPopupMenu popUp;
     private javax.swing.JMenuItem reiniciar;
