@@ -6,6 +6,7 @@
 package interfaz;
 
 import static interfaz.Principal.logo;
+import java.awt.Component;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ public class Tareas extends javax.swing.JFrame {
         this.ip=ip;
         //scroll.getVerticalScrollBar().setUnitIncrement(10);
         comboOrden.setSelectedIndex(0);
+        agregar();
     }
     public void agregar(){
         tab.addTab(ip.getHostName()+"",new Panel(tareas,ip));
@@ -107,7 +109,10 @@ public class Tareas extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void comboOrdenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboOrdenActionPerformed
-        //agregarProcesos(comboOrden.getSelectedIndex());
+        Component co[]=tab.getComponents();
+        for (Component co1 : co) {
+            ((Panel)co1).agregarProcesos(comboOrden.getSelectedIndex());
+        }
     }//GEN-LAST:event_comboOrdenActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed

@@ -27,6 +27,7 @@ public class Panel extends javax.swing.JPanel {
         initComponents();
         tareas=datos;
         this.ip=ip;
+        agregarProcesos(0);
     }
     
 public void agregarProcesos(int orden){
