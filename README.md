@@ -1,12 +1,24 @@
 # Java Control Software
+<!DOCTYPE html>
+<head>
+  <style type="text/css">
+  body {
+    background-color: #d8da3d }
+  </style>
+</head>
+<body>
 
+<p>
 Esta herramienta es desarrollada por estudiantes de la universidad de Guadalajara <br>
 campus CUCIÉNEGA, con el objetivo que realizar tareas para administrar los equipos <br>
 de cómputo de los laboratorios.
+</p>
+
 <br><br>
 Entre sus funciones se encuentran:<br>
-<li>_Control de acceso_</li>
-<li>_Registro de uso de los equipos_</li>
-<li>_Envío de archivos de administrador a cliente(s) en grupos LAN_</li>
-<li>_Monitoreo y gestión de tareas de manera remota_</li>
-<li>_Apagado remoto individual o por grupo_</li>
+<li>Control de acceso</li>
+<li>Registro de uso de los equipos</li>
+<li>Envío de archivos de administrador a cliente(s) en grupos LAN</li>
+<li>Monitoreo y gestión de tareas de manera remota</li>
+<li>Apagado remoto individual o por grupo</li>
+</body>
