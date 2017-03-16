@@ -6,6 +6,7 @@
 package interfaz;
 
 import java.net.InetAddress;
+import javax.swing.JPanel;
 import servidor.Ordenes;
 
 /**
@@ -26,6 +27,7 @@ public class proceso extends javax.swing.JPanel {
         this.memoria.setText(memoria);
         this.pid.setText(pid);
         this.ip=ip;
+        
     }
 
     /**
@@ -120,7 +122,7 @@ public class proceso extends javax.swing.JPanel {
 
     private void MatarProcesoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MatarProcesoActionPerformed
         orden.matar(ip,pid.getText());
-        Tareas.eliminarPanel(this);
+        //NO hayo como vergas quitarlo del panel XD
     }//GEN-LAST:event_MatarProcesoActionPerformed
 
 

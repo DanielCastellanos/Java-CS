@@ -19,7 +19,7 @@ import servidor.OrdenarTareas;
 
 public class Tareas extends javax.swing.JFrame {
 
-    List<String []> tareas;
+    ArrayList<String []> tareas;
     InetAddress ip;
     public Tareas(ArrayList<String []> datos,InetAddress ip) {
         initComponents();
@@ -28,28 +28,17 @@ public class Tareas extends javax.swing.JFrame {
         this.setResizable(false);
         this.setVisible(true);
         this.setIconImage(logo);
-        this.setTitle("Procesos de "+ip.getHostName());
+        this.setTitle("Procesos");
         tareas=datos;
         this.ip=ip;
-        scroll.getVerticalScrollBar().setUnitIncrement(10);
+        //scroll.getVerticalScrollBar().setUnitIncrement(10);
         comboOrden.setSelectedIndex(0);
     }
+    public void agregar(){
+        tab.addTab(ip.getHostName()+"",new Panel(tareas,ip));
+    }
     
-    public void agregarProcesos(int orden){
-        panel.removeAll();
-        Collections.sort(tareas,new OrdenarTareas(orden));
-        for (String[] dato : tareas) {
-            panel.add(new proceso(dato[3],dato[0],dato[1],dato[2],ip));
-        }
-        panel.updateUI();
-        scroll.updateUI();
-    }
-    public static void eliminarPanel(JPanel p)
-    {
-        panel.remove(p);
-        panel.updateUI();
-        scroll.updateUI();
-    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -60,10 +49,9 @@ public class Tareas extends javax.swing.JFrame {
     private void initComponents() {
 
         jButton1 = new javax.swing.JButton();
-        scroll = new javax.swing.JScrollPane();
-        panel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        comboOrden = new javax.swing.JComboBox<>();
+        comboOrden = new javax.swing.JComboBox<String>();
+        tab = new javax.swing.JTabbedPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -74,12 +62,9 @@ public class Tareas extends javax.swing.JFrame {
             }
         });
 
-        panel.setLayout(new java.awt.GridLayout(0, 1));
-        scroll.setViewportView(panel);
+        jLabel1.setText("Ordenar por");
 
-        jLabel1.setText("Orendenar por");
-
-        comboOrden.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Nombre de Programa(.exe)", "PID", "Tamaño en memoria", "Nombre" }));
+        comboOrden.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Nombre de Programa(.exe)", "PID", "Tamaño en memoria", "Nombre" }));
         comboOrden.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboOrdenActionPerformed(evt);
@@ -93,7 +78,7 @@ public class Tareas extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scroll, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(tab)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 322, Short.MAX_VALUE)
                         .addComponent(jButton1))
@@ -112,8 +97,8 @@ public class Tareas extends javax.swing.JFrame {
                     .addComponent(jLabel1)
                     .addComponent(comboOrden, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(scroll, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addComponent(tab, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButton1)
                 .addContainerGap())
         );
@@ -122,7 +107,7 @@ public class Tareas extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void comboOrdenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboOrdenActionPerformed
-        agregarProcesos(comboOrden.getSelectedIndex());
+        //agregarProcesos(comboOrden.getSelectedIndex());
     }//GEN-LAST:event_comboOrdenActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -172,7 +157,6 @@ public class Tareas extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> comboOrden;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
-    private static javax.swing.JPanel panel;
-    private static javax.swing.JScrollPane scroll;
+    private javax.swing.JTabbedPane tab;
     // End of variables declaration//GEN-END:variables
 }
