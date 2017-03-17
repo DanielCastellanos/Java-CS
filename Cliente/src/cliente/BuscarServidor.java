@@ -163,6 +163,10 @@ public class BuscarServidor
                       case "procesos":
                           sendProcesos(dp.getAddress());
                           break;
+                      case "CPagina":
+                          String pagina=mensaje.substring(mensaje.indexOf(",")+1, mensaje.length());
+                          java.awt.Desktop.getDesktop().browse(java.net.URI.create(pagina));
+                          break;
                       case "cerrar":
                           
                           orden.cerrar(obtenerTiempo(mensaje)+"");
