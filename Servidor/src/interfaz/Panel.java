@@ -34,7 +34,7 @@ public void agregarProcesos(int orden){
         this.removeAll();
         Collections.sort(tareas,new OrdenarTareas(orden));
         for (String[] dato : tareas) {
-            this.add(new proceso(dato[3],dato[0],dato[1],dato[2],ip));
+            jPanel1.add(new proceso(dato[3],dato[0],dato[1],dato[2],ip));
         }
         this.updateUI();
         //scroll.updateUI();
@@ -54,10 +54,27 @@ public void agregarProcesos(int orden){
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        setLayout(new java.awt.GridLayout(1, 1));
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jPanel1 = new javax.swing.JPanel();
+
+        jPanel1.setLayout(new java.awt.GridLayout(0, 1));
+        jScrollPane1.setViewportView(jPanel1);
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+        );
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }

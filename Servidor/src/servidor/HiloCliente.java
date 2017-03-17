@@ -144,8 +144,19 @@ public class HiloCliente implements Runnable{
                                     break;
                                 case "Tareas"://cuando se resiven las tareas solicitadas al cliente
                                     System.out.println("entro a Procesos");
-                                    String tareas=mensaje.substring(mensaje.indexOf(",")+1,mensaje.length());
-                                    new Tareas(separarTareas(tareas),dp.getAddress());
+                                    String tarea=mensaje.substring(mensaje.indexOf(",")+1,mensaje.length());
+                                    if(BuscarGrupo.tareas==null)
+                                    {
+                                        BuscarGrupo.tareas=new Tareas();
+                                        BuscarGrupo.tareas.agregar(separarTareas(tarea),dp.getAddress());
+                                    }
+                                    else
+                                    {
+                                        tareas.setVisible(true);
+                                        BuscarGrupo.tareas.agregar(separarTareas(tarea),dp.getAddress());
+                                    }
+                                    
+                                    
                                     break;
                             } 
                         }

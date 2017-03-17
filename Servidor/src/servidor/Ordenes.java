@@ -144,6 +144,19 @@ public class Ordenes {
             Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    public void enviarPagina(String hostName,String pagina)
+    {
+        try {
+            InetAddress direccion=InetAddress.getByName(hostName);
+            byte mensaje[]=("CPagina,"+pagina).getBytes();
+            orden=new DatagramPacket(mensaje,mensaje.length,direccion, 1001);
+            puerto.send(orden);
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     class Enviar implements Runnable
             {
 

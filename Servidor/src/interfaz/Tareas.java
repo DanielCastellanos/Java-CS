@@ -19,10 +19,7 @@ import servidor.OrdenarTareas;
 
 
 public class Tareas extends javax.swing.JFrame {
-
-    ArrayList<String []> tareas;
-    InetAddress ip;
-    public Tareas(ArrayList<String []> datos,InetAddress ip) {
+    public Tareas() {
         initComponents();
         this.setLocationRelativeTo(null);
         this.setSize(650,315);
@@ -30,14 +27,11 @@ public class Tareas extends javax.swing.JFrame {
         this.setVisible(true);
         this.setIconImage(logo);
         this.setTitle("Procesos");
-        tareas=datos;
-        this.ip=ip;
         //scroll.getVerticalScrollBar().setUnitIncrement(10);
         comboOrden.setSelectedIndex(0);
-        agregar();
     }
-    public void agregar(){
-        tab.addTab(ip.getHostName()+"",new Panel(tareas,ip));
+    public void agregar(ArrayList<String []> datos,InetAddress ip){
+        tab.addTab(ip.getHostName()+"",new Panel(datos,ip));
     }
     
     
@@ -149,11 +143,7 @@ public class Tareas extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                try {
-                    new Tareas(new ArrayList<String[]>(),InetAddress.getLocalHost()).setVisible(true);
-                } catch (UnknownHostException ex) {
-                    Logger.getLogger(Tareas.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                    new Tareas().setVisible(true);
             }
         });
     }

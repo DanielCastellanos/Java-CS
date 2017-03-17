@@ -39,7 +39,7 @@ public class Pc_info extends javax.swing.JPanel {
         try {
             conexion=new Socket();
             //intentamos la coneccion a la direccion ip y puerto con un tiempo maximo de 200milisegundos
-            conexion.connect(new InetSocketAddress(InetAddress.getByName(hostname), 4400),200);
+            conexion.connect(new InetSocketAddress(InetAddress.getByName(hostname), 4400),300);
             //si hay connecion con el destino colocamos el icono verde
             estado.setIcon(verde);
             

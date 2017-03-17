@@ -33,6 +33,7 @@ public class BuscarGrupo extends Principal {
     static ArchivoConf conf = new ArchivoConf();
     static ArrayList<Clientes> cliente=new ArrayList<>();
     DatagramPacket pregunta;
+    static Tareas tareas=null;
     int ip=1;
     String p="?,";
     ThreadPoolExecutor pool;

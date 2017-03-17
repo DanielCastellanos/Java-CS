@@ -83,6 +83,7 @@ public class Principal extends javax.swing.JFrame{
         reiniciar = new javax.swing.JMenuItem();
         Tareas = new javax.swing.JMenuItem();
         configuracion = new javax.swing.JMenuItem();
+        CompartirPagina = new javax.swing.JMenuItem();
         Salir = new javax.swing.JMenuItem();
         panelScroll = new javax.swing.JScrollPane();
         panel = new javax.swing.JPanel();
@@ -146,6 +147,14 @@ public class Principal extends javax.swing.JFrame{
             }
         });
         popUp.add(configuracion);
+
+        CompartirPagina.setText("Compartir Pagina");
+        CompartirPagina.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CompartirPaginaActionPerformed(evt);
+            }
+        });
+        popUp.add(CompartirPagina);
 
         Salir.setText("Salir");
         Salir.addActionListener(new java.awt.event.ActionListener() {
@@ -259,6 +268,10 @@ public class Principal extends javax.swing.JFrame{
 
         new VConf().setVisible(true);
     }//GEN-LAST:event_configuracionActionPerformed
+
+    private void CompartirPaginaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CompartirPaginaActionPerformed
+       new CompartirPagina(confPrincipal.getGrupo());
+    }//GEN-LAST:event_CompartirPaginaActionPerformed
     
     
     public static void main(String args[]) {
@@ -297,6 +310,7 @@ public class Principal extends javax.swing.JFrame{
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem Apagar;
     private javax.swing.JMenuItem Bloquear;
+    private javax.swing.JMenuItem CompartirPagina;
     private javax.swing.JMenuItem Enviar;
     private javax.swing.JMenuItem Salir;
     private javax.swing.JMenuItem Tareas;
