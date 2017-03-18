@@ -33,6 +33,7 @@ public class BuscarServidor
   {
       try {
           Listeners ls= new Listeners();
+          AppSystemTray.mostrarMensaje("Iniciando listeners", 2);
           ls.beginListeners(orden);
           puerto=new MulticastSocket(1001);
           hilo=new Thread(escucha);
@@ -54,6 +55,7 @@ public class BuscarServidor
       }
       else
       {
+          AppSystemTray.mostrarMensaje("No se encontró configuración previa", 2);
           this.buscarServidor();
       }
   }
