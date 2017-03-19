@@ -3,6 +3,9 @@ package cliente;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.Timer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jnetpcap.*;
 import org.jnetpcap.nio.JBuffer;
 import org.jnetpcap.packet.PcapPacket;
@@ -13,18 +16,22 @@ import org.jnetpcap.protocol.tcpip.Tcp;
 public class MonitorWeb {
 
     //Variables de clase
-    static final String DOMAIN[]= {"com", "org", "net", "info", "biz", "edu", "gob"};
-    StringBuilder errorBuffer = new StringBuilder();
-    List<PcapIf> allDevs = new ArrayList<>();
-    Pcap pcap;
-    String ipTarget;
-
+    static final String DOMAIN[]= {"com", "org", "net", "info", "biz", "edu", "gob"};   //cadenas de dominios a buscar en paquetes que salen por el puerto 443.
+    StringBuilder errorBuffer = new StringBuilder();        //Buffer para registrar errores que puedan ocurrir
+    List<PcapIf> allDevs = new ArrayList<>();               //Lista para almacenar las interfaces
+    Pcap pcap;                                              //Variable Pcap para capturar los paquetes entrantes
+    String ipTarget;                                        //Cadena correspondiente a la ip de la interfaz que se va a escuchar
+    ArrayList<String> webPages;                             //Para guardar temporalmente las páginas
+    Timer time= new Timer();                                //Para controlar el tiempo de envío de historial al admin.
+    //Constructor de la clase
     public MonitorWeb(String ip) {
-        ipTarget= ip;
-        initMonitor();
+        ipTarget= ip;                       //Recibe una cadena como parámetro que representa la ip de la interfaz a monitorear
+        initMonitor();                      //Realiza configuraciones iniciales
         
     }
+    
     private void initMonitor(){
+        webPages= new ArrayList<>();
         if(!findDevices()){
             System.err.printf("No se pudo obtener lista de interfaces %s", errorBuffer
             .toString());
@@ -43,10 +50,7 @@ public class MonitorWeb {
     private boolean findDevices(){
         
         int r = Pcap.findAllDevs(this.allDevs, this.errorBuffer);
-        if (r == Pcap.NOT_OK || allDevs.isEmpty()) {
-            return false;
-        }
-        return true;
+        return !(r == Pcap.NOT_OK || allDevs.isEmpty());
     }
     
     private int pickDevice(String ip){
@@ -73,21 +77,38 @@ public class MonitorWeb {
         pcap= Pcap.openLive(allDevs.get(indexDevice).getName(), snaplen, flags, timeout, errorBuffer);
     }
     
-    public static void getPageInPacket(String payload, String domain) {
+    public static String getPageInPacket(String payload, String domain) {
         
         payload= payload.substring(0,payload.indexOf(domain)+domain.length());
         StringTokenizer token= new StringTokenizer(payload,"\n");
-        String pagina;
-        String aux;
+        String wPage;
+        String temp;
         payload="";
         while(token.hasMoreTokens()){
-            aux=token.nextToken();
-            payload+=aux.substring(aux.indexOf("    ")+4, aux.length());
+            temp=token.nextToken();
+            payload+=temp.substring(temp.indexOf("    ")+4, temp.length());
         }
-        pagina= payload.substring(payload.lastIndexOf("..")+2,payload.length());
-        System.err.println(pagina);
+        wPage= payload.substring(payload.lastIndexOf("..")+2,payload.length());
+        return wPage;
+    }
+    private void pageRecieved(String page){
+        if(page!=null){
+            if(!webPages.contains(page)){
+                webPages.add(page);
+                System.out.println(page);
+            }
+        }
     }
     
+    private void cleanList(){
+        try {
+            handler.wait();
+            //método para el envío
+            handler.notify();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(MonitorWeb.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     PcapPacketHandler<String> handler = new PcapPacketHandler<String>(){
         
         @Override
@@ -104,12 +125,15 @@ public class MonitorWeb {
 //                  
                    for (String b : DOMAIN) {
                         if (payload.contains(b)) {
-                            getPageInPacket(payload, b);
+                            String page= getPageInPacket(payload, b);
+                            pageRecieved(page);
+                            
                         }
                     }
                 }
                 else if(packet.hasHeader(http)){    
-                    System.out.println(http.fieldValue(Http.Request.Host));
+                    String page= http.fieldValue(Http.Request.Host);
+                    System.out.println(page);
                 }
             }
         }
