@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Timer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.jnetpcap.*;
 import org.jnetpcap.nio.JBuffer;
 import org.jnetpcap.packet.PcapPacket;
@@ -77,6 +75,7 @@ public class MonitorWeb {
         pcap= Pcap.openLive(allDevs.get(indexDevice).getName(), snaplen, flags, timeout, errorBuffer);
     }
     
+    //Trabaja con la estructura del paquete para extraer solamente el dominio del host destino
     public static String getPageInPacket(String payload, String domain) {
         
         payload= payload.substring(0,payload.indexOf(domain)+domain.length());
@@ -91,6 +90,7 @@ public class MonitorWeb {
         wPage= payload.substring(payload.lastIndexOf("..")+2,payload.length());
         return wPage;
     }
+    //Verifica si la página ya está registrada en el arreglo temporal, si no, la registra
     private void pageRecieved(String page){
         if(page!=null){
             if(!webPages.contains(page)){
@@ -101,14 +101,9 @@ public class MonitorWeb {
     }
     
     private void cleanList(){
-        try {
-            handler.wait();
-            //método para el envío
-            handler.notify();
-        } catch (InterruptedException ex) {
-            Logger.getLogger(MonitorWeb.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        
     }
+    //Manejador de paquetes recibidos.
     PcapPacketHandler<String> handler = new PcapPacketHandler<String>(){
         
         @Override
