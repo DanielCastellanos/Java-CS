@@ -14,6 +14,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.net.ssl.SSLServerSocket;
 import javax.swing.JOptionPane;
 
 
@@ -24,7 +25,7 @@ public class BuscarServidor
   String nombre,dir,hostname,grupo;
   byte infServ[]="info,".getBytes();
   InetAddress direccion;
-  Thread hilo,nuevoArchivo;
+  Thread hilo,nuevoArchivo,con;
   ArchivoConf configuracion=new ArchivoConf();
   Ordenes orden=new Ordenes();
   Timer t=new Timer();
@@ -38,6 +39,7 @@ public class BuscarServidor
           puerto=new MulticastSocket(1001);
           hilo=new Thread(escucha);
           nuevoArchivo=new Thread(archivo);
+          con=new Thread(conexion);
       } catch (IOException ex) {
           Logger.getLogger(BuscarServidor.class.getName()).log(Level.SEVERE, null, ex);
       }
@@ -63,6 +65,7 @@ public class BuscarServidor
   {
           hilo.start();
           nuevoArchivo.start();
+          con.start();
   }
   
   public void buscarServidor()
@@ -137,7 +140,7 @@ public class BuscarServidor
                           break;
                       case "apagar":
                           System.out.println("El sistema se apagará");
-                          //orden.apagar();
+                          orden.apagar();
                           break;
                       case "archivo":
                               String archivo=mensaje.substring(mensaje.indexOf(",")+1, mensaje.length());
@@ -146,11 +149,11 @@ public class BuscarServidor
                       case "apagarAuto":
                           tiempo=obtenerTiempo(mensaje);
                           System.out.println("El sistema se apagará en "+tiempo);
-                          //orden.apagarAutomatico(tiempo);
+                          orden.apagarAutomatico(tiempo);
                           break;
                       case "reiniciar":
                           System.out.println("El sistema se reiniciaráO");
-                          //orden.reiniciar();
+                          orden.reiniciar();
                           break;
                       case "login":
                           orden.login();
@@ -270,7 +273,24 @@ public class BuscarServidor
               System.out.println("archivo recibido");
           }
         } catch (Exception e) {
+            e.printStackTrace();
         }
+      }
+  };
+  Runnable conexion=new Runnable() {
+
+      @Override
+      public void run() {
+          try {
+              ServerSocket ss=new ServerSocket(4401);
+              while(true)
+              {
+                  Socket socket=ss.accept();
+                  socket.close();
+              }
+          } catch (IOException ex) {
+              Logger.getLogger(BuscarServidor.class.getName()).log(Level.SEVERE, null, ex);
+          }
       }
   };
 }
