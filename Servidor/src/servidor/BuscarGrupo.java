@@ -6,9 +6,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
-import java.net.Socket;
 import java.util.ArrayList;
-import java.util.StringTokenizer;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
@@ -67,13 +65,12 @@ public class BuscarGrupo extends Principal {
         if(conf.CargarConf())
         {
             try {
-                puerto=new MulticastSocket(1000);
                 puerto.joinGroup(InetAddress.getByName(conf.getGrupo()));
-                System.out.println("estamos en el grupo ------>"+conf.getGrupo() );
+                System.out.println("estamos en el grupo ------>"+conf.getGrupo());
                 this.inicarHilos();
                 confPrincipal=this.getConf();
             } catch (IOException ex) {
-                Logger.getLogger(BuscarGrupo.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println("Error");
             }
         }
         else
@@ -89,7 +86,7 @@ public class BuscarGrupo extends Principal {
             escucha.start();
             System.out.println("Se creo el hilo correctamente");
     }
-    public void buscarGrupo()//?
+    public void buscarGrupo()
     {
         nombreServ();
         inicarHilos();
@@ -101,8 +98,6 @@ public class BuscarGrupo extends Principal {
             if(libre)
             {
                 t.cancel();
-//                escucha.stop(); //comentado para hacer pruebas
-//                puerto.close();
                 conf.setGrupo(ia.getHostAddress());
                 System.out.println("Servidor:"+nombre);
                 System.out.println("\033[32m****** grupo Libre -> "+"224.0.0."+ip);
@@ -139,6 +134,7 @@ public class BuscarGrupo extends Principal {
     Runnable r=new Runnable() {
             @Override
             public void run() {
+                
                 ExecutorService executor=Executors.newCachedThreadPool();
                 pool=(ThreadPoolExecutor)executor;
                 try {
@@ -149,15 +145,11 @@ public class BuscarGrupo extends Principal {
                         buf=new byte[500000];
                         dp=new DatagramPacket(buf,buf.length );
                         System.out.println("esperando respuesta");
-                       System.out.println(puerto.getLocalPort());
                         puerto.receive(dp);
-                         
-//                        System.out.println("asd");
                         executor.submit(new HiloCliente(dp,ia,puerto));
-                        
                     }
                 } catch (IOException ex) {
-                    Logger.getLogger(BuscarGrupo.class.getName()).log(Level.SEVERE, null, ex);
+                    ex.printStackTrace();
                 }
             }
         };//**

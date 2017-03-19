@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import servidor.Ordenes;
@@ -39,8 +40,9 @@ public class Pc_info extends javax.swing.JPanel {
         try {
             conexion=new Socket();
             //intentamos la coneccion a la direccion ip y puerto con un tiempo maximo de 200milisegundos
-            conexion.connect(new InetSocketAddress(InetAddress.getByName(hostname), 4400),300);
-            //si hay connecion con el destino colocamos el icono verde
+            SocketAddress sa=new InetSocketAddress(hostname, 4401);
+            conexion.connect(sa,200);
+            //si hay conexion con el destino colocamos el icono verde
             estado.setIcon(verde);
             
         } catch (IOException e) {
@@ -236,6 +238,7 @@ public class Pc_info extends javax.swing.JPanel {
 
     private void TareasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TareasActionPerformed
         ordenes.pedirProcesos(hostname);
+        System.out.println("orden pc_info"+hostname);
     }//GEN-LAST:event_TareasActionPerformed
 
 

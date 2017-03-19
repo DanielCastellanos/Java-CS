@@ -117,13 +117,27 @@ public class HiloCliente implements Runnable{
        }
        return lista;
     }
+    private String nombreCliente(InetAddress ia)
+    {
+        String nombre=null;
+        for (Clientes clientes : cliente) {
+            if(ia.getHostName().equalsIgnoreCase(clientes.hostname))
+            {
+                nombre=clientes.nombre;
+                break;
+            }
+        }
+        return nombre;
+    }
     @Override
     public void run() {
         if(!(dp.getAddress().getHostAddress().equals(miIp.getHostAddress())))//evita la respuesta de nuestra misma pc
                         {   
+            
                             String mensaje=new String(dp.getData());
                             mensaje=mensaje.trim();
                             String aux=mensaje.substring(0,mensaje.indexOf(","));
+                            InetAddress direccion=dp.getAddress();
                             System.out.println(mensaje);
                             switch(aux)
                             {
@@ -145,15 +159,19 @@ public class HiloCliente implements Runnable{
                                 case "Tareas"://cuando se resiven las tareas solicitadas al cliente
                                     System.out.println("entro a Procesos");
                                     String tarea=mensaje.substring(mensaje.indexOf(",")+1,mensaje.length());
+                                    String nomCliente=nombreCliente(direccion);
                                     if(BuscarGrupo.tareas==null)
                                     {
                                         BuscarGrupo.tareas=new Tareas();
-                                        BuscarGrupo.tareas.agregar(separarTareas(tarea),dp.getAddress());
+                                        BuscarGrupo.tareas.agregar(separarTareas(tarea),direccion,nomCliente);
                                     }
                                     else
                                     {
                                         tareas.setVisible(true);
-                                        BuscarGrupo.tareas.agregar(separarTareas(tarea),dp.getAddress());
+                                        if(!tareas.revisar(nomCliente))
+                                        {
+                                        BuscarGrupo.tareas.agregar(separarTareas(tarea),dp.getAddress(),nomCliente);
+                                        }
                                     }
                                     
                                     

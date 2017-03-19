@@ -8,14 +8,7 @@ package interfaz;
 import static interfaz.Principal.logo;
 import java.awt.Component;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JPanel;
-import servidor.OrdenarTareas;
 
 
 public class Tareas extends javax.swing.JFrame {
@@ -27,11 +20,23 @@ public class Tareas extends javax.swing.JFrame {
         this.setVisible(true);
         this.setIconImage(logo);
         this.setTitle("Procesos");
-        //scroll.getVerticalScrollBar().setUnitIncrement(10);
+        
         comboOrden.setSelectedIndex(0);
     }
-    public void agregar(ArrayList<String []> datos,InetAddress ip){
-        tab.addTab(ip.getHostName()+"",new Panel(datos,ip));
+    public void agregar(ArrayList<String []> datos,InetAddress ip,String nombre){
+        tab.addTab(nombre,new Panel(datos,ip));
+    }
+    public boolean revisar(String nombre)
+    {
+        boolean encontrado=false;
+        int cantidad=tab.getTabCount();
+        for (int i = 0; i < cantidad; i++) {
+            if(tab.getTitleAt(i).equalsIgnoreCase(nombre))
+            {
+                encontrado=true;
+            }
+        }
+        return encontrado;
     }
     
     
@@ -46,10 +51,15 @@ public class Tareas extends javax.swing.JFrame {
 
         jButton1 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        comboOrden = new javax.swing.JComboBox<String>();
+        comboOrden = new javax.swing.JComboBox<>();
         tab = new javax.swing.JTabbedPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         jButton1.setText("Aceptar");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -60,7 +70,7 @@ public class Tareas extends javax.swing.JFrame {
 
         jLabel1.setText("Ordenar por");
 
-        comboOrden.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Nombre de Programa(.exe)", "PID", "Tamaño en memoria", "Nombre" }));
+        comboOrden.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Nombre de Programa(.exe)", "PID", "Tamaño en memoria", "Nombre" }));
         comboOrden.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboOrdenActionPerformed(evt);
@@ -112,6 +122,10 @@ public class Tareas extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        tab.removeAll();
+    }//GEN-LAST:event_formWindowClosing
 
     /**
      * @param args the command line arguments

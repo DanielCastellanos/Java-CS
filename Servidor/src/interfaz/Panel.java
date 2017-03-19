@@ -27,6 +27,7 @@ public class Panel extends javax.swing.JPanel {
         initComponents();
         tareas=datos;
         this.ip=ip;
+        jScrollPane1.getVerticalScrollBar().setUnitIncrement(10);
         agregarProcesos(0);
     }
     
@@ -37,7 +38,7 @@ public void agregarProcesos(int orden){
             jPanel1.add(new proceso(dato[3],dato[0],dato[1],dato[2],ip));
         }
         this.updateUI();
-        //scroll.updateUI();
+        jScrollPane1.updateUI();
     }
 
     public  void eliminarProceso(Component p){
