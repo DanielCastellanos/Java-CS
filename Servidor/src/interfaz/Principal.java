@@ -33,6 +33,7 @@ public class Principal extends javax.swing.JFrame{
         this.setIconImage(logo);
         this.setTitle("Java Control Software");
         panelScroll.getVerticalScrollBar().setUnitIncrement(10);
+        AppSystemTray st = new AppSystemTray(logo, this);
         llenarPanel(clientes.cargarClientes());  //<---------------------------------------------Aqui va el array list que le mandas con los clientes
         //Timer con el cual verificaremos la coneccion con los clientes
         t=new Timer();
