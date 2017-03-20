@@ -15,6 +15,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -26,6 +27,11 @@ public class AppSystemTray {
     TrayIcon icon;                                          //variable para la canstrucción del icono
     Image imagen;
     JFrame vPrincipal;
+    public final static byte 
+            PLAIN_MESSAGE=1,
+            INFORMATION_MESSAGE=2,
+            WARNING_MESSAGE=3,
+            ERROR_MESSAGE=4;
     
    public AppSystemTray (Image ico, JFrame frame){
        imagen=ico;
