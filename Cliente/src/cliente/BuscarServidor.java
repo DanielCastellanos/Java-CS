@@ -1,4 +1,5 @@
 package cliente;
+import java.awt.TrayIcon;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -170,7 +171,8 @@ public class BuscarServidor
                           break;
                       case "CPagina":
                           String pagina=mensaje.substring(mensaje.indexOf(",")+1, mensaje.length());
-                          java.awt.Desktop.getDesktop().browse(java.net.URI.create(pagina));
+                          abrirPagina(pagina);
+                          
                           break;
                       case "cerrar":
                           
@@ -184,6 +186,21 @@ public class BuscarServidor
       }
   };
   
+    public void abrirPagina(String pagina){
+
+        try {
+            java.awt.Desktop.getDesktop().browse(java.net.URI.create(pagina));
+        } catch (Exception e) {
+
+            try {
+                pagina=pagina.replaceAll(" ", "+");
+                java.awt.Desktop.getDesktop().browse(java.net.URI.create("https://www.google.com.mx/webhp?sourceid=chrome-instant&ion=1&espv=2&ie=UTF-8#q=" + pagina + "&*"));
+            } catch (IOException ex) {
+                AppSystemTray.mostrarMensaje("Error al abrir pàgina", 1);
+            }
+        }
+
+    }
     public void sendProcesos(InetAddress ip){
         ListaTareas t = new ListaTareas();
         t.escribirLista();
