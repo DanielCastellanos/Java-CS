@@ -219,7 +219,7 @@ public class EnviarArchivo extends javax.swing.JFrame{
 
         lbPesoArchivo.setText("0 KB");
 
-        lbInfo.setText("de 1.5 GB");
+        lbInfo.setText("de 1 GB");
 
         btnEliminarArchivo.setText("Eliminar Archivo");
         btnEliminarArchivo.addActionListener(new java.awt.event.ActionListener() {
@@ -319,7 +319,7 @@ public class EnviarArchivo extends javax.swing.JFrame{
                 }
             }
             lbPesoArchivo.setText(peso(pesoTotal,0));
-            lbPesoArchivo.setForeground(pesoTotal>1610612736?Color.RED:Color.GREEN);
+            lbPesoArchivo.setForeground(pesoTotal>1073741824?Color.RED:Color.GREEN);
             
         } else {
             System.out.println("No seleccion ");
@@ -329,18 +329,17 @@ public class EnviarArchivo extends javax.swing.JFrame{
     private void aceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aceptarActionPerformed
         try {
             nombreZip=txt_Nombre.getText().trim();
-            if(!nombreZip.isEmpty() && pesoTotal<1610612736)
+            if(!nombreZip.isEmpty())
             {
-            zip();
-            //la ruta del .zip esta en la variable 'ruta'
-            if (individual) {
-                //envio a una sola pc
-                
-            }else{
-                //envio por multicast
-                
-            }
-            this.dispose();
+                if(pesoTotal<1073741824)
+                {
+                    zip();
+                    this.dispose();
+                }
+                else
+                {
+                    JOptionPane.showMessageDialog(this, "El archivo excede el peso Maximo", "Error ", JOptionPane.WARNING_MESSAGE);
+                }
             }
             else
             {

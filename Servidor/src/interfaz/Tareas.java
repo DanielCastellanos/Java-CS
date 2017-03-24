@@ -9,6 +9,7 @@ import static interfaz.Principal.logo;
 import java.awt.Component;
 import java.net.InetAddress;
 import java.util.ArrayList;
+import javax.swing.JPanel;
 
 
 public class Tareas extends javax.swing.JFrame {

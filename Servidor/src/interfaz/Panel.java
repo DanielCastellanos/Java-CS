@@ -32,12 +32,13 @@ public class Panel extends javax.swing.JPanel {
     }
     
 public void agregarProcesos(int orden){
-        this.removeAll();
+        jPanel1.removeAll();
         Collections.sort(tareas,new OrdenarTareas(orden));
         for (String[] dato : tareas) {
             jPanel1.add(new proceso(dato[3],dato[0],dato[1],dato[2],ip));
         }
         this.updateUI();
+        jPanel1.updateUI();
         jScrollPane1.updateUI();
     }
 

@@ -2,6 +2,7 @@ package servidor;
 
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.net.DatagramPacket;
@@ -15,6 +16,9 @@ import java.util.logging.Logger;
 public class Ordenes {
     MulticastSocket puerto;
     DatagramPacket orden;
+    RandomAccessFile salida;
+    byte[] buffer ;
+    
     public Ordenes(){
         try {
             puerto=new MulticastSocket();
@@ -50,6 +54,10 @@ public class Ordenes {
     public void enviarArchivo(String dir,String hostname)
     {
         try {
+            // Creamos flujo de entrada para realizar la lectura del archivo en bytes
+            salida=new RandomAccessFile(dir,"rw");
+            // Creamos un array de tipo byte con el tamaño del archivo 
+            buffer= new byte[(int)salida.length()];
             if(InetAddress.getByName(hostname).isMulticastAddress())
             {
                 String miIp=InetAddress.getLocalHost().getHostAddress();
@@ -63,6 +71,10 @@ public class Ordenes {
                 new Thread(new Enviar(dir, hostname)).start();
             }
         } catch (UnknownHostException ex) {
+            Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
             Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -178,15 +190,12 @@ public class Ordenes {
               System.out.println(hostname);
             // Creamos la direccion IP de la maquina que recibira el archivo
             InetAddress ip = InetAddress.getByName(hostname);
-         
+            
+            //Cargamos el archivo
+            File archivo=new File(dir);
+            
             // Creamos el Socket con la direccion y elpuerto de comunicacion
             Socket socket = new Socket( ip, 4400 );
-         
-            // Creamos el archivo que vamos a enviar
-            File archivo = new File( dir );
-         
-            // Obtenemos el tamaño del archivo
-            int tamañoArchivo = ( int )archivo.length();
          
             // Creamos el flujo de salida, este tipo de flujo nos permite 
             // hacer la escritura de diferentes tipos de datos tales como
@@ -199,13 +208,9 @@ public class Ordenes {
             dos.writeUTF( archivo.getName() );
          
             // Enviamos el tamaño del archivo
-            dos.writeInt( tamañoArchivo );
+            dos.writeInt((int)archivo.length());
          
-            // Creamos flujo de entrada para realizar la lectura del archivo en bytes
-            RandomAccessFile salida=new RandomAccessFile(dir,"rw");
-         
-            // Creamos un array de tipo byte con el tamaño del archivo 
-            byte[] buffer = new byte[ tamañoArchivo ];
+           
          
             // Leemos el archivo y lo introducimos en el array de bytes 
             salida.readFully(buffer,0,buffer.length); 
@@ -219,7 +224,7 @@ public class Ordenes {
           }
           catch( Exception e )
           {
-            System.out.println( e.toString() );
+            e.printStackTrace();
           }
     }
                 

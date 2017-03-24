@@ -1,0 +1,19 @@
+***************************
+*Ambos(Cliente y servidor)*
+***************************
+-- Agregar un "\r\n" a archivos de configuracion
+-- Desbloqueo opcion de desbloqueo con logg in o desbloqueo total del equipo
+-- Añadir detalles de maquinas
+***************************
+*         Cliente         *
+***************************
+-- Agragar hint a campos de logg in
+-- limpiar campos de logg in "sin internet"
+***************************
+*         Servidor        *
+***************************
+-- Tomar nombre de usuario para las ventanas
+-- Ordenar clientes alfabeticamente
+-- Falta clase "Listeners"
+-- Añadir abrir pagina individual
+-- Error panel de pestañas no agrega nombres 
