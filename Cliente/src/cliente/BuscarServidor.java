@@ -31,6 +31,8 @@ public class BuscarServidor
   Ordenes orden=new Ordenes();
   Timer t=new Timer();
   private ArrayList<Servidor_Inf> servidores=new ArrayList<>();
+  GroupsProgressBar gi;
+  
   public BuscarServidor()
   {
       try {
@@ -71,8 +73,9 @@ public class BuscarServidor
   
   public void buscarServidor()
   {
-      
+      gi= new GroupsProgressBar();
       datos();//*****Buscar donde va XD
+      gi.setVisible(true);
       t.schedule(tt,0,50);
       iniciarHilo();
       
@@ -93,9 +96,10 @@ public class BuscarServidor
       @Override
       public void run(){
           try {
+              
               if(ip<254)
               {
-                  System.out.println("asd");
+              gi.updatebar();
               direccion=InetAddress.getByName("224.0.0."+ip);
               puerto.joinGroup(direccion);
               DatagramPacket dp=new DatagramPacket(infServ, infServ.length,direccion,1000);
@@ -108,7 +112,14 @@ public class BuscarServidor
                   t.cancel();
                   System.out.println("busqueda finalizada");
                   mostrarServidores();
-                  enviarInfo(0);
+                  ///////////////////////// Usuario selecciona grupo
+                  //int indexGroup=;
+                  
+                  //if(indexGroup != -1){
+                    enviarInfo(0);
+                  //}else
+                  AppSystemTray.mostrarMensaje("No se encontró servidor: trabajando sin conexión", AppSystemTray.ERROR_MESSAGE);
+                  /////////////////////
               }
           } catch (IOException ex) {
               Logger.getLogger(BuscarServidor.class.getName()).log(Level.SEVERE, null, ex);
@@ -153,7 +164,7 @@ public class BuscarServidor
                           orden.apagarAutomatico(tiempo);
                           break;
                       case "reiniciar":
-                          System.out.println("El sistema se reiniciaráO");
+                          System.out.println("El sistema se reiniciará");
                           orden.reiniciar();
                           break;
                       case "login":

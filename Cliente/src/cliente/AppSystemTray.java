@@ -22,7 +22,11 @@ public class AppSystemTray {
     SystemTray st;                                          //variable de la bandeja de notificaciones
     static TrayIcon icon;                                          //variable para la canstrucción del icono
     Image imagen = new ImageIcon("src/images/logo.png").getImage();    //Imagen icono a mostrar
-    
+    public final static byte 
+                PLAIN_MESSAGE=1,
+                INFORMATION_MESSAGE=2,
+                WARNING_MESSAGE=3,
+                ERROR_MESSAGE=4;
    public AppSystemTray (){
        //imagen= ;
         if(SystemTray.isSupported()){           //Si es soportado por el sistema

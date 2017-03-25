@@ -24,7 +24,7 @@ import javax.swing.JOptionPane;
 public class AppSystemTray {
 
     SystemTray st;                                          //variable de la bandeja de notificaciones
-    TrayIcon icon;                                          //variable para la canstrucción del icono
+    static TrayIcon icon;                                          //variable para la canstrucción del icono
     Image imagen;
     JFrame vPrincipal;
     public final static byte 
@@ -84,16 +84,16 @@ public class AppSystemTray {
    public void mostrarMensaje(String m, byte tipo){
        switch(tipo){
            case 1:
-                this.icon.displayMessage("JavaCS", m, TrayIcon.MessageType.NONE);
+                AppSystemTray.icon.displayMessage("JavaCS", m, TrayIcon.MessageType.NONE);
                 break;
            case 2:
-               this.icon.displayMessage("JavaCS", m, TrayIcon.MessageType.INFO);
+               AppSystemTray.icon.displayMessage("JavaCS", m, TrayIcon.MessageType.INFO);
                break;
            case 3:
-               this.icon.displayMessage("JavaCS", m, TrayIcon.MessageType.WARNING);
+               AppSystemTray.icon.displayMessage("JavaCS", m, TrayIcon.MessageType.WARNING);
                break;
            case 4:
-               this.icon.displayMessage("JavaCS", m, TrayIcon.MessageType.ERROR);
+               AppSystemTray.icon.displayMessage("JavaCS", m, TrayIcon.MessageType.ERROR);
                break;
            default:
                System.out.println("no existe la opción");
