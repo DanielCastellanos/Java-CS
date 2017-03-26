@@ -16,6 +16,7 @@ import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.net.ssl.SSLServerSocket;
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 
 
@@ -78,9 +79,8 @@ public class BuscarServidor
       gi.setVisible(true);
       t.schedule(tt,0,50);
       iniciarHilo();
-      
-      
   }
+
   private void datos()
   {
       try {
@@ -109,16 +109,44 @@ public class BuscarServidor
               }
               else
               {
-                  t.cancel();
                   System.out.println("busqueda finalizada");
                   mostrarServidores();
                   ///////////////////////// Usuario selecciona grupo
-                  //int indexGroup=;
-                  
+                  if(!servidores.isEmpty()){                            //Si la lista de servidores encontrados no está vacía
+                    JComboBox cb= new JComboBox();                              //Crea ComboBox para mostrar la lista de grupos
+                    cb.addItem("Grupos...");
+                    for (Servidor_Inf serv : servidores) {                    //itera en los elementos encontrados
+                        cb.addItem("Equipo Admin "+serv.getNombre()+", "+"en grupo "+serv.getGrupo());    //Agregandolos al comboBox
+                    }
+                    int groupIndex=0;                   //Declaro la variable q guardara la eleccion del usuario
+                    while(groupIndex == 0){             //mientras q el valor por default (valor inválido) no cambie
+                        JOptionPane.showMessageDialog(null, cb, "Elige un grupo para unirte", JOptionPane.QUESTION_MESSAGE);    //Se despliega el dialogo
+                        groupIndex= cb.getSelectedIndex();          //Tomo la opción seleccionada
+                    }
+                    t.cancel();                                 //Cancelamos la ejecución del timer
+                    enviarInfo(groupIndex-1);                   //Invoca método para enviar la información
+                    
+                    
+                  }else{                                //De lo contrario informará q no encontró servidores
+                      AppSystemTray.mostrarMensaje("No se encontraron grupos activos", AppSystemTray.ERROR_MESSAGE);
+                      int opc;
+                      do{                                       //Pregunta si desea buscar de nuevo
+                         opc=JOptionPane.showConfirmDialog(null, "¿Desea realizar la búsqueda de nuevo?", "No se enccontró servidor", JOptionPane.YES_NO_OPTION); 
+                         
+                      }while(opc == -1);
+                      
+                      if(opc == 0 ){                            //Si la respuesta es si llama al metodo de busqueda
+                          gi= new GroupsProgressBar();
+                          gi.setVisible(true);
+                          ip=2;
+                      }else{                                    //De lo contrario la aplicación se detiene
+                          System.exit(0);                       
+                      }
+                  }//*/
                   //if(indexGroup != -1){
-                    enviarInfo(0);
+                    
                   //}else
-                  AppSystemTray.mostrarMensaje("No se encontró servidor: trabajando sin conexión", AppSystemTray.ERROR_MESSAGE);
+                  
                   /////////////////////
               }
           } catch (IOException ex) {
