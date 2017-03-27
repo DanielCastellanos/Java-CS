@@ -81,7 +81,7 @@ public class AppSystemTray {
        this.icon.setPopupMenu(menu);
    }
    
-   public void mostrarMensaje(String m, byte tipo){
+   public static void mostrarMensaje(String m, byte tipo){
        switch(tipo){
            case 1:
                 AppSystemTray.icon.displayMessage("JavaCS", m, TrayIcon.MessageType.NONE);

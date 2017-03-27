@@ -1,7 +1,11 @@
 package servidor;
 
+import interfaz.AppSystemTray;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -12,6 +16,13 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import oshi.SystemInfo;
+import oshi.hardware.CentralProcessor;
+import oshi.hardware.ComputerSystem;
+import oshi.hardware.GlobalMemory;
+import oshi.hardware.HWDiskStore;
+import oshi.hardware.HardwareAbstractionLayer;
+import oshi.software.os.OperatingSystem;
 
 public class Ordenes {
     MulticastSocket puerto;
@@ -169,64 +180,84 @@ public class Ordenes {
             Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    class Enviar implements Runnable
-            {
+    public Runnable getInfoPc=new Runnable() {
+        
 
-        private String dir,hostname;
-        public Enviar(String dir,String hostname)
-        {
-            this.dir=dir;
-            this.hostname=hostname;
-        }
         @Override
-        public void run()
-        {
+        public void run() {
+            //falta agregar la direccion MAC
+            SystemInfo si = new SystemInfo();
+        HardwareAbstractionLayer hal = si.getHardware();
+        OperatingSystem os = si.getOperatingSystem();
+        CentralProcessor cp = hal.getProcessor();
+        ComputerSystem cs = hal.getComputerSystem();
+        GlobalMemory gm = hal.getMemory();
+        HWDiskStore disks[] = hal.getDiskStores();
+        String marca=cs.getManufacturer();
+        String modelo=cs.getModel();
+        String nSerie=cs.getSerialNumber();
+        String hdd=null;
+        for (int i = 0; i < disks.length; i++) {
+            if (disks[i].getModel().contains("SATA")) {
+                hdd += (i > 0 ? "," : "") + (((disks[i].getSize()/1024)/1024)/1024)+" GB";
+            }
+        }
+        String ram=((((gm.getTotal()/1024)/1024)/1024)+1)+" GB";
+        String procesador=cp.getName();
+        String sistema=os.getFamily()+" "+os.getVersion().getVersion();
+        String inf=marca+"|"+modelo+"|"+nSerie+"|"+hdd+"|"+ram+"|"+procesador+"|"+sistema;
+        }
+    };
+    class Enviar implements Runnable {
+
+        private String dir, hostname;
+
+        public Enviar(String dir, String hostname) {
+            this.dir = dir;
+            this.hostname = hostname;
+        }
+
+        @Override
+        public void run() {
             enviarArhivo();
         }
-        public void enviarArhivo()
-    {
-        try
-          {
-              System.out.println(hostname);
-            // Creamos la direccion IP de la maquina que recibira el archivo
-            InetAddress ip = InetAddress.getByName(hostname);
-            
-            //Cargamos el archivo
-            File archivo=new File(dir);
-            
-            // Creamos el Socket con la direccion y elpuerto de comunicacion
-            Socket socket = new Socket( ip, 4400 );
-         
-            // Creamos el flujo de salida, este tipo de flujo nos permite 
-            // hacer la escritura de diferentes tipos de datos tales como
-            // Strings, boolean, caracteres y la familia de enteros, etc.
-            DataOutputStream dos = new DataOutputStream( socket.getOutputStream() );
-         
-            System.out.println( "Enviando Archivo: "+archivo.getName() );
-         
-            // Enviamos el nombre del archivo 
-            dos.writeUTF( archivo.getName() );
-         
-            // Enviamos el tamaño del archivo
-            dos.writeInt((int)archivo.length());
-         
-           
-         
-            // Leemos el archivo y lo introducimos en el array de bytes 
-            salida.readFully(buffer,0,buffer.length); 
-         
-            // Realizamos el envio de los bytes que conforman el archivo
-            dos.write(buffer,0,buffer.length);
-         
-            System.out.println( "Archivo Enviado: "+archivo.getName() );
-            // Cerramos socket y flujos
-            socket.close(); 
-          }
-          catch( Exception e )
-          {
-            e.printStackTrace();
-          }
-    }
-                
+
+        public void enviarArhivo() {
+            byte arreglo[];
+            int in;
+            try {
+                //creamos la direccion
+                InetAddress direccion = InetAddress.getByName(hostname);
+                //creamos socket con el que nos conectaremos al destino
+                Socket s = new Socket(direccion, 4400);
+                //obtenemos el archivo
+                File archivo = new File(dir);
+                //preparamos la informacion del archivo
+                DataOutputStream dos = new DataOutputStream(s.getOutputStream());
+                //preparamos el Stream para leer el archivo
+                BufferedInputStream bis = new BufferedInputStream(new FileInputStream(archivo));
+                //preparamos el stream para enviar el archivo
+                BufferedOutputStream bos = new BufferedOutputStream(s.getOutputStream());
+                //enviamos el nombre del archivo
+                dos.writeUTF(archivo.getName());
+                //arreglo de 4 KB para envio de datos
+                arreglo = new byte[4096];
+                //empezamos el envio de los datos
+                while ((in = bis.read(arreglo)) != -1) {
+                    bos.write(arreglo);
+                }
+                //cerramos BufferedInputStream
+                bis.close();
+                //cerramos BufferedOutputStream
+                bos.close();
+                //cerramos DataOutputStream
+                dos.close();
+                //cerramos el Socket
+                s.close();
+            } catch (IOException e) {
+                AppSystemTray.mostrarMensaje("error al enviar archivo", AppSystemTray.ERROR_MESSAGE);
             }
+        }
+
+    }
 }

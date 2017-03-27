@@ -144,7 +144,7 @@ public class EnviarArchivo extends javax.swing.JFrame{
         }
         else
         {
-            auxPeso=df.format(aux/1024)+pesos[i];
+            auxPeso=df.format(aux/1024)+" "+pesos[i];
         }
         return auxPeso;
     }
