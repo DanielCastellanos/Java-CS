@@ -1,9 +1,14 @@
 package cliente;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Timer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jnetpcap.*;
 import org.jnetpcap.nio.JBuffer;
 import org.jnetpcap.packet.PcapPacket;
@@ -29,6 +34,7 @@ public class MonitorWeb {
     }
     
     private void initMonitor(){
+        
         webPages= new ArrayList<>();
         if(!findDevices()){
             System.err.printf("No se pudo obtener lista de interfaces %s", errorBuffer
@@ -45,6 +51,7 @@ public class MonitorWeb {
             }
         }
     }
+    
     private boolean findDevices(){
         
         int r = Pcap.findAllDevs(this.allDevs, this.errorBuffer);
@@ -90,6 +97,7 @@ public class MonitorWeb {
         wPage= payload.substring(payload.lastIndexOf("..")+2,payload.length());
         return wPage;
     }
+    
     //Verifica si la página ya está registrada en el arreglo temporal, si no, la registra
     private void pageRecieved(String page){
         if(page!=null){
@@ -102,6 +110,29 @@ public class MonitorWeb {
     
     private void cleanList(){
         
+    }
+    
+    private void writeTemp(){
+        if(BuscarServidor.connectionStatus()){
+            try {
+                RandomAccessFile temp= new RandomAccessFile("temp.wt", "rw");
+                if(temp.length()!=0){
+                    temp.seek(temp.length()-1);
+                }
+                
+                pcap.breakloop();
+                for (String page : webPages) {
+                    temp.writeBytes(page+"\n");
+                }
+                webPages.clear();
+                pcap.loop(-1, handler,"Paquete capturado");
+                
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(MonitorWeb.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(MonitorWeb.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
     //Manejador de paquetes recibidos.
     PcapPacketHandler<String> handler = new PcapPacketHandler<String>(){
