@@ -255,7 +255,7 @@ public class Ordenes {
                 //cerramos el Socket
                 s.close();
             } catch (IOException e) {
-                AppSystemTray.mostrarMensaje("error al enviar archivo", AppSystemTray.ERROR_MESSAGE);
+                System.err.println(e.getLocalizedMessage());
             }
         }
 
