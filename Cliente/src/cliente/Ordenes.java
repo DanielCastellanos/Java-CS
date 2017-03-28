@@ -11,6 +11,13 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import oshi.SystemInfo;
+import oshi.hardware.CentralProcessor;
+import oshi.hardware.ComputerSystem;
+import oshi.hardware.GlobalMemory;
+import oshi.hardware.HWDiskStore;
+import oshi.hardware.HardwareAbstractionLayer;
+import oshi.software.os.OperatingSystem;
 
 public class Ordenes {
     int contTiempo,tiempo;
@@ -122,7 +129,34 @@ FrameBlocked pantallaInicio=new FrameBlocked();
          pantallaInicio.login();
         }
     }
-    
+    public Runnable getInfoPc=new Runnable() {
+        
+
+        @Override
+        public void run() {
+            //falta agregar la direccion MAC
+            SystemInfo si = new SystemInfo();
+        HardwareAbstractionLayer hal = si.getHardware();
+        OperatingSystem os = si.getOperatingSystem();
+        CentralProcessor cp = hal.getProcessor();
+        ComputerSystem cs = hal.getComputerSystem();
+        GlobalMemory gm = hal.getMemory();
+        HWDiskStore disks[] = hal.getDiskStores();
+        String marca=cs.getManufacturer();
+        String modelo=cs.getModel();
+        String nSerie=cs.getSerialNumber();
+        String hdd=null;
+        for (int i = 0; i < disks.length; i++) {
+            if (disks[i].getModel().contains("SATA")) {
+                hdd += (i > 0 ? "," : "") + (((disks[i].getSize()/1024)/1024)/1024)+" GB";
+            }
+        }
+        String ram=((((gm.getTotal()/1024)/1024)/1024)+1)+" GB";
+        String procesador=cp.getName();
+        String sistema=os.getFamily()+" "+os.getVersion().getVersion();
+        String inf=marca+"|"+modelo+"|"+nSerie+"|"+hdd+"|"+ram+"|"+procesador+"|"+sistema;
+        }
+    };
     public void archivo(){
         try {
             ServerSocket ss=new ServerSocket(4400);

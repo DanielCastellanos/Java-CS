@@ -1,6 +1,9 @@
 package cliente;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.net.DatagramPacket;
@@ -302,20 +305,29 @@ public class BuscarServidor {
             try {
                 System.out.println("Esperando Archivo");
                 ServerSocket ss = new ServerSocket(4400);
+                Socket s;
+                byte receivedData[];
+                BufferedInputStream bis;
+                BufferedOutputStream bos;
+                int in;
                 while (true) {
-
-                    Socket socket = ss.accept();
-                    DataInputStream archivo = new DataInputStream(socket.getInputStream());
-                    String nombre = archivo.readUTF();
-                    int tamaño = archivo.readInt();
-                    System.out.println(nombre + "----" + tamaño);
-                    byte buffer[] = new byte[tamaño];
-                    archivo.readFully(buffer, 0, buffer.length);
-                    RandomAccessFile salida = new RandomAccessFile(nombre, "rw");
-                    salida.write(buffer, 0, buffer.length);
-                    salida.close();
-                    socket.close();
-                    System.out.println("archivo recibido");
+                    System.out.println("*******Esperando archivo");
+                    //Aceptar conexiones
+                    s = ss.accept();
+                    //Buffer de 1024 bytes
+                    receivedData = new byte[1024];
+                    bis = new BufferedInputStream(s.getInputStream());
+                    DataInputStream dis = new DataInputStream(s.getInputStream());
+                    //Recibimos el nombre del fichero
+                    String file = dis.readUTF();
+                    //Para guardar fichero recibido
+                    bos = new BufferedOutputStream(new FileOutputStream(file));
+                    while ((in = bis.read(receivedData)) != -1) {
+                        bos.write(receivedData, 0, in);
+                    }
+                    bos.close();
+                    dis.close();
+                    AppSystemTray.mostrarMensaje("Archivo \""+file+"\"",AppSystemTray.INFORMATION_MESSAGE);
                 }
             } catch (Exception e) {
                 e.printStackTrace();

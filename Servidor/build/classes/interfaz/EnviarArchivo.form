@@ -146,7 +146,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="lbInfo">
       <Properties>
-        <Property name="text" type="java.lang.String" value="de 1.5 GB"/>
+        <Property name="text" type="java.lang.String" value="de 1 GB"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="btnEliminarArchivo">
