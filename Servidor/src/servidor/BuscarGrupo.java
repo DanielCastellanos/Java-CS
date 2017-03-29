@@ -1,5 +1,6 @@
 package servidor;
 
+import interfaz.AppSystemTray;
 import interfaz.Principal;
 import interfaz.Tareas;
 import java.io.IOException;
@@ -65,8 +66,8 @@ public class BuscarGrupo extends Principal {
         if(conf.CargarConf())
         {
             try {
+                AppSystemTray.mostrarMensaje("Cargando configuración",AppSystemTray.INFORMATION_MESSAGE);
                 puerto.joinGroup(InetAddress.getByName(conf.getGrupo()));
-                System.out.println("estamos en el grupo ------>"+conf.getGrupo());
                 this.inicarHilos();
                 confPrincipal=this.getConf();
             } catch (IOException ex) {
@@ -75,6 +76,7 @@ public class BuscarGrupo extends Principal {
         }
         else
         {
+            AppSystemTray.mostrarMensaje("no se encontro configuración", AppSystemTray.INFORMATION_MESSAGE);
             this.buscarGrupo();
             confPrincipal=this.getConf();
         }
@@ -84,7 +86,6 @@ public class BuscarGrupo extends Principal {
     public void inicarHilos()
     {
             escucha.start();
-            System.out.println("Se creo el hilo correctamente");
     }
     public void buscarGrupo()
     {
@@ -99,8 +100,7 @@ public class BuscarGrupo extends Principal {
             {
                 t.cancel();
                 conf.setGrupo(ia.getHostAddress());
-                System.out.println("Servidor:"+nombre);
-                System.out.println("\033[32m****** grupo Libre -> "+"224.0.0."+ip);
+                AppSystemTray.mostrarMensaje("Uniendose al grupo 224.0.0."+ip,AppSystemTray.INFORMATION_MESSAGE);
                 conf.nuevoArchivo();
             }
             else
@@ -144,7 +144,6 @@ public class BuscarGrupo extends Principal {
                     {
                         buf=new byte[500000];
                         dp=new DatagramPacket(buf,buf.length );
-                        System.out.println("esperando respuesta");
                         puerto.receive(dp);
                         executor.submit(new HiloCliente(dp,ia,puerto));
                     }

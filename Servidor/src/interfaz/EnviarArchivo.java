@@ -9,6 +9,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import servidor.Ordenes;
@@ -31,6 +32,7 @@ public class EnviarArchivo extends javax.swing.JFrame{
     String ruta;
     String nombreZip;
     long pesoTotal=0;
+    Thread hiloZip;
     String []pesos={"KB","MB","GB"};
     //metodo de envio a un solo usuario
     public EnviarArchivo(String ip) {
@@ -40,6 +42,9 @@ public class EnviarArchivo extends javax.swing.JFrame{
         this.setIconImage(Principal.getLogo());
         this.setTitle("Enviar a todos los equipos dentro del grupo");
         this.ip=ip;
+        barra.setVisible(false);
+        btnEliminarArchivo.setEnabled(false);
+        btnaceptar.setEnabled(false);
         modelo=new DefaultTableModel(new Object[][]{},new Object[]{"nombre","tipo","peso"})
         {
             @Override
@@ -59,6 +64,9 @@ public class EnviarArchivo extends javax.swing.JFrame{
         this.setTitle("Enviar Archivo a "+nombre);
         this.nombre=nombre;
         this.ip=ip;
+        barra.setVisible(false);
+        btnEliminarArchivo.setEnabled(false);
+        btnaceptar.setEnabled(false);
         modelo=new DefaultTableModel(new Object[][]{},new Object[]{"nombre","tipo","peso"})
         {
             @Override
@@ -82,34 +90,73 @@ public class EnviarArchivo extends javax.swing.JFrame{
       return arch;
   }
 
-    private void zip() throws IOException {
-        ZipOutputStream zout = null;
-        FileOutputStream fos;
-        lbInfo.setText("Comprimiendo archivo en zip...\n");
+    Runnable zip=new Runnable() {
+        @Override
+        public void run() {
+            txt_Nombre.setVisible(false);
+            btnaceptar.setVisible(false);
+            btnEliminarArchivo.setVisible(false);
+            btnselecionar.setVisible(false);
+            jLabel1.setVisible(false);
+            ZipOutputStream zout;
+        BufferedOutputStream bos;
         try {
             ruta=nombreZip+".zip";
-             fos = new FileOutputStream(ruta);
+             bos = new BufferedOutputStream(new FileOutputStream(ruta));
     		
-            zout = new ZipOutputStream(fos);
+            zout = new ZipOutputStream(bos);
             int i=0;
+            barra.setVisible(true);
+            barra.setStringPainted(true);
+            lbInfo.setHorizontalAlignment(JLabel.LEFT);
                 for (String documento : documentos) {
+                    
                 ZipEntry ze = new ZipEntry(nombres.get(i));
                 zout.putNextEntry(ze);
-                RandomAccessFile r=new RandomAccessFile(documentos.get(i),"r");
-                byte[] info=new byte[(int)r.length()];
-                r.readFully(info);
-                zout.write(info,0,info.length);
+                File arch=new File(documentos.get(i));
+                lbInfo.setText("comprimiendo: "+arch.getName());
+                long tamañoArch=arch.length();
+                barra.setMaximum((int)tamañoArch);
+                barra.setMinimum(0);
+                barra.setValue(0);
+                BufferedInputStream bis=new BufferedInputStream(new FileInputStream(documentos.get(i)));
+                byte[] info=new byte[4096];
+                long leido=0;
+                while(leido<tamañoArch)
+                {
+                    if((leido+4096)<tamañoArch)
+                    {
+                    bis.read(info);
+                    leido+=4096;
+                    }
+                    else
+                    {
+                        int resto=(int)(tamañoArch-leido);
+                        info=new byte[resto];
+                        bis.read(info);
+                        leido+=resto;
+                    }
+                    zout.write(info);
+                    barra.setValue((int)leido);
+                }
                 zout.closeEntry();
                 i++;
             }
-        } finally {
-            if (zout != null) {
                 zout.close();
-            }
-        }
+        }   catch (FileNotFoundException ex) {
+                Logger.getLogger(EnviarArchivo.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(EnviarArchivo.class.getName()).log(Level.SEVERE, null, ex);
+            } 
+        
         orden.enviarArchivo(ruta,ip);
-    }//Zuno
-
+        cerrar();
+        }
+    };
+public void cerrar()
+{
+    this.dispose();
+}
     Thread archivo=new Thread();
     private long recursivoCarpeta(File archivo,String nombre)
     {
@@ -168,9 +215,9 @@ public class EnviarArchivo extends javax.swing.JFrame{
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        selecionar = new javax.swing.JButton();
-        aceptar = new javax.swing.JButton();
-        cancelar = new javax.swing.JButton();
+        btnselecionar = new javax.swing.JButton();
+        btnaceptar = new javax.swing.JButton();
+        btncancelar = new javax.swing.JButton();
         txt_Nombre = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -178,27 +225,28 @@ public class EnviarArchivo extends javax.swing.JFrame{
         lbPesoArchivo = new javax.swing.JLabel();
         lbInfo = new javax.swing.JLabel();
         btnEliminarArchivo = new javax.swing.JButton();
+        barra = new javax.swing.JProgressBar();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        selecionar.setText("Agregar archivo");
-        selecionar.addActionListener(new java.awt.event.ActionListener() {
+        btnselecionar.setText("Agregar archivo");
+        btnselecionar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                selecionarActionPerformed(evt);
+                btnselecionarActionPerformed(evt);
             }
         });
 
-        aceptar.setText("Enviar");
-        aceptar.addActionListener(new java.awt.event.ActionListener() {
+        btnaceptar.setText("Enviar");
+        btnaceptar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                aceptarActionPerformed(evt);
+                btnaceptarActionPerformed(evt);
             }
         });
 
-        cancelar.setText("Cancelar");
-        cancelar.addActionListener(new java.awt.event.ActionListener() {
+        btncancelar.setText("Cancelar");
+        btncancelar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelarActionPerformed(evt);
+                btncancelarActionPerformed(evt);
             }
         });
 
@@ -219,7 +267,11 @@ public class EnviarArchivo extends javax.swing.JFrame{
 
         lbPesoArchivo.setText("0 KB");
 
-        lbInfo.setText("de 1 GB");
+        lbInfo.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lbInfo.setText("Total: ");
+        lbInfo.setMaximumSize(new java.awt.Dimension(406, 15));
+        lbInfo.setMinimumSize(new java.awt.Dimension(406, 15));
+        lbInfo.setPreferredSize(new java.awt.Dimension(406, 15));
 
         btnEliminarArchivo.setText("Eliminar Archivo");
         btnEliminarArchivo.addActionListener(new java.awt.event.ActionListener() {
@@ -233,50 +285,54 @@ public class EnviarArchivo extends javax.swing.JFrame{
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
+                        .addComponent(barra, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(lbPesoArchivo)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lbInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 68, Short.MAX_VALUE)
-                                .addGap(386, 386, 386))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(selecionar, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnEliminarArchivo)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(cancelar)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(aceptar))
+                            .addComponent(jScrollPane2)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel1)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(txt_Nombre))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane2)))
-                .addContainerGap())
+                                .addComponent(txt_Nombre)))
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(lbInfo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(lbPesoArchivo)
+                        .addGap(54, 54, 54))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(btnselecionar, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnEliminarArchivo)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btncancelar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnaceptar)
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(9, 9, 9)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbInfo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbPesoArchivo))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txt_Nombre, javax.swing.GroupLayout.DEFAULT_SIZE, 24, Short.MAX_VALUE)
                     .addComponent(jLabel1))
-                .addGap(9, 9, 9)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lbPesoArchivo)
-                    .addComponent(lbInfo))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(barra, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(selecionar)
-                    .addComponent(aceptar)
-                    .addComponent(cancelar)
+                    .addComponent(btnselecionar)
+                    .addComponent(btnaceptar)
+                    .addComponent(btncancelar)
                     .addComponent(btnEliminarArchivo))
                 .addContainerGap())
         );
@@ -284,7 +340,7 @@ public class EnviarArchivo extends javax.swing.JFrame{
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void selecionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selecionarActionPerformed
+    private void btnselecionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnselecionarActionPerformed
         JFileChooser f = new JFileChooser();
         String ext = null;
         f = agregarFiltros(f);
@@ -301,7 +357,7 @@ public class EnviarArchivo extends javax.swing.JFrame{
                 ext = aux.substring(aux.lastIndexOf((char) 92) + 1);
                 if(archivoDuplicado(aux))
                 {
-                    JOptionPane.showMessageDialog(this,"Archivo Duplicado","Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this,"Archivo duplicado","Error", JOptionPane.ERROR_MESSAGE);
                 }
                 else
                 {
@@ -319,41 +375,33 @@ public class EnviarArchivo extends javax.swing.JFrame{
                 }
             }
             lbPesoArchivo.setText(peso(pesoTotal,0));
-            lbPesoArchivo.setForeground(pesoTotal>1073741824?Color.RED:Color.GREEN);
+            btnEliminarArchivo.setEnabled(true);
+            btnaceptar.setEnabled(true);
             
         } else {
             System.out.println("No seleccion ");
         }
-    }//GEN-LAST:event_selecionarActionPerformed
+    }//GEN-LAST:event_btnselecionarActionPerformed
 
-    private void aceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aceptarActionPerformed
-        try {
+    private void btnaceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnaceptarActionPerformed
+        
             nombreZip=txt_Nombre.getText().trim();
             if(!nombreZip.isEmpty())
             {
-                if(pesoTotal<1073741824)
-                {
-                    zip();
-                    this.dispose();
-                }
-                else
-                {
-                    JOptionPane.showMessageDialog(this, "El archivo excede el peso Maximo", "Error ", JOptionPane.WARNING_MESSAGE);
-                }
+                    hiloZip=new Thread(zip);
+                    hiloZip.start();
             }
             else
             {
                 JOptionPane.showMessageDialog(this, "Escribe un nombre para el archivo", "Error ", JOptionPane.WARNING_MESSAGE);
             }
-        } catch (IOException ex) {
-            Logger.getLogger(EnviarArchivo.class.getName()).log(Level.SEVERE, null, ex);
-        }
         
-    }//GEN-LAST:event_aceptarActionPerformed
+    }//GEN-LAST:event_btnaceptarActionPerformed
 
-    private void cancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelarActionPerformed
-         this.dispose();
-    }//GEN-LAST:event_cancelarActionPerformed
+    private void btncancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btncancelarActionPerformed
+        hiloZip.interrupt();
+        this.dispose();
+    }//GEN-LAST:event_btncancelarActionPerformed
 
     private void btnEliminarArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarArchivoActionPerformed
         int fila=tablaArchivos.getSelectedRow();
@@ -361,7 +409,6 @@ public class EnviarArchivo extends javax.swing.JFrame{
         for (int i = documentos.size()-1; i >=0; i--) {
             if(documentos.get(i).contains(direccion))
             {
-                System.out.println("se removio "+documentos.get(i));
                 nombres.remove(i);
                 pesoTotal-=new File(documentos.get(i)).length();
                 documentos.remove(i);
@@ -370,9 +417,8 @@ public class EnviarArchivo extends javax.swing.JFrame{
         listaArchivos.remove(fila);
         modelo.removeRow(fila);
         lbPesoArchivo.setText(peso(pesoTotal,0));
-        lbPesoArchivo.setForeground(pesoTotal>1610612736?Color.RED:Color.GREEN);
-        System.out.println(documentos.size()+"*****"+nombres.size());
-        
+        btnEliminarArchivo.setEnabled(documentos.size()>0);
+        btnaceptar.setEnabled(documentos.size()>0);
     }//GEN-LAST:event_btnEliminarArchivoActionPerformed
     
     public static void main(String args[]) {
@@ -408,14 +454,15 @@ public class EnviarArchivo extends javax.swing.JFrame{
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton aceptar;
+    private javax.swing.JProgressBar barra;
     private javax.swing.JButton btnEliminarArchivo;
-    private javax.swing.JButton cancelar;
+    private javax.swing.JButton btnaceptar;
+    private javax.swing.JButton btncancelar;
+    private javax.swing.JButton btnselecionar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel lbInfo;
     private javax.swing.JLabel lbPesoArchivo;
-    private javax.swing.JButton selecionar;
     private javax.swing.JTable tablaArchivos;
     private javax.swing.JTextField txt_Nombre;
     // End of variables declaration//GEN-END:variables

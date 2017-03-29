@@ -1,6 +1,5 @@
 package servidor;
 
-import interfaz.AppSystemTray;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;

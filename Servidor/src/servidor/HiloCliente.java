@@ -1,5 +1,6 @@
 package servidor;
 
+import interfaz.AppSystemTray;
 import interfaz.Principal;
 import interfaz.Tareas;
 import java.io.IOException;
@@ -79,6 +80,7 @@ public class HiloCliente implements Runnable{
             cliente.add(c);
             c.crearArchivoLista(cliente);
             Principal.agregaEquipo(c);
+            AppSystemTray.mostrarMensaje("Nuevo Cliente",AppSystemTray.PLAIN_MESSAGE);
         }
         else{
             System.out.println("El usuario ya esta registrado");
@@ -146,18 +148,16 @@ public class HiloCliente implements Runnable{
                                     break;
                                 case "servidor"://resive respuesta del servdor obtiene nombre y direccion
                                     BuscarGrupo.libre=false;
-                                    System.err.println("****** grupo Ocupado ");
                                     System.err.println("Grupo ocupado por la direccion ip: "+dp.getAddress().getHostAddress());
                                     break;
                                 case "info"://cuando el cliente solicita informacion del servidor (IP y nombre)
                                     contestarCliente(dp.getAddress());
                                     break;
                                 case "cliente"://cuando un nuevo usuario se une al grupo
-                                    System.out.println("Nuevo usuario en el servidor :D");
+                                    
                                     guardarCliente(mensaje);
                                     break;
                                 case "Tareas"://cuando se resiven las tareas solicitadas al cliente
-                                    System.out.println("entro a Procesos");
                                     String tarea=mensaje.substring(mensaje.indexOf(",")+1,mensaje.length());
                                     String nomCliente=nombreCliente(direccion);
                                     if(BuscarGrupo.tareas==null)
@@ -173,16 +173,12 @@ public class HiloCliente implements Runnable{
                                         BuscarGrupo.tareas.agregar(separarTareas(tarea),dp.getAddress(),nomCliente);
                                         }
                                     }
-                                    
-                                    
                                     break;
                             } 
                         }
                         else
                         {
-                            System.err.println("Entro al else");
                             BuscarGrupo.libre=true; 
                         }
     }
-    
 }
