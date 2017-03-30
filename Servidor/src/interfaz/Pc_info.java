@@ -93,6 +93,7 @@ public class Pc_info extends javax.swing.JPanel {
         Apagar = new javax.swing.JMenuItem();
         Bloquear = new javax.swing.JMenuItem();
         desbloquear = new javax.swing.JMenuItem();
+        Cpagina = new javax.swing.JMenuItem();
         reiniciar = new javax.swing.JMenuItem();
         Tareas = new javax.swing.JMenuItem();
         estado = new javax.swing.JLabel();
@@ -130,6 +131,14 @@ public class Pc_info extends javax.swing.JPanel {
             }
         });
         menu.add(desbloquear);
+
+        Cpagina.setText("Compartir Pagina");
+        Cpagina.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CpaginaActionPerformed(evt);
+            }
+        });
+        menu.add(Cpagina);
 
         reiniciar.setText("Reiniciar");
         reiniciar.addActionListener(new java.awt.event.ActionListener() {
@@ -226,14 +235,11 @@ public class Pc_info extends javax.swing.JPanel {
     }//GEN-LAST:event_BloquearActionPerformed
 
     private void desbloquearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_desbloquearActionPerformed
-        if(JOptionPane.showConfirmDialog(null, "¿Seguro que desea desbloquear '"+ this.nombre+ "'?", "Desbloqueo",JOptionPane.CANCEL_OPTION)==0){
-            //Enviar orden
-            ordenes.desbloqueo(hostname);
-        }
+        new Desbloquear(this.nombre, hostname);
     }//GEN-LAST:event_desbloquearActionPerformed
 
     private void reiniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reiniciarActionPerformed
-        new Reiniciar(hostname);
+        new Reiniciar(this.nombre,hostname);
     }//GEN-LAST:event_reiniciarActionPerformed
 
     private void TareasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TareasActionPerformed
@@ -241,10 +247,16 @@ public class Pc_info extends javax.swing.JPanel {
         System.out.println("orden pc_info"+hostname);
     }//GEN-LAST:event_TareasActionPerformed
 
+    private void CpaginaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CpaginaActionPerformed
+        
+        new Desbloquear(this.nombre, hostname);
+    }//GEN-LAST:event_CpaginaActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem Apagar;
     private javax.swing.JMenuItem Bloquear;
+    private javax.swing.JMenuItem Cpagina;
     private javax.swing.JMenuItem Enviar;
     private javax.swing.JMenuItem Tareas;
     private javax.swing.JLabel conf;

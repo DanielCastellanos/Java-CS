@@ -26,8 +26,6 @@ import oshi.software.os.OperatingSystem;
 public class Ordenes {
     MulticastSocket puerto;
     DatagramPacket orden;
-    RandomAccessFile salida;
-    byte[] buffer ;
     
     public Ordenes(){
         try {
@@ -64,10 +62,6 @@ public class Ordenes {
     public void enviarArchivo(String dir,String hostname)
     {
         try {
-            // Creamos flujo de entrada para realizar la lectura del archivo en bytes
-            salida=new RandomAccessFile(dir,"rw");
-            // Creamos un array de tipo byte con el tamaño del archivo 
-            buffer= new byte[(int)salida.length()];
             if(InetAddress.getByName(hostname).isMulticastAddress())
             {
                 String miIp=InetAddress.getLocalHost().getHostAddress();
@@ -82,9 +76,7 @@ public class Ordenes {
             }
         } catch (UnknownHostException ex) {
             Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
+        }catch (IOException ex) {
             Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -158,6 +150,19 @@ public class Ordenes {
         try {
             InetAddress direccion=InetAddress.getByName(hostName);
             byte mensaje[]=("desbloqueo,").getBytes();
+            orden=new DatagramPacket(mensaje,mensaje.length,direccion, 1001);
+            puerto.send(orden);
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    public void desbloqueoTotal (String hostName)
+    {
+        try {
+            InetAddress direccion=InetAddress.getByName(hostName);
+            byte mensaje[]=("desbloqueoTotal,").getBytes();
             orden=new DatagramPacket(mensaje,mensaje.length,direccion, 1001);
             puerto.send(orden);
         } catch (UnknownHostException ex) {

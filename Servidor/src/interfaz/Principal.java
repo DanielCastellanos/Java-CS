@@ -257,9 +257,7 @@ public class Principal extends javax.swing.JFrame{
     }//GEN-LAST:event_reiniciarActionPerformed
 
     private void desbloquearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_desbloquearActionPerformed
-        if(JOptionPane.showConfirmDialog(null, "¿Seguro que desea desbloquear todos los equipos?", "Desbloqueo",JOptionPane.CANCEL_OPTION)==0){
-            orden.reiniciar(confPrincipal.getGrupo());
-        }
+        new Desbloquear(confPrincipal.getGrupo());
     }//GEN-LAST:event_desbloquearActionPerformed
 
     private void TareasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TareasActionPerformed

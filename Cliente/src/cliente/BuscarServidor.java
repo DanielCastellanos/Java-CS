@@ -199,6 +199,9 @@ public class BuscarServidor {
                         case "desbloqueo":
                             orden.desbloquear();
                             break;
+                        case "desbloqueoTotal":
+                            orden.desbloquearCompleto();
+                            break;
                         case "procesos":
                             sendProcesos(dp.getAddress());
                             break;

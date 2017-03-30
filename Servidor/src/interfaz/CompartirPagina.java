@@ -21,7 +21,21 @@ public class CompartirPagina extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
         this.setVisible(true);
+        this.setResizable(false);
         this.hostName=hostName;
+        this.setIconImage(Principal.getLogo());
+        this.setTitle("Compartir con todos los Equipos");
+    }
+    public CompartirPagina(String nombre,String hostname)
+    {
+        initComponents();
+        this.setLocationRelativeTo(null);
+        this.setVisible(true);
+        this.setResizable(false);
+        this.hostName=hostname;
+        this.setIconImage(Principal.getLogo());
+        this.setTitle("Compartir con "+ nombre);
+
     }
 
     /**

@@ -34,7 +34,7 @@ public class Bloquear extends javax.swing.JFrame {
     public Bloquear(String nombre, String ip) {
         initComponents();
         this.setLocationRelativeTo(null);
-        this.setTitle("Bloquearrrr");
+        this.setTitle("Bloquear");
         this.setIconImage(Principal.getLogo());
         this.setResizable(false);
         this.setVisible(true);

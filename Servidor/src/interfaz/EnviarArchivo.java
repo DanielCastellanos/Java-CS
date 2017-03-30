@@ -116,7 +116,7 @@ public class EnviarArchivo extends javax.swing.JFrame{
                 File arch=new File(documentos.get(i));
                 lbInfo.setText("comprimiendo: "+arch.getName());
                 long tamañoArch=arch.length();
-                barra.setMaximum((int)tamañoArch);
+                barra.setMaximum((int)(tamañoArch/100));
                 barra.setMinimum(0);
                 barra.setValue(0);
                 BufferedInputStream bis=new BufferedInputStream(new FileInputStream(documentos.get(i)));
@@ -137,7 +137,7 @@ public class EnviarArchivo extends javax.swing.JFrame{
                         leido+=resto;
                     }
                     zout.write(info);
-                    barra.setValue((int)leido);
+                    barra.setValue((int)(leido/100));
                 }
                 zout.closeEntry();
                 i++;
