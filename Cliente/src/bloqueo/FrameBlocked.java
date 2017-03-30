@@ -79,6 +79,10 @@ public class FrameBlocked extends javax.swing.JFrame {
         panel.setVisible(false);
         estilos();
     }
+    public boolean estaBloqueado()
+    {
+        return (panel.isVisible());
+    }
     
     //Coloca la imagen de fondo, mantiene el focus en el panel e inicia el keylistener
     private void carga()
@@ -296,8 +300,6 @@ public class FrameBlocked extends javax.swing.JFrame {
     }
     //borra el campo de contraseña
     public void borrarComp() {
-        this.pass.setText("");
-        this.user.setText("");
         this.pass.setVisible(false);
         this.lblPassword.setVisible(false);
     }
