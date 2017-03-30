@@ -1,5 +1,6 @@
 package cliente;
 
+import java.awt.Image;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
@@ -17,6 +18,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 
@@ -33,7 +36,8 @@ public class BuscarServidor {
     Timer t = new Timer();
     private ArrayList<Servidor_Inf> servidores = new ArrayList<>();
     GroupsProgressBar gi;
-
+    Icon ico= new ImageIcon(AppSystemTray.imagen.getScaledInstance(30, 30, Image.SCALE_DEFAULT));
+    
     public static boolean connectionStatus(){
     boolean flag= false;
     
@@ -116,7 +120,7 @@ public class BuscarServidor {
                         }
                         int groupIndex = 0;                   //Declaro la variable q guardara la eleccion del usuario
                         while (groupIndex == 0) {             //mientras q el valor por default (valor inválido) no cambie
-                            JOptionPane.showMessageDialog(null, cb, "Elige un grupo para unirte", JOptionPane.QUESTION_MESSAGE);    //Se despliega el dialogo
+                            JOptionPane.showMessageDialog(null, cb, "Elige un grupo para unirte", JOptionPane.QUESTION_MESSAGE, ico);    //Se despliega el dialogo
                             groupIndex = cb.getSelectedIndex();          //Tomo la opción seleccionada
                         }
                         t.cancel();                                 //Cancelamos la ejecución del timer
@@ -126,7 +130,7 @@ public class BuscarServidor {
                         AppSystemTray.mostrarMensaje("No se encontraron grupos activos", AppSystemTray.ERROR_MESSAGE);
                         int opc;
                         do {                                       //Pregunta si desea buscar de nuevo
-                            opc = JOptionPane.showConfirmDialog(null, "¿Desea realizar la búsqueda de nuevo?", "No se enccontró servidor", JOptionPane.YES_NO_OPTION);
+                            opc = JOptionPane.showConfirmDialog(null, "¿Desea realizar la búsqueda de nuevo?", "No se enccontró servidor", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, ico);
 
                         } while (opc == -1);
 
