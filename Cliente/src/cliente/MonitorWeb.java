@@ -34,7 +34,6 @@ public class MonitorWeb {
     }
     
     private void initMonitor(){
-        
         webPages= new ArrayList<>();
         if(!findDevices()){
             System.err.printf("No se pudo obtener lista de interfaces %s", errorBuffer
