@@ -1,5 +1,7 @@
 #title{
     background-color: rgb(32,53,141);
+    font-size: 30px;
+    padding: 5px;
 }
 #campos{
     padding-bottom: 10px;
@@ -11,20 +13,21 @@
 }
 #Principal
 {
-    width: 30%;
+    width: 32%;
     min-width: 150px;
     height: auto;
     text-align: center;
     margin-left: auto;
     margin-right: auto;
     margin-top: 40px;
-    max-width: 325px;
+    max-width: 350px;
     box-shadow: 10px 10px 10px rgba(0, 0, 0,.4);
     background-color: white;
 }
 
 #boton{
-    
+    font-size: 18px;
+    padding: 5px;
     width: 35%;
     min-width: 120px;
     margin: 5px;
@@ -43,7 +46,7 @@
 
 #boton:hover{
     color: white; 
-    background-color: rgb(48, 170, 85);
+    background-color: rgba(239, 6, 0,.8);
 }
 
 *{
@@ -86,7 +89,7 @@ header{
 }
 header #lab 
 {
-    background: rgba(48,170,85,.6);
+    background: rgba(239, 6, 0,.5);
     margin-top: -10000000000000000px;
     display: inline-block;
     padding: 18px;
