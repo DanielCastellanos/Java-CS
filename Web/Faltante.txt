@@ -1,0 +1,7 @@
+************** Registro.html *****************
+borrar Scripts
+agregar boton Regresar
+agregar combobox Plaza 
+************** Servicio.php*******************
+agregar funcion de Registro y actualizacion  a btn
+agregar funcion a "mi cuenta"
