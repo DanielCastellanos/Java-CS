@@ -11,11 +11,9 @@ import java.awt.SystemTray;             //Para aplicación de bandeja del escrit
 import java.awt.TrayIcon;               //Para el ícono de la app
 import java.awt.event.ActionEvent;      //Para capturar evento
 import java.awt.event.ActionListener;   //Para crear lista de acciones
-import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 
 /**
  *

@@ -8,12 +8,10 @@ package interfaz;
 import java.awt.Color;
 import java.awt.Image;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
 import servidor.Ordenes;
 
 public class Pc_info extends javax.swing.JPanel {

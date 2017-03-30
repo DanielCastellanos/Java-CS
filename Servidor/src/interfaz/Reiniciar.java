@@ -5,8 +5,6 @@
  */
 package interfaz;
 
-import java.awt.Image;
-import javax.swing.ImageIcon;
 import servidor.Ordenes;
 
 

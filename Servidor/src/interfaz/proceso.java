@@ -6,7 +6,6 @@
 package interfaz;
 
 import java.net.InetAddress;
-import javax.swing.JPanel;
 import servidor.Ordenes;
 
 /**

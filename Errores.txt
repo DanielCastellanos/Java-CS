@@ -4,7 +4,6 @@
 -- Agregar un "\r\n" a archivos de configuracion
 -- Desbloqueo opcion de desbloqueo con logg in o desbloqueo total del equipo
 -- Añadir detalles de maquinas
--- Añadir el icono del programa en la barra de progreso inicial
 ***************************
 *         Cliente         *
 ***************************
