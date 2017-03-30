@@ -296,6 +296,8 @@ public class FrameBlocked extends javax.swing.JFrame {
     }
     //borra el campo de contraseña
     public void borrarComp() {
+        this.pass.setText("");
+        this.user.setText("");
         this.pass.setVisible(false);
         this.lblPassword.setVisible(false);
     }
