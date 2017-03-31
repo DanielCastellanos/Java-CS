@@ -1,5 +1,6 @@
 package servidor;
 
+import interfaz.BDConfig;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -7,12 +8,20 @@ import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JDialog;
 
 public class ArchivoConf {
+    //variable del archivo de configuracion
     File configuracion;
-    public String nombreServ;
-    public String grupo;
-    RandomAccessFile escribir;
+    //variables configurables
+    public String nombreServ;           //Nombre del servidor
+    public String grupo;                //Grupo multicast usado por este Admin
+    public String URLBD;                //Dirección de la base de datos
+    public String userBD;               //Usuario de la BD
+    public String passBD;               //Contraseña de la BD
+    //Objeto RandomAcccessFile para tratar archivo de configuración
+    RandomAccessFile escribir;     
+    
     public String getNombreServ() {
         return nombreServ;
     }
@@ -28,6 +37,31 @@ public class ArchivoConf {
     public void setGrupo(String grupo) {
         this.grupo = grupo;
     }
+
+    public String getURLBD() {
+        return URLBD;
+    }
+
+    public void setURLBD(String URLBD) {
+        this.URLBD = URLBD;
+    }
+
+    public String getUserBD() {
+        return userBD;
+    }
+
+    public void setUserBD(String userBD) {
+        this.userBD = userBD;
+    }
+
+    public String getPassBD() {
+        return passBD;
+    }
+
+    public void setPassBD(String passBD) {
+        this.passBD = passBD;
+    }
+    
     public void nuevoArchivo()
     {
         try {
@@ -38,6 +72,10 @@ public class ArchivoConf {
              escribir=new RandomAccessFile(configuracion, "rw");
                 escribir.write(StandardCharsets.UTF_8.encode("#nombre="+nombreServ+
                                   "\r\n#Grupo="+grupo).array());
+                
+                ///Configuración de conexion con BD.
+                
+                System.out.println("continua");
             escribir.close();
         } catch (FileNotFoundException ex) {
             Logger.getLogger(ArchivoConf.class.getName()).log(Level.SEVERE, null, ex);
@@ -45,6 +83,7 @@ public class ArchivoConf {
             Logger.getLogger(ArchivoConf.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
     public boolean CargarConf()
     {
         boolean existe=false;
