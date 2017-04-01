@@ -102,8 +102,9 @@ public class BuscarGrupo extends Principal {
                 t.cancel();
                 conf.setGrupo(ia.getHostAddress());
                 AppSystemTray.mostrarMensaje("Uniendose al grupo 224.0.0."+ip,AppSystemTray.INFORMATION_MESSAGE);
-                conf.nuevoArchivo();
                 new BDConfig(conf).setVisible(true);
+                conf.nuevoArchivo();
+                
             }
             else
             {

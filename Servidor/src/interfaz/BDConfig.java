@@ -24,6 +24,18 @@ public class BDConfig extends javax.swing.JFrame {
         this.setIconImage(icon.getImage());
         this.settingsFile= conf;
     }
+    
+    //Este constructor tiene el propósito de mostrar al usuario configuración previamente definida
+    public BDConfig(ArchivoConf conf, String ur, String u, String p) {
+        initComponents();
+        this.setIconImage(icon.getImage());
+        this.settingsFile= conf;
+        
+        UrlField.setText(ur);
+        usrField.setText(u);
+        passField.setText(p);
+        
+    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -37,7 +49,7 @@ public class BDConfig extends javax.swing.JFrame {
         passField = new javax.swing.JTextField();
         usrField = new javax.swing.JTextField();
         btnDone = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        btnNoBD = new javax.swing.JButton();
         errorLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -77,10 +89,10 @@ public class BDConfig extends javax.swing.JFrame {
             }
         });
 
-        jButton1.setText("Trabajar sin base de datos");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnNoBD.setText("Trabajar sin base de datos");
+        btnNoBD.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnNoBDActionPerformed(evt);
             }
         });
 
@@ -111,7 +123,7 @@ public class BDConfig extends javax.swing.JFrame {
                                 .addGap(40, 40, 40)
                                 .addComponent(btnDone)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton1)
+                        .addComponent(btnNoBD)
                         .addGap(30, 30, 30))))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -142,7 +154,7 @@ public class BDConfig extends javax.swing.JFrame {
                 .addGap(37, 37, 37)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnDone)
-                    .addComponent(jButton1))
+                    .addComponent(btnNoBD))
                 .addGap(18, 18, 18)
                 .addComponent(errorLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE)
                 .addContainerGap())
@@ -169,33 +181,48 @@ public class BDConfig extends javax.swing.JFrame {
         submit();
     }//GEN-LAST:event_btnDoneActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnNoBDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNoBDActionPerformed
         this.dispose();
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_btnNoBDActionPerformed
 
     private void submit() {
 
+        //inhabilita la edición de los campos y botones
         editable(false);
-
+        
+        //Obtiene información de los campos
         URL = UrlField.getText();
         usr = usrField.getText();
         pass = passField.getText();
 
-        if (URL.length() * usr.length() != 0) {
+        if (URL.length() * usr.length() != 0) {                 /*Si no estan vacíos los campos de usuario o url
+                                                            Intentará realizar la conexión con esos datos
+            */
             try {
-                HibernateUtil.buildSessionFactory(URL, usr, pass);
+                HibernateUtil.buildSessionFactory(URL, usr, pass);          /*Invoca al método de construir la sesión
+                                        Si en este punto no se ha obtenido una HibernateException significa que se
+                                        creó exitosamente la session factory con los datos ingresados, así que los escribiremos
+                                        en el objeto de configuración
+                */
                 settingsFile.setURLBD(URL);
                 settingsFile.setUserBD(usr);
-                settingsFile.setPassBD(pass);
+                settingsFile.setPassBD(pass);       
+                settingsFile.nuevoArchivo();        //Y le diremos que guarde esa configuración en el archivo
+                //Después notificaremos al usuario que la conexión fue realizada
                 JOptionPane.showMessageDialog(null, "Conexión con BD establecida", "Conexión establecida", JOptionPane.INFORMATION_MESSAGE);
+                //Y se cerrará este frame.
                 this.dispose();
 
-            } catch (HibernateException ex) {
+            } catch (HibernateException ex) {           /*Si la conexión falla
+                                                Avisamos al usuario y le pedimos que rectifique los datos
+                */
                 errorLabel.setText("Error de conexión: Verifique sus datos");
+                //Habilitamos los controles para que el usuario vuelva a ingresar datos.
                 editable(true);
             }
-        } else {
+        } else {                //Advertimos al usuario sobre los valores vacíos
             JOptionPane.showMessageDialog(null, "Valores inválidos", "Error de valores nulos", JOptionPane.WARNING_MESSAGE);
+            //Habilitamos los controles.
             editable(true);
         }
     }
@@ -205,13 +232,14 @@ public class BDConfig extends javax.swing.JFrame {
         usrField.setEditable(flag);
         passField.setEditable(flag);
         btnDone.setEnabled(flag);
+        btnNoBD.setEnabled(flag);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField UrlField;
     private javax.swing.JButton btnDone;
+    private javax.swing.JButton btnNoBD;
     private javax.swing.JLabel errorLabel;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

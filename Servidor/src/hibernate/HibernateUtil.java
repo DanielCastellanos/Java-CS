@@ -13,7 +13,11 @@ import org.hibernate.service.ServiceRegistry;
 public class HibernateUtil {
 
     private static SessionFactory sessionFactory;
-
+    
+    public static boolean isConnected(){
+        return (sessionFactory != null && !sessionFactory.isClosed());
+    }
+    
     public static synchronized void buildSessionFactory(String url, String usr, String pass) {
 
         //Verifica que el objeto sessionFactory no haya sido inicializado 
@@ -44,7 +48,6 @@ public class HibernateUtil {
     }
 
     public static SessionFactory getSessionFactory() {
-
         return sessionFactory;
     }
 
