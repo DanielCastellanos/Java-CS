@@ -1,6 +1,7 @@
 package servidor;
 
 import interfaz.AppSystemTray;
+import interfaz.BDConfig;
 import interfaz.Principal;
 import interfaz.Tareas;
 import java.io.IOException;
@@ -102,6 +103,7 @@ public class BuscarGrupo extends Principal {
                 conf.setGrupo(ia.getHostAddress());
                 AppSystemTray.mostrarMensaje("Uniendose al grupo 224.0.0."+ip,AppSystemTray.INFORMATION_MESSAGE);
                 conf.nuevoArchivo();
+                new BDConfig(conf).setVisible(true);
             }
             else
             {

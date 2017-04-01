@@ -8,7 +8,6 @@ import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JDialog;
 
 public class ArchivoConf {
     //variable del archivo de configuracion
@@ -72,9 +71,6 @@ public class ArchivoConf {
              escribir=new RandomAccessFile(configuracion, "rw");
                 escribir.write(StandardCharsets.UTF_8.encode("#nombre="+nombreServ+
                                   "\r\n#Grupo="+grupo).array());
-                
-                ///Configuración de conexion con BD.
-                
                 System.out.println("continua");
             escribir.close();
         } catch (FileNotFoundException ex) {
