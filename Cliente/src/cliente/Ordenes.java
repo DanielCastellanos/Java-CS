@@ -121,6 +121,7 @@ public class Ordenes {
     public void desbloquearCompleto() {
         if (pantallaInicio.isVisible()) {
             pantallaInicio.dispose();
+            Listeners.secs=0;
             //agregar codigo de Sesion 
         }
     }

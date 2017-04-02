@@ -8,10 +8,12 @@ package interfaz;
 import java.awt.Color;
 import java.awt.Image;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import servidor.Ordenes;
 
 public class Pc_info extends javax.swing.JPanel {
@@ -27,6 +29,7 @@ public class Pc_info extends javax.swing.JPanel {
     public Pc_info(String nombre ,String hostname) {
         initComponents();
         Color color = new Color(255, 255, 255, 255);
+        barEnvio.setVisible(false);
         this.setBackground(color);
         this.nombre=nombre;
         this.hostname=hostname;
@@ -97,6 +100,7 @@ public class Pc_info extends javax.swing.JPanel {
         estado = new javax.swing.JLabel();
         conf = new javax.swing.JLabel();
         label = new javax.swing.JLabel();
+        barEnvio = new javax.swing.JProgressBar();
 
         Enviar.setText("Enviar Archivo");
         Enviar.addActionListener(new java.awt.event.ActionListener() {
@@ -182,13 +186,18 @@ public class Pc_info extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(19, 19, 19)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(conf, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(label))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 124, Short.MAX_VALUE)
-                .addComponent(estado, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(barEnvio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addGap(19, 19, 19)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(conf, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(label))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 124, Short.MAX_VALUE)
+                        .addComponent(estado, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(20, 20, 20))
         );
         layout.setVerticalGroup(
@@ -199,7 +208,9 @@ public class Pc_info extends javax.swing.JPanel {
                     .addComponent(label)
                     .addComponent(estado, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(conf, javax.swing.GroupLayout.DEFAULT_SIZE, 24, Short.MAX_VALUE))
+                .addComponent(conf, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(barEnvio, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -257,6 +268,7 @@ public class Pc_info extends javax.swing.JPanel {
     private javax.swing.JMenuItem Cpagina;
     private javax.swing.JMenuItem Enviar;
     private javax.swing.JMenuItem Tareas;
+    public javax.swing.JProgressBar barEnvio;
     private javax.swing.JLabel conf;
     private javax.swing.JMenuItem desbloquear;
     private javax.swing.JLabel estado;

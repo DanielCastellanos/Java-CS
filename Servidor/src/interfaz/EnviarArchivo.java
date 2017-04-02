@@ -11,7 +11,10 @@ import java.util.logging.Logger;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import servidor.Hint;
 import servidor.Ordenes;
+
+
 
 /**
  *
@@ -41,6 +44,9 @@ public class EnviarArchivo extends javax.swing.JFrame{
         this.setIconImage(Principal.getLogo());
         this.setTitle("Enviar a todos los equipos dentro del grupo");
         this.ip=ip;
+        txt_Nombre.setUI(new Hint("Nombre del Archivo"));
+        lblGeneral.setVisible(false);
+        barraGeneral.setVisible(false);
         barra.setVisible(false);
         btnEliminarArchivo.setEnabled(false);
         btnaceptar.setEnabled(false);
@@ -63,6 +69,9 @@ public class EnviarArchivo extends javax.swing.JFrame{
         this.setTitle("Enviar Archivo a "+nombre);
         this.nombre=nombre;
         this.ip=ip;
+        txt_Nombre.setUI(new Hint("Nombre del Archivo"));
+        lblGeneral.setVisible(false);
+        barraGeneral.setVisible(false);
         barra.setVisible(false);
         btnEliminarArchivo.setEnabled(false);
         btnaceptar.setEnabled(false);
@@ -96,7 +105,6 @@ public class EnviarArchivo extends javax.swing.JFrame{
             btnaceptar.setVisible(false);
             btnEliminarArchivo.setVisible(false);
             btnselecionar.setVisible(false);
-            jLabel1.setVisible(false);
             ZipOutputStream zout;
         BufferedOutputStream bos;
         try {
@@ -105,11 +113,16 @@ public class EnviarArchivo extends javax.swing.JFrame{
     		
             zout = new ZipOutputStream(bos);
             int i=0;
+            lblGeneral.setVisible(true);
+            barraGeneral.setVisible(true);
+            barraGeneral.setStringPainted(true);
+            barraGeneral.setMaximum(documentos.size());
+            barraGeneral.setMinimum(0);
             barra.setVisible(true);
             barra.setStringPainted(true);
             lbInfo.setHorizontalAlignment(JLabel.LEFT);
                 for (String documento : documentos) {
-                    
+                    barraGeneral.setValue(i);
                 ZipEntry ze = new ZipEntry(nombres.get(i));
                 zout.putNextEntry(ze);
                 File arch=new File(documentos.get(i));
@@ -218,15 +231,17 @@ public void cerrar()
         btnaceptar = new javax.swing.JButton();
         btncancelar = new javax.swing.JButton();
         txt_Nombre = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         tablaArchivos = new javax.swing.JTable();
         lbPesoArchivo = new javax.swing.JLabel();
         lbInfo = new javax.swing.JLabel();
         btnEliminarArchivo = new javax.swing.JButton();
         barra = new javax.swing.JProgressBar();
+        barraGeneral = new javax.swing.JProgressBar();
+        lblGeneral = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setPreferredSize(new java.awt.Dimension(560, 400));
 
         btnselecionar.setText("Agregar archivo");
         btnselecionar.addActionListener(new java.awt.event.ActionListener() {
@@ -249,7 +264,7 @@ public void cerrar()
             }
         });
 
-        jLabel1.setText("Nombre del zip");
+        txt_Nombre.setMaximumSize(new java.awt.Dimension(2147483647, 24));
 
         tablaArchivos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -279,6 +294,8 @@ public void cerrar()
             }
         });
 
+        lblGeneral.setText("Progreso general");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -287,29 +304,35 @@ public void cerrar()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(barra, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(txt_Nombre, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane2)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(txt_Nombre)))
+                        .addComponent(barraGeneral, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 536, Short.MAX_VALUE)
                         .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(lbInfo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addComponent(lbPesoArchivo)
-                        .addGap(54, 54, 54))
+                        .addGap(43, 43, 43))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(lblGeneral)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnselecionar, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnEliminarArchivo)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btncancelar)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnaceptar)))
+                        .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(btnselecionar, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnEliminarArchivo)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btncancelar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnaceptar)
+                        .addComponent(barra, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addContainerGap())))
         );
         layout.setVerticalGroup(
@@ -317,14 +340,16 @@ public void cerrar()
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(9, 9, 9)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblGeneral)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(barraGeneral, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lbInfo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lbPesoArchivo))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txt_Nombre, javax.swing.GroupLayout.DEFAULT_SIZE, 24, Short.MAX_VALUE)
-                    .addComponent(jLabel1))
+                .addComponent(txt_Nombre, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(barra, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -454,14 +479,15 @@ public void cerrar()
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JProgressBar barra;
+    private javax.swing.JProgressBar barraGeneral;
     private javax.swing.JButton btnEliminarArchivo;
     private javax.swing.JButton btnaceptar;
     private javax.swing.JButton btncancelar;
     private javax.swing.JButton btnselecionar;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel lbInfo;
     private javax.swing.JLabel lbPesoArchivo;
+    private javax.swing.JLabel lblGeneral;
     private javax.swing.JTable tablaArchivos;
     private javax.swing.JTextField txt_Nombre;
     // End of variables declaration//GEN-END:variables

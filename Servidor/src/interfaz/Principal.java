@@ -8,7 +8,9 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import servidor.ArchivoConf;
+import servidor.BuscarGrupo;
 import servidor.Clientes;
 import servidor.Ordenes;
 
@@ -20,6 +22,7 @@ public class Principal extends javax.swing.JFrame{
     Clientes clientes=new Clientes();
     Timer t;
     public ArchivoConf confPrincipal=new ArchivoConf();
+    public static ArrayList<Pc_info> paneles=new ArrayList<>();
     public static Image logo=new ImageIcon(new ImageIcon("src/iconos/logo chico.png").getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH)).getImage();
     public Principal() {
         initComponents();
@@ -47,7 +50,9 @@ public class Principal extends javax.swing.JFrame{
     
     //Agrega paneles al Principal
     public static void agregaEquipo(Clientes c){
-        panel.add(new Pc_info(c.getNombre(),c.getDireccion()));
+        Pc_info p=new Pc_info(c.getNombre(),c.getDireccion());
+        paneles.add(p);
+        panel.add(p);
     }
     
     public static Image getLogo() {

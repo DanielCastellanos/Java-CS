@@ -1,13 +1,13 @@
 package servidor;
 
+import interfaz.Pc_info;
+import interfaz.Principal;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
@@ -65,14 +65,18 @@ public class Ordenes {
             if(InetAddress.getByName(hostname).isMulticastAddress())
             {
                 String miIp=InetAddress.getLocalHost().getHostAddress();
-                String aux=miIp.substring(0, miIp.lastIndexOf(".")+1);
-                for (int i = 0; i < 254; i++) {
-                    new Thread(new Enviar(dir, aux+i)).start();
+                for (int i = 0; i < BuscarGrupo.cliente.size(); i++) {
+                    new Thread(new Enviar(dir, BuscarGrupo.cliente.get(i).direccion,Principal.paneles.get(i))).start();
                 }
             }
             else
             {
-                new Thread(new Enviar(dir, hostname)).start();
+                for (int i=0;i<BuscarGrupo.cliente.size();i++) {
+                    if(BuscarGrupo.cliente.get(i).direccion.equals(hostname))
+                    {
+                        new Thread(new Enviar(dir, hostname,Principal.paneles.get(i))).start();
+                    }
+                }
             }
         } catch (UnknownHostException ex) {
             Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
@@ -215,10 +219,12 @@ public class Ordenes {
     class Enviar implements Runnable {
 
         private String dir, hostname;
+        private Pc_info panel;
 
-        public Enviar(String dir, String hostname) {
+        public Enviar(String dir, String hostname,Pc_info panel) {
             this.dir = dir;
             this.hostname = hostname;
+            this.panel=panel;
         }
 
         @Override
@@ -247,9 +253,27 @@ public class Ordenes {
                 //arreglo de 4 KB para envio de datos
                 arreglo = new byte[4096];
                 //empezamos el envio de los datos
-                while ((in = bis.read(arreglo)) != -1) {
+                panel.barEnvio.setVisible(true);
+                panel.barEnvio.setMaximum((int)(archivo.length()/100));
+                panel.barEnvio.setMinimum(0);
+                panel.barEnvio.setValue(0);
+                panel.barEnvio.setStringPainted(true);
+                long leido=0;
+                long tamañoArch=archivo.length();
+                while (leido < tamañoArch) {
+                    if ((leido + 4096) < tamañoArch) {
+                        bis.read(arreglo);
+                        leido += 4096;
+                    } else {
+                        int resto = (int) (tamañoArch - leido);
+                        arreglo = new byte[resto];
+                        bis.read(arreglo);
+                        leido += resto;
+                    }
                     bos.write(arreglo);
+                    panel.barEnvio.setValue((int) (leido / 100));
                 }
+                panel.barEnvio.setVisible(false);
                 //cerramos BufferedInputStream
                 bis.close();
                 //cerramos BufferedOutputStream

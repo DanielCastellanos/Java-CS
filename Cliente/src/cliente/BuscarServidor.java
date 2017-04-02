@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.MulticastSocket;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -27,7 +28,11 @@ public class BuscarServidor {
 
     MulticastSocket puerto;
     int ip = 2;
-    String nombre, dir, hostname, grupo;
+    String nombre,
+            dir,
+            hostname,
+            grupo;
+    public static String serverHost;
     byte infServ[] = "info,".getBytes();
     InetAddress direccion;
     Thread hilo, nuevoArchivo, con;
@@ -38,9 +43,17 @@ public class BuscarServidor {
     GroupsProgressBar gi;
     Icon ico= new ImageIcon(AppSystemTray.imagen.getScaledInstance(30, 30, Image.SCALE_DEFAULT));
     
-    public static boolean connectionStatus(){
+    public static boolean connectionStatus(){//codigo en pruebas
     boolean flag= false;
-    
+        try {
+            Socket socket=new Socket();
+            //falta capturar la direccion del servidor
+            socket.connect(new InetSocketAddress(serverHost,4500), 200);
+            socket.close();
+            flag=true;
+        } catch (Exception e){
+            //accion si existe conexion con el cliente
+        }
     return flag;
 }
     public BuscarServidor() {
@@ -61,6 +74,7 @@ public class BuscarServidor {
         if (configuracion.cargarConfiguracion()) {
             try {
                 puerto.joinGroup(InetAddress.getByName(configuracion.getGrupo()));
+                serverHost=configuracion.getServerHost();
                 this.iniciarHilo();
             } catch (IOException ex) {
                 Logger.getLogger(BuscarServidor.class.getName()).log(Level.SEVERE, null, ex);
@@ -173,7 +187,7 @@ public class BuscarServidor {
                     int tiempo;
                     switch (aux) {
                         case "serv":
-                            extDatosServ(mensaje);
+                            extDatosServ(mensaje,dp.getAddress().getHostName());
                             break;
                         case "apagar":
                             System.out.println("El sistema se apagará");
@@ -264,7 +278,7 @@ public class BuscarServidor {
         return t;
     }
 
-    private void extDatosServ(String mensaje) {
+    private void extDatosServ(String mensaje,String hostName) {
         int cont = 0;
         Servidor_Inf serv = new Servidor_Inf();
         String datos[] = new String[3];
@@ -275,6 +289,7 @@ public class BuscarServidor {
         }
         serv.setNombre(datos[1]);
         serv.setGrupo(datos[2]);
+        serv.setHostName(hostName);
         servidores.add(serv);
     }
 
@@ -296,6 +311,7 @@ public class BuscarServidor {
             grupo = servidor.getGrupo();
             configuracion.setNombre(nombre);
             configuracion.setGrupo(grupo);
+            configuracion.setServerHost(serverHost);
             configuracion.archivoNuevo();
         } catch (UnknownHostException ex) {
             Logger.getLogger(BuscarServidor.class.getName()).log(Level.SEVERE, null, ex);

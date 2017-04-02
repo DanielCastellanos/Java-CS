@@ -24,7 +24,7 @@ import org.jnativehook.mouse.NativeMouseMotionListener;
  */
 public class Listeners implements NativeKeyListener, NativeMouseListener, NativeMouseMotionListener{
 
-    private static int secs=0;
+    static int secs=0;
     private static final Timer temp= new Timer();
     private static int limite = 300;     //Default 7200
     private static int tiempoLogin=100;   //Default 30

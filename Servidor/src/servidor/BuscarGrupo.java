@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -26,7 +28,7 @@ public class BuscarGrupo extends Principal {
     InetAddress miIp;
     String nombre;
     MulticastSocket puerto;
-    Thread escucha;
+    Thread escucha,con;
     static boolean libre=false;
     InetAddress ia;
     Timer t=new Timer();
@@ -46,7 +48,7 @@ public class BuscarGrupo extends Principal {
             miIp=InetAddress.getLocalHost();
             puerto=new MulticastSocket(1000);
             escucha = new Thread(r);
-        
+            con = new Thread(conexion);
         } catch (IOException ex) {
             Logger.getLogger(BuscarGrupo.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -87,6 +89,7 @@ public class BuscarGrupo extends Principal {
     public void inicarHilos()
     {
             escucha.start();
+            con.start();
     }
     public void buscarGrupo()
     {
@@ -132,7 +135,20 @@ public class BuscarGrupo extends Principal {
         nombre=JOptionPane.showInputDialog(null, "Escriba un nombre para el equipo");
         conf.setNombreServ(nombre);
     }
-    
+    Runnable conexion=new Runnable(){
+        @Override
+        public void run() {
+            try {
+                ServerSocket ss=new ServerSocket(4500);
+                while(true)
+                {
+                    Socket s=ss.accept();
+                    s.close();
+                }
+            } catch (Exception e) {
+            }
+        }
+    };
     
     Runnable r=new Runnable() {
             @Override
@@ -154,6 +170,7 @@ public class BuscarGrupo extends Principal {
                     ex.printStackTrace();
                 }
             }
-        };//**
+        };
+    
     
 }

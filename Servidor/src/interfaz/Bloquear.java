@@ -6,6 +6,7 @@
 package interfaz;
 
 import javax.swing.JOptionPane;
+import servidor.Hint;
 import servidor.Ordenes;
 
 /**
@@ -26,6 +27,7 @@ public class Bloquear extends javax.swing.JFrame {
         this.setResizable(false);
         this.setVisible(true);
         login.setSelected(true);
+        tiempo.setUI(new Hint("Tiempo"));
         tiempo.setEnabled(false);
         combo.setEnabled(false);
         this.ip=grupo;
@@ -39,6 +41,7 @@ public class Bloquear extends javax.swing.JFrame {
         this.setResizable(false);
         this.setVisible(true);
         login.setSelected(true);
+        tiempo.setUI(new Hint("Tiempo"));
         tiempo.setEnabled(false);
         combo.setEnabled(false);
         individual=true;
@@ -86,18 +89,6 @@ public class Bloquear extends javax.swing.JFrame {
         login.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loginActionPerformed(evt);
-            }
-        });
-
-        tiempo.setText("Tiempo");
-        tiempo.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tiempoMouseClicked(evt);
-            }
-        });
-        tiempo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tiempoActionPerformed(evt);
             }
         });
 
@@ -165,14 +156,6 @@ public class Bloquear extends javax.swing.JFrame {
             combo.setEnabled(false);
         }
     }//GEN-LAST:event_loginActionPerformed
-
-    private void tiempoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tiempoActionPerformed
-        
-    }//GEN-LAST:event_tiempoActionPerformed
-
-    private void tiempoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tiempoMouseClicked
-        tiempo.setText("");
-    }//GEN-LAST:event_tiempoMouseClicked
 
     private void aceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aceptarActionPerformed
         //Bloqueo sin contraseña
