@@ -4,10 +4,17 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.util.zip.*;
 import java.io.*;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import servidor.Hint;
 import servidor.Ordenes;
+
+
 
 /**
  *
@@ -18,19 +25,40 @@ public class EnviarArchivo extends javax.swing.JFrame{
     
     private static File[] archivosTem;
     private Ordenes orden=new Ordenes();
+    private DefaultTableModel modelo;
     ArrayList <String> documentos=new ArrayList<>();
     ArrayList <String> nombres=new ArrayList<>();
+    ArrayList <String> listaArchivos=new ArrayList<>();
     boolean individual=false;
     String nombre,ip;
     String ruta;
+    String nombreZip;
+    long pesoTotal=0;
+    Thread hiloZip;
+    String []pesos={"KB","MB","GB"};
     //metodo de envio a un solo usuario
     public EnviarArchivo(String ip) {
         initComponents();
         this.setVisible(true);
         this.setLocationRelativeTo(null);
         this.setIconImage(Principal.getLogo());
-        this.setTitle("Enviar Archivo");
+        this.setTitle("Enviar a todos los equipos dentro del grupo");
         this.ip=ip;
+        txt_Nombre.setUI(new Hint("Nombre del Archivo"));
+        lblGeneral.setVisible(false);
+        barraGeneral.setVisible(false);
+        barra.setVisible(false);
+        btnEliminarArchivo.setEnabled(false);
+        btnaceptar.setEnabled(false);
+        modelo=new DefaultTableModel(new Object[][]{},new Object[]{"nombre","tipo","peso"})
+        {
+            @Override
+            public boolean isCellEditable(int i, int i1) {
+                return false;
+            }
+            
+        };
+        tablaArchivos.setModel(modelo);
     }
     //envio a varios usarios
     public EnviarArchivo(String nombre,String ip) {
@@ -38,10 +66,24 @@ public class EnviarArchivo extends javax.swing.JFrame{
         this.setVisible(true);
         this.setLocationRelativeTo(null);
         this.setIconImage(Principal.getLogo());
-        this.setTitle("Enviar Archivo");
-        this.aviso.setText("Enviar archivos a "+nombre);
+        this.setTitle("Enviar Archivo a "+nombre);
         this.nombre=nombre;
         this.ip=ip;
+        txt_Nombre.setUI(new Hint("Nombre del Archivo"));
+        lblGeneral.setVisible(false);
+        barraGeneral.setVisible(false);
+        barra.setVisible(false);
+        btnEliminarArchivo.setEnabled(false);
+        btnaceptar.setEnabled(false);
+        modelo=new DefaultTableModel(new Object[][]{},new Object[]{"nombre","tipo","peso"})
+        {
+            @Override
+            public boolean isCellEditable(int i, int i1) {
+                return false;
+            }
+            
+        };
+        tablaArchivos.setModel(modelo);
     }
     private static JFileChooser agregarFiltros(JFileChooser arch)
   {
@@ -56,36 +98,126 @@ public class EnviarArchivo extends javax.swing.JFrame{
       return arch;
   }
 
-    private void zip() throws IOException {
-        ZipOutputStream zout = null;
-        FileOutputStream fos;
-        detalles.append("Comprimiendo archivo en zip...\n");
+    Runnable zip=new Runnable() {
+        @Override
+        public void run() {
+            txt_Nombre.setVisible(false);
+            btnaceptar.setVisible(false);
+            btnEliminarArchivo.setVisible(false);
+            btnselecionar.setVisible(false);
+            ZipOutputStream zout;
+        BufferedOutputStream bos;
         try {
-            ruta="MyFile.zip";
-             fos = new FileOutputStream(ruta);
+            ruta=nombreZip+".zip";
+             bos = new BufferedOutputStream(new FileOutputStream(ruta));
     		
-            zout = new ZipOutputStream(fos);
+            zout = new ZipOutputStream(bos);
             int i=0;
+            lblGeneral.setVisible(true);
+            barraGeneral.setVisible(true);
+            barraGeneral.setStringPainted(true);
+            barraGeneral.setMaximum(documentos.size());
+            barraGeneral.setMinimum(0);
+            barra.setVisible(true);
+            barra.setStringPainted(true);
+            lbInfo.setHorizontalAlignment(JLabel.LEFT);
                 for (String documento : documentos) {
+                    barraGeneral.setValue(i);
                 ZipEntry ze = new ZipEntry(nombres.get(i));
                 zout.putNextEntry(ze);
-                RandomAccessFile r=new RandomAccessFile(documentos.get(i),"r");
-                byte[] info=new byte[(int)r.length()];
-                r.readFully(info);
-                zout.write(info,0,info.length);
+                File arch=new File(documentos.get(i));
+                lbInfo.setText("comprimiendo: "+arch.getName());
+                long tamañoArch=arch.length();
+                barra.setMaximum((int)(tamañoArch/100));
+                barra.setMinimum(0);
+                barra.setValue(0);
+                BufferedInputStream bis=new BufferedInputStream(new FileInputStream(documentos.get(i)));
+                byte[] info=new byte[4096];
+                long leido=0;
+                while(leido<tamañoArch)
+                {
+                    if((leido+4096)<tamañoArch)
+                    {
+                    bis.read(info);
+                    leido+=4096;
+                    }
+                    else
+                    {
+                        int resto=(int)(tamañoArch-leido);
+                        info=new byte[resto];
+                        bis.read(info);
+                        leido+=resto;
+                    }
+                    zout.write(info);
+                    barra.setValue((int)(leido/100));
+                }
                 zout.closeEntry();
                 i++;
             }
-        } finally {
-            if (zout != null) {
                 zout.close();
+        }   catch (FileNotFoundException ex) {
+                Logger.getLogger(EnviarArchivo.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(EnviarArchivo.class.getName()).log(Level.SEVERE, null, ex);
+            } 
+        
+        orden.enviarArchivo(ruta,ip);
+        cerrar();
+        }
+    };
+public void cerrar()
+{
+    this.dispose();
+}
+    Thread archivo=new Thread();
+    private long recursivoCarpeta(File archivo,String nombre)
+    {
+        long pesoArchivo=0;
+        if(archivo.isDirectory())
+        {
+            File lista[]=archivo.listFiles();
+            for (File file : lista) {
+                pesoArchivo+=recursivoCarpeta(file, nombre);
             }
         }
-        orden.enviarArchivo(ruta,ip);
-    }//Zuno
-
-    Thread archivo=new Thread();
-    
+        else
+        {
+            pesoArchivo=archivo.length();
+            String aux=archivo.toString();
+            documentos.add(archivo.getPath());
+            aux=aux.substring(aux.indexOf(nombre),aux.length());
+            nombres.add(aux);
+        }
+        return pesoArchivo;
+    }
+    private String peso(long peso,int i)
+    {
+        System.out.println(i);
+        DecimalFormat df=new DecimalFormat("#.##");
+        float aux=peso;
+        String auxPeso;
+        if(aux/1024>1024)
+        {
+            i=i+1;
+            auxPeso=peso(peso/1024,i);
+        }
+        else
+        {
+            auxPeso=df.format(aux/1024)+" "+pesos[i];
+        }
+        return auxPeso;
+    }
+    private boolean archivoDuplicado(String direccion)
+    {
+        boolean encontrado=false;
+        for (String documento : listaArchivos) {
+            if(documento.equals(direccion))
+            {
+                encontrado=true;
+            }
+        }
+        return encontrado;
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -95,39 +227,74 @@ public class EnviarArchivo extends javax.swing.JFrame{
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        selecionar = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        detalles = new javax.swing.JTextArea();
-        aceptar = new javax.swing.JButton();
-        cancelar = new javax.swing.JButton();
-        aviso = new javax.swing.JLabel();
+        btnselecionar = new javax.swing.JButton();
+        btnaceptar = new javax.swing.JButton();
+        btncancelar = new javax.swing.JButton();
+        txt_Nombre = new javax.swing.JTextField();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tablaArchivos = new javax.swing.JTable();
+        lbPesoArchivo = new javax.swing.JLabel();
+        lbInfo = new javax.swing.JLabel();
+        btnEliminarArchivo = new javax.swing.JButton();
+        barra = new javax.swing.JProgressBar();
+        barraGeneral = new javax.swing.JProgressBar();
+        lblGeneral = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setPreferredSize(new java.awt.Dimension(560, 400));
 
-        selecionar.setText("Agregar archivo");
-        selecionar.addActionListener(new java.awt.event.ActionListener() {
+        btnselecionar.setText("Agregar archivo");
+        btnselecionar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                selecionarActionPerformed(evt);
+                btnselecionarActionPerformed(evt);
             }
         });
 
-        detalles.setColumns(20);
-        detalles.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
-        detalles.setRows(5);
-        detalles.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        detalles.setFocusable(false);
-        jScrollPane1.setViewportView(detalles);
-
-        aceptar.setText("Enviar");
-        aceptar.addActionListener(new java.awt.event.ActionListener() {
+        btnaceptar.setText("Enviar");
+        btnaceptar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                aceptarActionPerformed(evt);
+                btnaceptarActionPerformed(evt);
             }
         });
 
-        cancelar.setText("Cancelar");
+        btncancelar.setText("Cancelar");
+        btncancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btncancelarActionPerformed(evt);
+            }
+        });
 
-        aviso.setText("Enviar a todos los equipos dentro del grupo");
+        txt_Nombre.setMaximumSize(new java.awt.Dimension(2147483647, 24));
+
+        tablaArchivos.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane2.setViewportView(tablaArchivos);
+
+        lbPesoArchivo.setText("0 KB");
+
+        lbInfo.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lbInfo.setText("Total: ");
+        lbInfo.setMaximumSize(new java.awt.Dimension(406, 15));
+        lbInfo.setMinimumSize(new java.awt.Dimension(406, 15));
+        lbInfo.setPreferredSize(new java.awt.Dimension(406, 15));
+
+        btnEliminarArchivo.setText("Eliminar Archivo");
+        btnEliminarArchivo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarArchivoActionPerformed(evt);
+            }
+        });
+
+        lblGeneral.setText("Progreso general");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -136,76 +303,147 @@ public class EnviarArchivo extends javax.swing.JFrame{
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(selecionar, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 103, Short.MAX_VALUE)
-                        .addComponent(cancelar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(aceptar))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(aviso, javax.swing.GroupLayout.PREFERRED_SIZE, 315, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addComponent(txt_Nombre, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(barraGeneral, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 536, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(lbInfo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(lbPesoArchivo)
+                        .addGap(43, 43, 43))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(lblGeneral)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnselecionar, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnEliminarArchivo)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btncancelar)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnaceptar)))
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(barra, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(aviso)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblGeneral)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(barraGeneral, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbInfo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbPesoArchivo))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txt_Nombre, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(barra, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(aceptar)
-                    .addComponent(cancelar)
-                    .addComponent(selecionar))
-                .addContainerGap(24, Short.MAX_VALUE))
+                    .addComponent(btnselecionar)
+                    .addComponent(btnaceptar)
+                    .addComponent(btncancelar)
+                    .addComponent(btnEliminarArchivo))
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void selecionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selecionarActionPerformed
+    private void btnselecionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnselecionarActionPerformed
         JFileChooser f = new JFileChooser();
         String ext = null;
         f = agregarFiltros(f);
+        f.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        f.setFileFilter(f.getAcceptAllFileFilter());
         f.setMultiSelectionEnabled(true);
-        if (f.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-            
+
+        if (f.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+
             archivosTem = f.getSelectedFiles();
             String aux;
             for (int i = 0; i < archivosTem.length; i++) {
                 aux=archivosTem[i].getPath();
-                documentos.add(aux);
-            ext = aux.substring(aux.lastIndexOf((char) 92) + 1);
-            nombres.add(ext);
-            detalles.append("archivo añadido: "+ext+"\n");
+                ext = aux.substring(aux.lastIndexOf((char) 92) + 1);
+                if(archivoDuplicado(aux))
+                {
+                    JOptionPane.showMessageDialog(this,"Archivo duplicado","Error", JOptionPane.ERROR_MESSAGE);
+                }
+                else
+                {
+                if (archivosTem[i].isDirectory()) {//si el la selección fue una carpeta
+                    long pesoCarpeta=recursivoCarpeta(archivosTem[i],ext);
+                    pesoTotal+=pesoCarpeta;
+                    modelo.addRow(new Object[]{ext,"Carpeta",peso(pesoCarpeta,0)});
+                } else {// si la selección fue un archivo
+                    pesoTotal+=archivosTem[i].length();
+                    documentos.add(aux);
+                    nombres.add(ext);
+                    modelo.addRow(new Object[]{ext,"Archivo",peso(archivosTem[i].length(),0)});
+                }
+                listaArchivos.add(aux);
+                }
             }
+            lbPesoArchivo.setText(peso(pesoTotal,0));
+            btnEliminarArchivo.setEnabled(true);
+            btnaceptar.setEnabled(true);
+            
         } else {
             System.out.println("No seleccion ");
         }
-    }//GEN-LAST:event_selecionarActionPerformed
+    }//GEN-LAST:event_btnselecionarActionPerformed
 
-    private void aceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aceptarActionPerformed
-        try {
-            
-            zip();
-            detalles.append("Compresión finalizada.\n");
-            //la ruta del .zip esta en la variable 'ruta'
-            if (individual) {
-                //envio a una sola pc
-                
-            }else{
-                //envio por multicast
-                
+    private void btnaceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnaceptarActionPerformed
+        
+            nombreZip=txt_Nombre.getText().trim();
+            if(!nombreZip.isEmpty())
+            {
+                    hiloZip=new Thread(zip);
+                    hiloZip.start();
             }
-            detalles.append("Envio realizado");
-            this.dispose();
-        } catch (IOException ex) {
-            Logger.getLogger(EnviarArchivo.class.getName()).log(Level.SEVERE, null, ex);
+            else
+            {
+                JOptionPane.showMessageDialog(this, "Escribe un nombre para el archivo", "Error ", JOptionPane.WARNING_MESSAGE);
+            }
+        
+    }//GEN-LAST:event_btnaceptarActionPerformed
+
+    private void btncancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btncancelarActionPerformed
+        hiloZip.interrupt();
+        this.dispose();
+    }//GEN-LAST:event_btncancelarActionPerformed
+
+    private void btnEliminarArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarArchivoActionPerformed
+        int fila=tablaArchivos.getSelectedRow();
+        String direccion=listaArchivos.get(fila);
+        for (int i = documentos.size()-1; i >=0; i--) {
+            if(documentos.get(i).contains(direccion))
+            {
+                nombres.remove(i);
+                pesoTotal-=new File(documentos.get(i)).length();
+                documentos.remove(i);
+            }
         }
-    }//GEN-LAST:event_aceptarActionPerformed
+        listaArchivos.remove(fila);
+        modelo.removeRow(fila);
+        lbPesoArchivo.setText(peso(pesoTotal,0));
+        btnEliminarArchivo.setEnabled(documentos.size()>0);
+        btnaceptar.setEnabled(documentos.size()>0);
+    }//GEN-LAST:event_btnEliminarArchivoActionPerformed
     
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
@@ -240,11 +478,17 @@ public class EnviarArchivo extends javax.swing.JFrame{
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton aceptar;
-    private javax.swing.JLabel aviso;
-    private javax.swing.JButton cancelar;
-    private javax.swing.JTextArea detalles;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JButton selecionar;
+    private javax.swing.JProgressBar barra;
+    private javax.swing.JProgressBar barraGeneral;
+    private javax.swing.JButton btnEliminarArchivo;
+    private javax.swing.JButton btnaceptar;
+    private javax.swing.JButton btncancelar;
+    private javax.swing.JButton btnselecionar;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JLabel lbInfo;
+    private javax.swing.JLabel lbPesoArchivo;
+    private javax.swing.JLabel lblGeneral;
+    private javax.swing.JTable tablaArchivos;
+    private javax.swing.JTextField txt_Nombre;
     // End of variables declaration//GEN-END:variables
 }

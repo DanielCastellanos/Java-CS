@@ -1,0 +1,24 @@
+***************************
+*Ambos(Cliente y servidor)*
+***************************
+-- Agregar un "\r\n" a archivos de configuracion
+-- Desbloqueo opcion de desbloqueo con logg in o desbloqueo total del equipo
+-- Añadir detalles de maquinas
+***************************
+*         Cliente         *
+***************************
+-- Agragar hint a campos de logg in
+-- Reinicio de tiempo de bloqueo
+***************************
+*         Servidor        *
+***************************
+-- Barra de progreso total para la compresión del archivo
+-- Tomar nombre de usuario para las ventanas
+-- Ordenar clientes alfabeticamente
+-- Falta clase "Listeners"
+-- Añadir abrir pagina individual
+-- Error panel de pestañas no agrega nombres
+-- (Opcional) Añadir Splash Screen
+-- Evento en mensaje de appsystem tray
+-- Enviar archivo solo a las IP del grupo
+-- Después de enviar que borre el archivo comprimido

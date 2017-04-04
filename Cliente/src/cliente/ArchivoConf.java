@@ -9,7 +9,17 @@ import java.util.logging.Logger;
 
 public class ArchivoConf 
 {
-    private String nombre,grupo;
+    private String nombre,
+            grupo,
+            serverHost;
+
+    public String getServerHost() {
+        return serverHost;
+    }
+
+    public void setServerHost(String serverHost) {
+        this.serverHost = serverHost;
+    }
     File configuracion;
     RandomAccessFile escribir;
 
@@ -38,7 +48,9 @@ public class ArchivoConf
                 configuracion.delete();
             }
             escribir=new RandomAccessFile(configuracion,"rw");
-            escribir.write(("nombre="+nombre+"#grupo="+grupo).getBytes());
+            escribir.write(("nombre="+nombre+"\r\n"
+                    + "grupo="+grupo
+                    +"\r\n server hostname="+serverHost).getBytes());
             escribir.close();
         } catch (FileNotFoundException ex) {
             Logger.getLogger(ArchivoConf.class.getName()).log(Level.SEVERE, null, ex);
@@ -58,7 +70,8 @@ public class ArchivoConf
                 existe=true;
                 String linea=escribir.readLine();
                 nombre=linea.substring(linea.indexOf("=")+1,linea.indexOf("#"));
-                grupo=linea.substring(linea.lastIndexOf("=")+1,linea.length());
+                linea=escribir.readLine();
+                grupo=linea.substring(linea.indexOf("=")+1,linea.length());
             }
             escribir.close();
         } catch (FileNotFoundException ex) {

@@ -5,8 +5,15 @@ package cliente;
  * @author PC11
  */
 public class Servidor_Inf {
-    private String nombre=null,grupo=null;
+    private String nombre=null,grupo=null,hostName=null;
 
+    public String getHostName() {
+        return hostName;
+    }
+
+    public void setHostName(String hostName) {
+        this.hostName = hostName;
+    }
     public String getNombre() {
         return nombre;
     }

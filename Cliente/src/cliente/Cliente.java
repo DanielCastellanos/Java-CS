@@ -1,20 +1,15 @@
 package cliente;
-
-import bloqueo.FrameBlocked;
-
 /**
  *
  * @author Ricardo
  */
 public class Cliente {
-    public static void main(String[] args) {
-        ArchivoConf configuracion=new ArchivoConf();
-        System.out.println("iniciar listener");
-        BuscarServidor b=new BuscarServidor();
-        System.out.println("Iniciar cliente");
-        b.iniciarCliente();
-        
-        
-    }
+    public static AppSystemTray notIcon= new AppSystemTray();
     
+    public static void main(String[] args) {
+        BuscarServidor b=new BuscarServidor();
+        System.out.println("Iniciando cliente");
+        AppSystemTray.mostrarMensaje("Iniciando cliente", 1);
+        b.iniciarCliente();
+    }
 }

@@ -1,9 +1,12 @@
 
 package interfaz;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import servidor.ArchivoConf;
@@ -17,7 +20,9 @@ public class Principal extends javax.swing.JFrame{
     int height=Toolkit.getDefaultToolkit().getScreenSize().height;
     Ordenes orden=new Ordenes();
     Clientes clientes=new Clientes();
+    Timer t;
     public ArchivoConf confPrincipal=new ArchivoConf();
+    public static ArrayList<Pc_info> paneles=new ArrayList<>();
     public static Image logo=new ImageIcon(new ImageIcon("src/iconos/logo chico.png").getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH)).getImage();
     public Principal() {
         initComponents();
@@ -29,8 +34,11 @@ public class Principal extends javax.swing.JFrame{
         this.setIconImage(logo);
         this.setTitle("Java Control Software");
         panelScroll.getVerticalScrollBar().setUnitIncrement(10);
-        AppSystemTray sTray= new AppSystemTray(logo, this);
+        AppSystemTray st = new AppSystemTray(logo, this);
         llenarPanel(clientes.cargarClientes());  //<---------------------------------------------Aqui va el array list que le mandas con los clientes
+        //Timer con el cual verificaremos la coneccion con los clientes
+        t=new Timer();
+        t.schedule(verificarCon, 5000, 5000);
     }
     //Recibe un arraylist de Strings
     public void llenarPanel(ArrayList<Clientes> clientes){
@@ -41,9 +49,11 @@ public class Principal extends javax.swing.JFrame{
     }
     
     //Agrega paneles al Principal
-    public void agregaEquipo(Clientes c){
-        panel.add(new Pc_info(c.getNombre(),c.conexion(),c.getDireccion()));
-    }    
+    public static void agregaEquipo(Clientes c){
+        Pc_info p=new Pc_info(c.getNombre(),c.getDireccion());
+        paneles.add(p);
+        panel.add(p);
+    }
     
     public static Image getLogo() {
         return logo;
@@ -55,7 +65,17 @@ public class Principal extends javax.swing.JFrame{
         this.add(p, BorderLayout.CENTER);
         p.repaint();
     }
-    
+    //Tarea para verificar conexion
+    TimerTask verificarCon=new TimerTask()
+    {
+        @Override
+        public void run() {
+            Component[]paneles=panel.getComponents();
+            for (Component panel : paneles) {
+                ((Pc_info)panel).conexion();
+            }
+        }
+    };
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -68,6 +88,7 @@ public class Principal extends javax.swing.JFrame{
         reiniciar = new javax.swing.JMenuItem();
         Tareas = new javax.swing.JMenuItem();
         configuracion = new javax.swing.JMenuItem();
+        CompartirPagina = new javax.swing.JMenuItem();
         Salir = new javax.swing.JMenuItem();
         panelScroll = new javax.swing.JScrollPane();
         panel = new javax.swing.JPanel();
@@ -131,6 +152,14 @@ public class Principal extends javax.swing.JFrame{
             }
         });
         popUp.add(configuracion);
+
+        CompartirPagina.setText("Compartir Pagina");
+        CompartirPagina.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CompartirPaginaActionPerformed(evt);
+            }
+        });
+        popUp.add(CompartirPagina);
 
         Salir.setText("Salir");
         Salir.addActionListener(new java.awt.event.ActionListener() {
@@ -231,9 +260,7 @@ public class Principal extends javax.swing.JFrame{
     }//GEN-LAST:event_reiniciarActionPerformed
 
     private void desbloquearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_desbloquearActionPerformed
-        if(JOptionPane.showConfirmDialog(null, "¿Seguro que desea desbloquear todos los equipos?", "Desbloqueo",JOptionPane.CANCEL_OPTION)==0){
-            orden.reiniciar(confPrincipal.getGrupo());
-        }
+        new Desbloquear(confPrincipal.getGrupo());
     }//GEN-LAST:event_desbloquearActionPerformed
 
     private void TareasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TareasActionPerformed
@@ -244,6 +271,10 @@ public class Principal extends javax.swing.JFrame{
 
         new VConf().setVisible(true);
     }//GEN-LAST:event_configuracionActionPerformed
+
+    private void CompartirPaginaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CompartirPaginaActionPerformed
+       new CompartirPagina(confPrincipal.getGrupo());
+    }//GEN-LAST:event_CompartirPaginaActionPerformed
     
     
     public static void main(String args[]) {
@@ -282,6 +313,7 @@ public class Principal extends javax.swing.JFrame{
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem Apagar;
     private javax.swing.JMenuItem Bloquear;
+    private javax.swing.JMenuItem CompartirPagina;
     private javax.swing.JMenuItem Enviar;
     private javax.swing.JMenuItem Salir;
     private javax.swing.JMenuItem Tareas;
@@ -289,7 +321,7 @@ public class Principal extends javax.swing.JFrame{
     private javax.swing.JMenuItem desbloquear;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JButton opciones;
-    private javax.swing.JPanel panel;
+    private static javax.swing.JPanel panel;
     private javax.swing.JScrollPane panelScroll;
     private javax.swing.JPopupMenu popUp;
     private javax.swing.JMenuItem reiniciar;

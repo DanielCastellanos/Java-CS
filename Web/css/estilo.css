@@ -1,0 +1,230 @@
+html
+{
+    position: relative; 
+    min-height: 100%;
+}
+
+@font-face
+{
+ font-family: 'OpenSans';
+ src: url('../Fuentes/OpenSans-Regular.ttf') format("truetype");
+}
+
+body
+{
+    margin: 0 0 65px;
+    margin bottom: 50px;
+    padding: 0px;
+    background-image: url(../img/Index_BG.jpg);
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    background-color: #464646;
+    font-family: 'OpenSans',sans-serif;
+    text-align: center;
+}
+#linea
+{
+    display: inline-block;
+    min-width: 350px;
+}
+#titulo
+{
+    color :white;
+    border:0px;
+    width: 100%;
+    text-align: center;
+    display: inline-block;
+    margin-top: -.5%;
+    background-color:rgba(17, 53, 161,.8);
+}
+#text,#pass,#txt_fecha
+{
+    width: 70%;
+    padding: 2px;
+    margin-bottom:10px;
+}
+#boton{
+    
+    width: 35%;
+    min-width: 120px;
+    margin: 5px;
+    border-radius: 0px 10px;
+    box-shadow: 1px 1px 1px rgba(0, 0, 0,.4);
+    
+}
+
+
+#botones
+{
+    text-align: center;
+    height: auto;
+    font-family: 'OpenSans',sans-serif;
+}
+
+#boton:hover{
+    color: white; 
+    background-color: rgba(239, 6, 0,.7);
+}
+
+#boton{
+    transition: background 0.2s linear 0.1s;
+}
+
+#Principal
+{
+    width: 30%;
+    min-width: 150px;
+    height: auto;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 40px;
+    max-width: 325px;
+    box-shadow: 10px 10px 10px rgba(0, 0, 0,.4);
+}
+
+#frase{
+    margin-top: 10%;
+    font-size: 250%;
+    color: white;
+    width: 70%;
+    display: inline-block;
+    text-align: center;
+    max-width: 500px;
+    padding: 20px;
+    background-color: rgba(239, 6, 0,.5);
+    border-radius: 5px
+}
+
+footer
+{
+    
+    color: white;
+    width: 100%;
+    bottom: 0;
+    position: absolute;
+    height: auto;
+    background-color: rgba(17, 53, 161,.8);
+    text-align: center;
+    margin-top: 0px;
+}
+footer p{
+    margin: 5px;
+}
+
+#sex #sexo{
+    display: inline-block;
+    width: 10%;
+}
+
+label{
+    font-size: 90%;
+}
+
+#contenido div{
+    color: white;
+    display: inline-block;
+    width: 30%;
+    vertical-align: top;
+    background-color: rgba(48, 170, 85,.5);
+    margin: 1%;
+    box-shadow: 10px 10px 10px rgba(0, 0, 0,.4);
+}
+#contenido div:hover{
+    background-color: rgba(32,53,141,.8);
+    width: 33%;
+    
+}
+
+#contenido div{
+    transition: background 0.5s linear 0.1s;
+    transition: width 0.5s linear 0.1s;
+}
+
+#contenido p{
+    text-align:justify;
+    padding: 20px;
+    
+}
+
+#cargar_estilos{
+    border-radius: 5px;
+    font-size: 20px;
+    font-family: "OpenSans";
+}
+
+#cargar_estilos:hover{
+    background-color: cornflowerblue;
+    color: white; 
+    background-color: rgb(239, 6, 0);
+    transition: background 0.2s linear 0.1s;
+
+}
+#p_estilos{
+    margin-top: 0px;
+    padding-top: 0px;
+}
+#referencias{
+    margin-bottom: 30px;
+    background-color: rgba(255, 253, 110,.5);
+    padding: 10px;
+    margin-bottom:0px;
+    color:white;
+}
+#referencias p{
+    text-align: left;
+    padding :0% 10% 0% 10%;
+    
+}
+@media screen and (max-width:800px){
+    
+    #contenido div{
+        display:block;
+        width: 90%;
+        margin:auto;
+       
+    }
+    
+    #Principal{
+        width: 80%;
+    }
+    #frase{
+        font-size: 30px;
+        background-color: rgba(239, 6, 0,.5);
+    }
+    
+    #contenido div:hover{
+    background-color: rgba(32,53,141,.8);
+    width: 83%;
+    
+}
+
+    #referencias p{
+        width: 60%;
+        font-size: 12px;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <script src="js/jquery-3.1.1.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+    <script src="js/jquery.gritter.min.js"></script>
+    <script src="js/Estilos.js"></script>
+    <script>
+    $(document).ready(function(){
+        Estilos();
+        plazas();
+    });</script>
+    <link rel="stylesheet" href="css/gritter/jquery.gritter.css">
+    <link rel="stylesheet" href="css/jQuery-ui/jquery-ui.min.css">
+    <link rel="stylesheet" href="css/estilo.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+</head>
+<body>
+    <h1 id="titulo">Registro</h1>
+            <input type="text" id = "text" name ="nombre" placeholder="Nombre">
+            <input type="text" id = "text" name ="codigo" placeholder="Código">
+            <input type="password" id = "pass" name="contraseña" placeholder="Crea una contraseña" required>
+            <input type="password" id = "pass" name="confirmacion" placeholder="Confirma tu nueva contraseña" required>
+            <input type="text" id = "pass" name="correo" placeholder="Correo electrónico">
+            <p>fecha Nacimiento</p><input type="date" name="fecha_nac" id="fecha" placeholder="Fecha de nacimiento">
+            <p>Lugar</p><select id="selector"></select>
+    <div id="botones">
+                <button id="boton" class="volver">Volver</button>
+                <button id="boton" class="Registro">Registrar</button>
+            </div>
+</body>
+</html>

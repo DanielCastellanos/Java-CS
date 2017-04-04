@@ -14,7 +14,6 @@ import java.awt.Robot;
 import java.awt.Toolkit;
 import java.util.Random;
 import java.util.Timer;
-import java.util.TimerTask;
 import javax.swing.BorderFactory;
 
 public class FrameBlocked extends javax.swing.JFrame {
@@ -33,7 +32,9 @@ public class FrameBlocked extends javax.swing.JFrame {
         initComponents();
         revisaConeccion();                                          //Revisa si hay conexión a internet
         carga();
-        
+        pass.setEchoChar('•');
+        pass.setUI(new passHint("Password"));
+        user.setUI(new Hint("Codigo"));
     //Carga el keylistener y llama keepfocus
     }
     ////////////////////////////////////////////
@@ -79,6 +80,10 @@ public class FrameBlocked extends javax.swing.JFrame {
         this.setVisible(true);
         panel.setVisible(false);
         estilos();
+    }
+    public boolean estaBloqueado()
+    {
+        return (panel.isVisible());
     }
     
     //Coloca la imagen de fondo, mantiene el focus en el panel e inicia el keylistener
@@ -132,8 +137,6 @@ public class FrameBlocked extends javax.swing.JFrame {
     private void initComponents() {
 
         panel = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        lblPassword = new javax.swing.JLabel();
         user = new javax.swing.JTextField();
         entrar = new javax.swing.JButton();
         pass = new javax.swing.JPasswordField();
@@ -142,17 +145,9 @@ public class FrameBlocked extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setBackground(new java.awt.Color(0, 0, 0));
 
-        panel.setBackground(new java.awt.Color(51, 102, 255));
+        panel.setBackground(new java.awt.Color(153, 153, 153));
         panel.setToolTipText("");
         panel.setFocusable(false);
-
-        jLabel1.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(240, 240, 240));
-        jLabel1.setText("Código:");
-
-        lblPassword.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        lblPassword.setForeground(new java.awt.Color(240, 240, 240));
-        lblPassword.setText("NIP:");
 
         user.setPreferredSize(new java.awt.Dimension(196, 28));
 
@@ -182,31 +177,23 @@ public class FrameBlocked extends javax.swing.JFrame {
         panelLayout.setHorizontalGroup(
             panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelLayout.createSequentialGroup()
-                .addGap(62, 62, 62)
-                .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(lblPassword, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addGap(18, 18, 18)
+                .addContainerGap(54, Short.MAX_VALUE)
                 .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addGroup(panelLayout.createSequentialGroup()
                         .addComponent(jButton1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(35, 35, 35)
                         .addComponent(entrar, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(pass, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(user, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(pass)
+                    .addComponent(user, javax.swing.GroupLayout.DEFAULT_SIZE, 284, Short.MAX_VALUE))
                 .addGap(50, 50, 50))
         );
         panelLayout.setVerticalGroup(
             panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelLayout.createSequentialGroup()
                 .addGap(45, 45, 45)
-                .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(user, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
+                .addComponent(user, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(pass, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblPassword))
+                .addComponent(pass, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(39, 39, 39)
                 .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(entrar, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -298,12 +285,11 @@ public class FrameBlocked extends javax.swing.JFrame {
     //borra el campo de contraseña
     public void borrarComp() {
         this.pass.setVisible(false);
-        this.lblPassword.setVisible(false);
     }
     
     //modifica apariencia del panel de usuario y contraseña
     public void estilos(){
-        Color c=new Color(50,183,216);
+        Color c=new Color(145,145,145);
         Color a=new Color(235,37,37,150);
         panel.setBackground(c);
         panel.setBorder( BorderFactory.createLineBorder(a, 3, true));
@@ -346,8 +332,6 @@ public class FrameBlocked extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton entrar;
     private javax.swing.JButton jButton1;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel lblPassword;
     private javax.swing.JPanel panel;
     private javax.swing.JPasswordField pass;
     private javax.swing.JTextField user;

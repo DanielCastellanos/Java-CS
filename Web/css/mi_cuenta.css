@@ -1,0 +1,246 @@
+#title{
+    background-color: rgb(32,53,141);
+    font-size: 30px;
+    padding: 5px;
+}
+#campos{
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
+#campos form input{
+    margin-bottom: 4px;
+    width: 80%;
+}
+#Principal
+{
+    width: 32%;
+    min-width: 150px;
+    height: auto;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 40px;
+    max-width: 350px;
+    box-shadow: 10px 10px 10px rgba(0, 0, 0,.4);
+    background-color: white;
+}
+
+#boton{
+    font-size: 18px;
+    padding: 5px;
+    width: 35%;
+    min-width: 120px;
+    margin: 5px;
+    border-radius: 0px 10px;
+    box-shadow: 1px 1px 1px rgba(0, 0, 0,.4);
+    
+}
+
+
+#botones
+{
+    text-align: center;
+    height: auto;
+    font-family: 'OpenSans',sans-serif;
+}
+
+#boton:hover{
+    color: white; 
+    background-color: rgba(239, 6, 0,.8);
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    font-family: 'OpenSans';
+
+}
+@font-face
+{
+ font-family: 'OpenSans';
+ src: url('../Fuentes/OpenSans-Regular.ttf') format("truetype");
+}
+body{
+    background-image: url(../img/v4e3ji7ddhi-sebastian-unrau.jpg);
+    background-color: black;
+    color: white;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-attachment: fixed;
+    background-size: cover;
+    padding-top: 85px;
+    margin-top: -80px;
+    width:100%;
+    height: auto;
+    
+}
+body p{
+    background-color: rgba(0,0,0,.4);
+}
+#menu_bar{
+    display: none;
+}
+header{
+    background-color: rgba(32,53,141,.8);
+    z-index: 20;
+    width: 100%;
+    height: 60px;
+    margin: 0 auto;
+}
+header #lab 
+{
+    background: rgba(239, 6, 0,.5);
+    margin-top: -10000000000000000px;
+    display: inline-block;
+    padding: 18px;
+}
+header #titulo {
+    display: inline-block;
+    padding: 10px;
+    margin-left: 50px;
+    font-size: 30px;
+}
+header nav{
+    width: 30%;
+    display: inline-block;
+    float: right;
+    z-index: 20;
+    margin: 0px auto;
+}
+header nav ul {
+    list-style: none;
+}
+header nav ul li:hover
+{
+    background: rgba(48,170,85,.8);
+}
+header nav ul li{
+    display: inline-block;
+    position: relative;
+}
+header nav ul li a{
+    color:white;
+    display: block;
+    text-decoration: none;
+    padding: 20px;
+    right: 0;    
+}
+
+#wrapper{
+    padding: 20px;
+    
+}
+
+#datos h2{
+display: inline-block;
+    font-size: 25px;
+    transition: font-size 0.5s linear 0.1s;
+}
+
+#datos #codigo{
+    float: right;
+}
+    
+#datos{
+    margin-bottom: 30px;
+    background-color: rgba(0,0,0,.4);
+    padding: 10px;
+    border-radius: 10px;
+}
+
+table {
+    border-collapse: collapse;
+    border: 1px solid white;
+    width: 100%;
+}
+
+
+table, th, td {
+    padding: 15px;
+    text-align: center;
+    border: 1px solid white;
+}
+
+td{
+    border: 1px solid white;
+    
+}
+#contenedor
+{
+    padding: 20px;
+    background-color: rgba(0,0,0,.6);
+}
+tr
+{
+    transition: background 0.5s ease-in-out 0.1s;
+    
+}
+tr:nth-child(even) {
+    background-color: rgba(150,150,150,.5);
+}
+tr:hover {
+    background-color: rgba(255,167,68,.5);
+    transition: background 0.5s ease-in-out 0.1s;
+}
+
+th{
+    height: 40px;
+    background-color:rgba(48,170,85,1);
+    border-right: 1px solid #ddd;
+}
+
+/*//////////////////////////MOBILES//////////////////////////////////////////*/
+@media screen and (max-width:800px){
+    header #titulo p
+    {
+        margin-left: 15px;
+    }
+    header #menu_bar{
+        display: inline-block;
+        float: right;
+        width: 10%;
+        top 0;
+        
+    }
+    header #menu_bar #bt-menu{
+        display: block;
+        padding: 15px;
+        color: white;
+        text-decoration: none;
+        font-size: 25px;
+    }
+    header #menu_bar span{
+        float: right;
+        font-size: 30px;
+    }
+    header nav {
+        width: 50%;
+        height: 100%;
+        position:fixed;
+        left: 100%;
+        margin: 0;
+        top:65px;
+    }
+    header nav ul li
+    {
+        display: block;
+        background-color: rgba(32,53,141,.8);
+        border-bottom: 1px solid rgba(255,255,255,.5);
+    }
+    #Principal{
+        width: 80%;
+    }
+}
+
+@media screen and (max-width:570px){
+    #titulo{
+        visibility: hidden;
+        transition: visibility 0.1s linear 0.1s;
+    }
+    #datos h2{
+        font-size: 18px;
+    }
+    #datos h2{
+        transition: font-size 0.5s linear 0.1s;
+    }
+}

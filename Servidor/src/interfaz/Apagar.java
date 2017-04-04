@@ -5,6 +5,7 @@
  */
 package interfaz;
 
+import servidor.Hint;
 import servidor.Ordenes;
 
 public class Apagar extends javax.swing.JFrame {
@@ -15,6 +16,7 @@ public class Apagar extends javax.swing.JFrame {
     public Apagar(String grupo) {
         initComponents();
         this.setTitle("Apagar");
+        tiempo.setUI(new Hint("Tiempo"));
         tiempo.setEnabled(false);
         medida.setEnabled(false);
         this.setVisible(true);
@@ -26,6 +28,7 @@ public class Apagar extends javax.swing.JFrame {
     public Apagar(String nombre,String ip ) {
         initComponents();
         this.setTitle("Apagar "+nombre);
+        tiempo.setUI(new Hint("Tiempo"));
         tiempo.setEnabled(false);
         medida.setEnabled(false);
         this.setVisible(true);
@@ -61,6 +64,7 @@ public class Apagar extends javax.swing.JFrame {
             }
         });
 
+        check1.setSelected(true);
         check1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 check1ActionPerformed(evt);
@@ -134,7 +138,7 @@ public class Apagar extends javax.swing.JFrame {
                 .addGap(41, 41, 41)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(tiempo, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(tiempo, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(medida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(29, 29, 29))

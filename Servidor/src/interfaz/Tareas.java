@@ -6,34 +6,40 @@
 package interfaz;
 
 import static interfaz.Principal.logo;
-import java.net.Inet4Address;
+import java.awt.Component;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
 public class Tareas extends javax.swing.JFrame {
-
-    
-    public Tareas(ArrayList<String []> datos,InetAddress ip) {
+    public Tareas() {
         initComponents();
         this.setLocationRelativeTo(null);
-        this.setSize(400,315);
+        this.setSize(650,315);
         this.setResizable(false);
         this.setVisible(true);
         this.setIconImage(logo);
         this.setTitle("Procesos");
-        scroll.getVerticalScrollBar().setUnitIncrement(10);
-        agregarProcesos(datos,ip);
+        
+        comboOrden.setSelectedIndex(0);
+    }
+    public void agregar(ArrayList<String []> datos,InetAddress ip,String nombre){
+        tab.addTab(nombre,new Panel(datos,ip));
+    }
+    public boolean revisar(String nombre)
+    {
+        boolean encontrado=false;
+        int cantidad=tab.getTabCount();
+        for (int i = 0; i < cantidad; i++) {
+            if(tab.getTitleAt(i).equalsIgnoreCase(nombre))
+            {
+                encontrado=true;
+            }
+        }
+        return encontrado;
     }
     
-    public void agregarProcesos(ArrayList<String []> datos,InetAddress ip){
-        for (String[] dato : datos) {
-            panel.add(new proceso(dato[3],dato[0],dato[1],dato[2],ip));
-        }
-    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -44,41 +50,82 @@ public class Tareas extends javax.swing.JFrame {
     private void initComponents() {
 
         jButton1 = new javax.swing.JButton();
-        scroll = new javax.swing.JScrollPane();
-        panel = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        comboOrden = new javax.swing.JComboBox<>();
+        tab = new javax.swing.JTabbedPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         jButton1.setText("Aceptar");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
-        panel.setLayout(new java.awt.GridLayout(0, 1));
-        scroll.setViewportView(panel);
+        jLabel1.setText("Ordenar por");
+
+        comboOrden.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Nombre de Programa(.exe)", "PID", "Tamaño en memoria", "Nombre" }));
+        comboOrden.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboOrdenActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(scroll)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(tab)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 322, Short.MAX_VALUE)
+                        .addComponent(jButton1))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 309, Short.MAX_VALUE)
-                        .addComponent(jButton1)))
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(comboOrden, javax.swing.GroupLayout.PREFERRED_SIZE, 207, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(scroll, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(14, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(comboOrden, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(tab, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButton1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void comboOrdenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboOrdenActionPerformed
+        Component co[]=tab.getComponents();
+        for (Component co1 : co) {
+            ((Panel)co1).agregarProcesos(comboOrden.getSelectedIndex());
+        }
+    }//GEN-LAST:event_comboOrdenActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        tab.removeAll();
+    }//GEN-LAST:event_formWindowClosing
 
     /**
      * @param args the command line arguments
@@ -110,18 +157,15 @@ public class Tareas extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                try {
-                    new Tareas(new ArrayList<String[]>(),InetAddress.getLocalHost()).setVisible(true);
-                } catch (UnknownHostException ex) {
-                    Logger.getLogger(Tareas.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                    new Tareas().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> comboOrden;
     private javax.swing.JButton jButton1;
-    private javax.swing.JPanel panel;
-    private javax.swing.JScrollPane scroll;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JTabbedPane tab;
     // End of variables declaration//GEN-END:variables
 }
