@@ -6,8 +6,6 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jnetpcap.*;
@@ -26,36 +24,17 @@ public class MonitorWeb {
     Pcap pcap;                                              //Variable Pcap para capturar los paquetes entrantes
     String ipTarget;                                        //Cadena correspondiente a la ip de la interfaz que se va a escuchar
     StringBuffer webPages;                                  //Para guardar temporalmente las páginas
-    Timer timer= new Timer();                               //Para controlar el tiempo de envío de historial al admin.
-    long sendReportTime;                                    /*Variable para guardar el tiempo en que se va a ejecutar la tarea de 
-                                                            envío del registro de trafico en el buffer en segundos*/
-    long seconds;                                           //Contador de tiempo transcurrido desde el envío anterior en segundos
-    /*Tarea para el timer que realizará el guardado de la información en el String buffer webPages*/
-    TimerTask task= new TimerTask(){                        
-        @Override
-        public void run() {
-            if(!BuscarServidor.connectionStatus()){                                 //Si la conexión con admin está abajo
-                writeInTemporalFile();
-            }
-            else{
-                sendInfo();
-            }
-            seconds= 0;
-        }  
-    };
     
     //Constructor de la clase
-    public MonitorWeb(String ip, long t) {
+    public MonitorWeb(String ip) {
         
         ipTarget= ip;                       //Recibe una cadena como parámetro que representa la ip de la interfaz a monitorear
-        sendReportTime = t;                 //Recibe un long que será el tiempo entre cada guardado de historial
         initMonitor();                      //Realiza configuraciones iniciales
         
     }
     
     private void initMonitor(){
         webPages= new StringBuffer();
-        timer.schedule(task, sendReportTime);
         if(!findDevices()){
             System.err.printf("No se pudo obtener lista de interfaces %s", errorBuffer
             .toString());
@@ -125,7 +104,7 @@ public class MonitorWeb {
     private void pageRecieved(String page){
         if(page!=null){
             if(webPages.indexOf(page) == -1){
-                webPages.append(page).append("\r\n");
+                webPages.append("+").append(page).append("\r\n");
                 System.out.println(page);
             }
         }
@@ -135,8 +114,8 @@ public class MonitorWeb {
     /*Si el programa cliente está corriendo sin conexión con la máquina admin
     El historial web se almacenará en un archivo.
     */
-    private void writeInTemporalFile(){
-        
+    /*private void writeInTemporalFile(){
+    
             try {                       
                                                                                 //Declaramos un RandomAccessFile del archivo temp.wt
                 RandomAccessFile temp= new RandomAccessFile("temp.wt", "rw");           //Y colocamos el puntero en donde vamos a escribir
@@ -153,7 +132,13 @@ public class MonitorWeb {
                 Logger.getLogger(MonitorWeb.class.getName()).log(Level.SEVERE, null, ex);
             }
     }
-    
+    */
+    public StringBuffer getReport(){
+        
+        StringBuffer aux= webPages;
+        webPages.setLength(0);
+        return aux;
+    }
     /*De haber conexión se enviará la información al equipo administrador dek grupo
     para su análisis y persistencia*/
     private void sendInfo(){

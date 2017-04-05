@@ -18,18 +18,21 @@ public class ListaTareas {
     private BufferedReader s;
     private final String[] filtroNombre={"explorer.exe", "conhost.exe",
                             "unsecapp.exe", "csrss.exe", "taskhostex.exe"};
+    
     public ArrayList<Tarea> escribirLista(){
         
         try{
-            lista= new ArrayList<>();
-            p= Runtime.getRuntime().exec(command);
-            s= new BufferedReader(new InputStreamReader(p.getInputStream()));
+            
+            lista= new ArrayList<>();                       //Se inicializa la lista de tareas
+            p= Runtime.getRuntime().exec(command);          //Y se ejecuta el comando tasklist en consola de windows
+            s= new BufferedReader(new InputStreamReader(p.getInputStream()));               //Se captura el resultado en el buffer
             //se= new BufferedReader(new InputStreamReader(p.getErrorStream()));
             
-            String aux= s.readLine();
-            StringTokenizer tokens;
+            String aux= s.readLine();                                   //leemos la primera linea
+            StringTokenizer tokens;                                     //Se declara un objeto StringTokenizer
             
             while(aux!=null){                   //mientras que la variable aux no sea una cadena vacía
+                
                 int pos=0;
                 
                 String[] filas= new String[9];
@@ -38,14 +41,12 @@ public class ListaTareas {
                                                 Esto para omitir las lineas leídas que solo contienen un salto de linea
                                                 y que separan cada objeto*/
                 
-                        tokens=new StringTokenizer(aux,":");        //El objeto tokens parte la cadena aux usando ';' de delimitador
+                        tokens=new StringTokenizer(aux,":");        //El objeto tokens parte la cadena aux usando ':' de delimitador
                         tokens.nextToken();                         //obtiene el nombre del dato, pero no lo almacena
-//                        String line=tokens.nextToken();             //Y pide el siguiente token, que corresponde al valor del atributo
-//                  
                     
-                    filas[pos]= tokens.nextToken().trim();
+                    filas[pos]= tokens.nextToken().trim();          //Obtiene el valor y lo almacena en una posición del arreglo filas
                     
-                    while(tokens.hasMoreElements()){
+                    while(tokens.hasMoreElements()){                //Mientras el token tenga mas elementos
                         filas[pos]+=":"+tokens.nextToken();
                     }
                     pos++;
