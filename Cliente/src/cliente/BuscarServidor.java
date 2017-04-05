@@ -36,7 +36,7 @@ public class BuscarServidor {
     byte infServ[] = "info,".getBytes();
     InetAddress direccion;
     Thread hilo, nuevoArchivo, con;
-    ArchivoConf configuracion = new ArchivoConf();
+    static ArchivoConf configuracion = new ArchivoConf();
     Ordenes orden = new Ordenes();
     Timer t = new Timer();
     private ArrayList<Servidor_Inf> servidores = new ArrayList<>();
