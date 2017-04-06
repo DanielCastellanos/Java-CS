@@ -237,6 +237,14 @@ public class Principal extends javax.swing.JFrame{
     private void opcionesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_opcionesMouseClicked
         if(evt.getButton()==1)
         {
+            for (Pc_info panel : paneles) {
+                if(panel.estaEnviarBloq())
+                {
+                    Enviar.setEnabled(false);
+                    break;
+                }
+                Enviar.setEnabled(true);
+            }
             popUp.show(evt.getComponent(), evt.getX(),evt.getY());
         }
     }//GEN-LAST:event_opcionesMouseClicked

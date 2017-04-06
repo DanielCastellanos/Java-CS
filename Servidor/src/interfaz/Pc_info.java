@@ -71,7 +71,18 @@ public class Pc_info extends javax.swing.JPanel {
         this.nombre = nombre;
         label.setText(nombre);
     }
-
+    public void bloquearEnviar()
+    {
+        Enviar.setEnabled(false);
+    }
+    public void desBloqEnviar()
+    {
+        Enviar.setEnabled(true);
+    }
+    public boolean estaEnviarBloq()
+    {
+        return !Enviar.isEnabled();
+    }
     public String getNombre() {
         return nombre;
     }

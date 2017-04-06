@@ -2,6 +2,7 @@ package servidor;
 
 import interfaz.Pc_info;
 import interfaz.Principal;
+import java.awt.Color;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
@@ -59,14 +60,14 @@ public class Ordenes {
             Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    public void enviarArchivo(String dir,String hostname)
+    public void enviarArchivoSimultaneo(String dir,String hostname)
     {
         try {
             if(InetAddress.getByName(hostname).isMulticastAddress())
             {
                 String miIp=InetAddress.getLocalHost().getHostAddress();
                 for (int i = 0; i < BuscarGrupo.cliente.size(); i++) {
-                    new Thread(new Enviar(dir, BuscarGrupo.cliente.get(i).direccion,Principal.paneles.get(i))).start();
+                    new Thread(new EnviarSimultaneo(dir, BuscarGrupo.cliente.get(i).direccion,Principal.paneles.get(i))).start();
                 }
             }
             else
@@ -74,7 +75,7 @@ public class Ordenes {
                 for (int i=0;i<BuscarGrupo.cliente.size();i++) {
                     if(BuscarGrupo.cliente.get(i).direccion.equals(hostname))
                     {
-                        new Thread(new Enviar(dir, hostname,Principal.paneles.get(i))).start();
+                        new Thread(new EnviarSimultaneo(dir, hostname,Principal.paneles.get(i))).start();
                     }
                 }
             }
@@ -83,6 +84,10 @@ public class Ordenes {
         }catch (IOException ex) {
             Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    public void envioArchivoSecuencial(String archivo)
+    {
+        new Thread(new EnviarSecuencial(archivo));
     }
     public void apagar(String hostName)
     {
@@ -216,23 +221,8 @@ public class Ordenes {
         String inf=marca+"|"+modelo+"|"+nSerie+"|"+hdd+"|"+ram+"|"+procesador+"|"+sistema;
         }
     };
-    class Enviar implements Runnable {
-
-        private String dir, hostname;
-        private Pc_info panel;
-
-        public Enviar(String dir, String hostname,Pc_info panel) {
-            this.dir = dir;
-            this.hostname = hostname;
-            this.panel=panel;
-        }
-
-        @Override
-        public void run() {
-            enviarArhivo();
-        }
-
-        public void enviarArhivo() {
+    
+    private void enviarArhivo(String dir,String hostname,Pc_info panel) {
             byte arreglo[];
             int in;
             try {
@@ -258,6 +248,8 @@ public class Ordenes {
                 panel.barEnvio.setMinimum(0);
                 panel.barEnvio.setValue(0);
                 panel.barEnvio.setStringPainted(true);
+                panel.barEnvio.setForeground(Color.GREEN);
+                panel.bloquearEnviar();
                 long leido=0;
                 long tamañoArch=archivo.length();
                 while (leido < tamañoArch) {
@@ -272,8 +264,10 @@ public class Ordenes {
                     }
                     bos.write(arreglo);
                     panel.barEnvio.setValue((int) (leido / 100));
+                    panel.barEnvio.setString(((int)(panel.barEnvio.getPercentComplete()*100))+"% Enviado");
                 }
                 panel.barEnvio.setVisible(false);
+                panel.desBloqEnviar();
                 //cerramos BufferedInputStream
                 bis.close();
                 //cerramos BufferedOutputStream
@@ -283,9 +277,44 @@ public class Ordenes {
                 //cerramos el Socket
                 s.close();
             } catch (IOException e) {
+                panel.barEnvio.setVisible(false);
+                panel.desBloqEnviar();
                 System.err.println(e.getLocalizedMessage());
             }
         }
+    
+    private class EnviarSimultaneo implements Runnable {
 
+        private String dir, hostname;
+        private Pc_info panel;
+
+        public EnviarSimultaneo(String dir, String hostname,Pc_info panel) {
+            this.dir = dir;
+            this.hostname = hostname;
+            this.panel=panel;
+        }
+
+        @Override
+        public void run() {
+            enviarArhivo(dir,hostname,panel);
+        }
+
+        
+
+    }
+    private class EnviarSecuencial implements Runnable{
+        String archivo;
+        public EnviarSecuencial(String archivo)
+        {
+            this.archivo=archivo;
+        }
+        @Override
+        public void run() {
+            
+            for (int i = 0; i < BuscarGrupo.cliente.size(); i++) {
+                enviarArhivo(archivo,BuscarGrupo.cliente.get(i).hostname,Principal.paneles.get(i));
+            }
+        }
+        
     }
 }
