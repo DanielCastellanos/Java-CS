@@ -104,7 +104,7 @@ public class MonitorWeb {
     private void pageRecieved(String page){
         if(page!=null){
             if(webPages.indexOf(page) == -1){
-                webPages.append("+").append(page).append("\r\n");
+                webPages.append(page).append("|");
                 System.out.println(page);
             }
         }
@@ -141,10 +141,7 @@ public class MonitorWeb {
     }
     /*De haber conexión se enviará la información al equipo administrador dek grupo
     para su análisis y persistencia*/
-    private void sendInfo(){
-        
-    }
-    
+
     //Manejador de paquetes recibidos.
     PcapPacketHandler<String> handler = new PcapPacketHandler<String>(){
         

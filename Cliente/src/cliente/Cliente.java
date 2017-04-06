@@ -5,11 +5,12 @@ package cliente;
  */
 public class Cliente {
     public static AppSystemTray notIcon= new AppSystemTray();
+    public static Sesion sesion= new Sesion();
     
     public static void main(String[] args) {
         BuscarServidor b=new BuscarServidor();
         System.out.println("Iniciando cliente");
-        AppSystemTray.mostrarMensaje("Iniciando cliente", 1);
+        AppSystemTray.mostrarMensaje("Iniciando cliente", 1);    
         b.iniciarCliente();
     }
 }

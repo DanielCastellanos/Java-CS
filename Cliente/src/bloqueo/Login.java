@@ -8,6 +8,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import java.io.IOException;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -41,7 +42,9 @@ public class Login {
 //imprimimos el resultado 
             String res = pageResultado.asText();
             if (res.equals("Untitled Document")) {
-                log = true;
+                log = true; 
+                cliente.Cliente.sesion.setUsr(cod);
+                cliente.Cliente.sesion.setEntrada(new Date());
             }
 //cerramos el navegador emulado, para liberar todo esto de la memoria 
             webClient.close();
