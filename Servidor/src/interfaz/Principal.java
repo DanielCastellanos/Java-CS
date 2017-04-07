@@ -13,6 +13,7 @@ import servidor.ArchivoConf;
 import servidor.BuscarGrupo;
 import servidor.Clientes;
 import servidor.Ordenes;
+import servidor.Tarea;
 
 public class Principal extends javax.swing.JFrame{
     
@@ -94,6 +95,7 @@ public class Principal extends javax.swing.JFrame{
         panel = new javax.swing.JPanel();
         opciones = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
 
         popUp.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
 
@@ -195,6 +197,13 @@ public class Principal extends javax.swing.JFrame{
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Grupo:");
 
+        jButton1.setText("jButton1");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -207,6 +216,8 @@ public class Principal extends javax.swing.JFrame{
                     .addGroup(layout.createSequentialGroup()
                         .addGap(32, 32, 32)
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(opciones, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
@@ -217,7 +228,9 @@ public class Principal extends javax.swing.JFrame{
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(opciones, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jButton1)
+                        .addComponent(jLabel1)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(panelScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 294, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -283,6 +296,24 @@ public class Principal extends javax.swing.JFrame{
     private void CompartirPaginaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CompartirPaginaActionPerformed
        new CompartirPagina(confPrincipal.getGrupo());
     }//GEN-LAST:event_CompartirPaginaActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        ArrayList<servidor.Sesion> lista=BuscarGrupo.listaSesiones;
+        for (servidor.Sesion sesion : lista) {
+            System.out.println("*****************************************");
+            System.out.println(sesion.getUsr()+"\r\n"+
+                    sesion.getEntrada()+"\r\n"+
+                    sesion.getSalida()+"\r\n"+
+                    sesion.getWebHistory()+"\r\n");
+            ArrayList<servidor.Tarea> listaTareas=sesion.getTaskHistory();
+            for (Tarea listaTarea : listaTareas) {
+                System.out.println("_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_");
+                System.out.println(listaTarea.getNombreImagen()+"\r\n"+
+                        listaTarea.getPID()+"\r\n"+
+                        listaTarea.getTituloVentana()+"\r\n");
+            }
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
     
     
     public static void main(String args[]) {
@@ -327,6 +358,7 @@ public class Principal extends javax.swing.JFrame{
     private javax.swing.JMenuItem Tareas;
     private javax.swing.JMenuItem configuracion;
     private javax.swing.JMenuItem desbloquear;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JButton opciones;
     private static javax.swing.JPanel panel;

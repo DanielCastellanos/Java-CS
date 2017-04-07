@@ -310,6 +310,7 @@ public class BuscarServidor {
             DatagramPacket dp = new DatagramPacket(registro, registro.length, ia, 1000);
             puerto.send(dp);
             grupo = servidor.getGrupo();
+            serverHost=servidor.getHostName();
             configuracion.setNombre(nombre);
             configuracion.setGrupo(grupo);
             configuracion.setServerHost(serverHost);

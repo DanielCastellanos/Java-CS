@@ -1,4 +1,4 @@
-package cliente;
+package servidor;
 
 import java.io.Serializable;
 import java.util.ArrayList;

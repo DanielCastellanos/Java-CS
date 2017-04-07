@@ -4,11 +4,14 @@ import interfaz.AppSystemTray;
 import interfaz.BDConfig;
 import interfaz.Principal;
 import interfaz.Tareas;
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.RandomAccessFile;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
-import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -30,12 +33,14 @@ public class BuscarGrupo extends Principal {
     String nombre;              //nombre del servidor
     MulticastSocket puerto;     //puerto multicast
     Thread escucha,         //Hilo para mensajes multicast
-            con;            //Hilo para que los clientes verifiquen la conexion con el servidor
+            con,            //Hilo para que los clientes verifiquen la conexion con el servidor
+            sesiones;       //Hilo para resivir los archivos de sesiones de los clientes
     static boolean libre=false;         //Variable para verificar si el grupo Multicast esta ocupado
     InetAddress ia;         //InetAddress para los grupos multicast
     Timer t=new Timer();    //Timer para preguntar en los grupos multicast
     static ArchivoConf conf = new ArchivoConf();        //Variable de la configuracion del servidor
     static ArrayList<Clientes> cliente=new ArrayList<>();   //Lista de clientes
+    public static ArrayList<Sesion> listaSesiones=new ArrayList<>(); //lista de pruebas para las sesiones
     DatagramPacket pregunta;    //Datagrama para enviar los mensajes multicast
     static Tareas tareas=null;  //Objeto de tipo Tarea para los procesos de los clientes
     int ip=1;       //contador para preguntar a los grupos multicast
@@ -200,6 +205,74 @@ public class BuscarGrupo extends Principal {
                 }
             }
         };
-    
+    Runnable HiloSesiones = new Runnable()
+    {
+        @Override
+        public void run() {
+            ExecutorService excecutor=Executors.newCachedThreadPool();
+            try
+            {
+                ServerSocket ss=new ServerSocket(4600);
+                while(true)
+                {
+                    Socket s=ss.accept();
+                    
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(BuscarGrupo.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    };
+} 
+class guardarSesion implements Runnable
+{
+    private Socket socket;
+    public guardarSesion(Socket s)
+    {
+        this.socket=s;
+    }
+    @Override
+    public void run() {
+        DataInputStream dis=null;
+        byte buffer[];
+        try {
+            dis = new DataInputStream(socket.getInputStream());
+            //resivimos el nombre del archivo
+            String nombre=dis.readUTF();
+            //obtenemos el tamaño del archivo
+            long tamaño=dis.readLong();
+            //preparamos el array para recivir el objeto
+            buffer=new byte[(int)tamaño];
+            //leemos el objeto entrante
+            dis.read(buffer);
+            //preparamos la entrada de datos del array
+            ByteArrayInputStream bs=new ByteArrayInputStream(buffer);
+            //preparamos la entrada para obtener el objeto "Sesion"
+            ObjectInputStream ois=new ObjectInputStream(bs);
+            //obtenemos el objeto "Sesion"
+            Sesion s=(Sesion)ois.readObject();
+            //lo añadimo a la lista se sesiones
+            BuscarGrupo.listaSesiones.add(s);
+            //preparamos el archivo para escribir el objeto
+            RandomAccessFile archivo=new RandomAccessFile(nombre,"rw");
+            //cerramos toda entrada y salida de datos 
+            archivo.write(buffer);
+            archivo.close();
+            ois.close();
+            bs.close();
+            dis.close();
+            socket.close();
+                    } catch (IOException ex) {
+            Logger.getLogger(guardarSesion.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(guardarSesion.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                dis.close();
+            } catch (IOException ex) {
+                Logger.getLogger(guardarSesion.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
     
 }

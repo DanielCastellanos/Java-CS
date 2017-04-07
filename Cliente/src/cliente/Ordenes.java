@@ -1,8 +1,14 @@
 package cliente;
 
 import bloqueo.FrameBlocked;
+import static cliente.Cliente.sesion;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
 import java.net.Inet4Address;
 import java.net.ServerSocket;
@@ -129,6 +135,52 @@ public class Ordenes {
     public void login() {
         if (!(pantallaInicio.isVisible())) {
             pantallaInicio.login();
+        }
+    }
+    public void guardarSesion(Sesion sesion,String nombreCliente) throws IOException
+    {
+        try {
+            RandomAccessFile raf=new RandomAccessFile(nombreCliente+"-"+sesion.getUsr(), "rw");
+            byte buffer[];
+            ByteArrayOutputStream bs=new ByteArrayOutputStream();
+            ObjectOutputStream os=new ObjectOutputStream(bs);
+            os.writeObject(sesion);
+            buffer=bs.toByteArray();
+            raf.write(buffer);
+            raf.close();
+            bs.close();
+            os.close();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
+    public void enviarSesion(String direccion,File archivo)
+    {
+        try {
+            //iniciamos el socket
+            Socket socket=new Socket(direccion,4600);
+            //preparamos el arreglo que almacenara el archivo
+            byte buffer[];
+            //preparamos el paquete para el envio
+            DataOutputStream dos=new DataOutputStream(socket.getOutputStream());
+            //enviamos el nombre del archivo
+            dos.writeUTF(archivo.getName());
+            //enviamos la longitud del archivo
+            dos.writeLong(archivo.length());
+            //preparamos el archivo para la lectura
+            RandomAccessFile raf=new RandomAccessFile(archivo, "r");
+            //inicializamos el buffer
+            buffer=new byte[(int)archivo.length()];
+            //leemos el archivo
+            raf.readFully(buffer);
+            //enviamos el archivo
+            dos.write(buffer);
+            //cerramos la salida de datos
+            socket.close();
+            dos.close();
+        } catch (IOException e) {
+            System.out.println("Error al enviar la sesion");
         }
     }
     public Runnable getInfoPc = new Runnable() {
