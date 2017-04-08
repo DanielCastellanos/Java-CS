@@ -12,6 +12,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Robot;
 import java.awt.Toolkit;
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Timer;
 import javax.swing.BorderFactory;
@@ -89,9 +91,8 @@ public class FrameBlocked extends javax.swing.JFrame {
     //Coloca la imagen de fondo, mantiene el focus en el panel e inicia el keylistener
     private void carga()
     {
-        
-        Random r=new Random();
-        colocarImagen((r.nextInt(2)+1) + ".jpg");
+        revisaAvisos();
+        colocarImagen(revisaAvisos());
         this.setExtendedState(MAXIMIZED_BOTH);    //maximizado
         this.setAlwaysOnTop(true);                //siempre al frente       
         new KeepFocus(this).block();              //Envia este frame y lo pone al frente cada 50 milisegundos para evitar perder el focus
@@ -106,6 +107,27 @@ public class FrameBlocked extends javax.swing.JFrame {
         user.addKeyListener(listen);
         entrar.addKeyListener(listen);
         this.addKeyListener(listen);
+    }
+
+    public String revisaAvisos() {
+        String sDirectorio = "src/images";
+        File f = new File(sDirectorio);
+        if (f.exists()) {
+            File[] ficheros = f.listFiles();
+            ArrayList<String> correctos=new ArrayList();
+            for (int x = 0; x < ficheros.length; x++) {
+                String ext=ficheros[x].getName().substring(ficheros[x].getName().length()-3, ficheros[x].getName().length());
+                if (ext.equals("jpg")) {
+                    correctos.add(ficheros[x].getName());
+                }
+            }
+            
+            Random r = new Random();
+            return correctos.get(r.nextInt(correctos.size()));
+        } else {
+            System.err.println("Directorio de avisos inexistente");
+            return "1.jpg";
+        }
     }
     
     //Este metodo detiene los atajos de teclado ALT, HOME y CTRL
