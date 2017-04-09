@@ -1,5 +1,6 @@
 package bloqueo;
 
+import cliente.SesionCliente;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
@@ -8,7 +9,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import java.io.IOException;
-import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -43,8 +43,7 @@ public class Login {
             String res = pageResultado.asText();
             if (res.equals("Untitled Document")) {
                 log = true; 
-                cliente.Cliente.sesion.setUsr(cod);
-                cliente.Cliente.sesion.setEntrada(new Date());
+                cliente.Cliente.sesion= new SesionCliente(cod);
             }
 //cerramos el navegador emulado, para liberar todo esto de la memoria 
             webClient.close();

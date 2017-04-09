@@ -27,18 +27,16 @@ public class MonitorWeb {
     
     //Constructor de la clase
     public MonitorWeb(String ip) {
-        
         ipTarget= ip;                       //Recibe una cadena como parámetro que representa la ip de la interfaz a monitorear
-        initMonitor();                      //Realiza configuraciones iniciales
         
     }
     
-    private void initMonitor(){
+    public void initMonitor(){
         webPages= new StringBuffer();
         if(!findDevices()){
             System.err.printf("No se pudo obtener lista de interfaces %s", errorBuffer
             .toString());
-            AppSystemTray.mostrarMensaje("Error al obtener interfaces de red", 4);
+            AppSystemTray.mostrarMensaje("Error al obtener interfaces de red", AppSystemTray.ERROR_MESSAGE);
         }else{
             int indexDev= pickDevice(ipTarget);
             if(indexDev == -1){
@@ -110,29 +108,6 @@ public class MonitorWeb {
         }
     }
     
-    
-    /*Si el programa cliente está corriendo sin conexión con la máquina admin
-    El historial web se almacenará en un archivo.
-    */
-    /*private void writeInTemporalFile(){
-    
-            try {                       
-                                                                                //Declaramos un RandomAccessFile del archivo temp.wt
-                RandomAccessFile temp= new RandomAccessFile("temp.wt", "rw");           //Y colocamos el puntero en donde vamos a escribir
-                if(temp.length()!=0){
-                    temp.seek(temp.length()-1);
-                }
-                                                                                //Vaciamos el contenido de webPages en el archivo temporal
-                temp.writeBytes(webPages.toString());                           //Y borramos su contenido.
-                webPages.setLength(0);
-                
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(MonitorWeb.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(MonitorWeb.class.getName()).log(Level.SEVERE, null, ex);
-            }
-    }
-    */
     public StringBuffer getReport(){
         
         StringBuffer aux= webPages;
@@ -142,6 +117,9 @@ public class MonitorWeb {
     /*De haber conexión se enviará la información al equipo administrador dek grupo
     para su análisis y persistencia*/
 
+    public void stop(){
+        pcap.breakloop();
+    }
     //Manejador de paquetes recibidos.
     PcapPacketHandler<String> handler = new PcapPacketHandler<String>(){
         
