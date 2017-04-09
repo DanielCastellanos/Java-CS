@@ -15,12 +15,6 @@ import javax.swing.table.DefaultTableModel;
 import servidor.Hint;
 import servidor.Ordenes;
 
-
-
-/**
- *
- * @author PC11
- */
 public class EnviarArchivo extends javax.swing.JFrame{
     
     

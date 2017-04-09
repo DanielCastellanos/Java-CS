@@ -38,7 +38,7 @@
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="tiempo" min="-2" pref="59" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Component id="combo" min="-2" max="-2" attributes="0"/>
+                              <Component id="medida" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Component id="aviso2" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="login" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -62,7 +62,7 @@
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="tiempo" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="combo" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="medida" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="32767" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
@@ -106,7 +106,7 @@
     </Component>
     <Component class="javax.swing.JTextField" name="tiempo">
     </Component>
-    <Component class="javax.swing.JComboBox" name="combo">
+    <Component class="javax.swing.JComboBox" name="medida">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
           <StringArray count="2">

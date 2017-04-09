@@ -9,30 +9,37 @@ import servidor.Ordenes;
 
 
 public class Reiniciar extends javax.swing.JFrame {
-    boolean individual=false;
     String nombre,ip;
     Ordenes orden=new Ordenes();
     public Reiniciar(String grupo) {
         initComponents();
-        this.setLocationRelativeTo(null);
-        this.setTitle("Reiniciar");
-        this.setIconImage(Principal.getLogo());
-        this.setResizable(false);
-        this.setVisible(true);
+        conf();
+        //guardamos la direccion del cliente/grupo
         this.ip=grupo;
     }
     
     public Reiniciar(String nombre, String ip) {
         initComponents();
-        this.setLocationRelativeTo(null);
-        this.setTitle("Reiniciar");
-        this.setIconImage(Principal.getLogo());
-        this.setResizable(false);
-        this.setVisible(true);
+        conf();
+        //personalimamos la etiqueta con el nombre del usuario
         aviso.setText("El equipo '"+nombre+"' será reiniciado");
+        //guardamos el nombre del usuario
         this.nombre=nombre;
+        //guardamos la direccion del cliente
         this.ip=ip;
-        individual=true;
+    }
+    private void conf()
+    {
+        //poenmos el titulo de la ventana
+        this.setTitle("Reiniciar");
+        //centramos la ventana
+       this.setLocationRelativeTo(null);
+       //ponemos el icono a la ventana
+       this.setIconImage(Principal.getLogo());
+       //Prohibimos la redimencion de la ventana
+        this.setResizable(false);
+        //hacemos visible la ventana
+        this.setVisible(true);
     }
     
     @SuppressWarnings("unchecked")
@@ -96,14 +103,7 @@ public class Reiniciar extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        if (individual) {
-            //enviar reinicio individual;
             orden.reiniciar(ip);
-        }else{
-            //enviar reinicio en multicast
-            orden.reiniciar(ip);
-        }   
-        this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
     /**
      * @param args the command line arguments

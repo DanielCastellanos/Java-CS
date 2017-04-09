@@ -11,35 +11,63 @@ import servidor.Ordenes;
 public class Apagar extends javax.swing.JFrame {
 
     private Ordenes orden=new Ordenes();
-    private String hostname; 
-    private boolean individual=false;
+    private String hostname;    //direccion o hostname del usuario/grupo
+    
     public Apagar(String grupo) {
         initComponents();
+        //poenmos el titulo a la ventana
         this.setTitle("Apagar");
-        tiempo.setUI(new Hint("Tiempo"));
-        tiempo.setEnabled(false);
-        medida.setEnabled(false);
-        this.setVisible(true);
-        this.setLocationRelativeTo(null);
-        this.setIconImage(Principal.getLogo());
+        iniciarVentana();
         this.hostname=grupo;
     }
     
     public Apagar(String nombre,String ip ) {
         initComponents();
+        //Colocamos el titulo de la ventana
         this.setTitle("Apagar "+nombre);
-        tiempo.setUI(new Hint("Tiempo"));
-        tiempo.setEnabled(false);
-        medida.setEnabled(false);
-        this.setVisible(true);
-        this.setLocationRelativeTo(null);
-        this.setIconImage(Principal.getLogo());
+        iniciarVentana();
+        //modificamos texto apra envio individual
         this.aviso1.setText("El equipo '"+nombre+"' se apagará inmediatamente");
         this.aviso2.setText("Ingrese el tiempo que tardará '"+nombre+"' para apagarse");
-        individual=true;
+        //capturamos la ip recibida
         hostname=ip;
     }
+    private void iniciarVentana()
+    {
+        //Colocamos pista al Campo de texto "Tiempo"
+        tiempo.setUI(new Hint("Tiempo"));
+        //desHabilitamos el campo de texto "tiempo"
+        tiempo.setEnabled(false);
+        //deshabilitamos el comboBox "medida"
+        medida.setEnabled(false);
+        //hacemos visible la ventana
+        this.setVisible(true);
+        //centramos la ventana
+        this.setLocationRelativeTo(null);
+        //colocamos el icono de la aplicacion ala ventana
+        this.setIconImage(Principal.getLogo());
+    }
     
+    //metodo para calcular las horas o minutos
+    private String calcularTiempo()
+    {
+        //obtenemos el texto del campo "Texto"
+        int cantidad=Integer.getInteger(this.tiempo.getText());
+        //Verificamos la opción seleccionada
+        if(medida.getSelectedIndex() == 0)
+        {
+            //si fueron minutos tomamos la cantidad y la multiplicamos por
+            //60000 que es un minuto en milisegundos
+            cantidad=cantidad*60000;
+        }
+        else
+        {
+            //si la seleccion fue de Horas multiplicaremos la cantidad por
+            //3600000 que es una hora en milisegundos
+            cantidad=cantidad*3600000;
+        }
+        return cantidad+"";
+    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -55,7 +83,7 @@ public class Apagar extends javax.swing.JFrame {
         medida = new javax.swing.JComboBox();
         tiempo = new javax.swing.JTextField();
         aviso2 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        btnCancelar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -90,14 +118,14 @@ public class Apagar extends javax.swing.JFrame {
 
         aviso1.setText("Todas las computadoras dentro del grupo se apagarán");
 
-        medida.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Horas", "Minutos" }));
+        medida.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Minutos", "Horas" }));
 
         aviso2.setText("Apagar todas las computadoras dentro de...");
 
-        jButton1.setText("Cancelar");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnCancelar.setText("Cancelar");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnCancelarActionPerformed(evt);
             }
         });
 
@@ -129,7 +157,7 @@ public class Apagar extends javax.swing.JFrame {
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(jButton1)
+                                .addComponent(btnCancelar)
                                 .addGap(18, 18, 18)
                                 .addComponent(aceptar))
                             .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -171,7 +199,7 @@ public class Apagar extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(aceptar)
-                    .addComponent(jButton1))
+                    .addComponent(btnCancelar))
                 .addGap(6, 6, 6))
         );
 
@@ -191,22 +219,14 @@ public class Apagar extends javax.swing.JFrame {
     }//GEN-LAST:event_check2ActionPerformed
 
     private void aceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aceptarActionPerformed
-        if (individual) {//Si la instrucción va a una sola PC
+        
             if (check1.isSelected()) {
                 //Envia instrucción de apagado
                 orden.apagar(hostname);
             } else if (check2.isSelected()) {
                 //Envia instrucción de apagado programado
-                orden.autoApagado(hostname,tiempo.getText());
+                orden.autoApagado(hostname,calcularTiempo());
             }
-        } else //Si la instrucción es grupal
-            if (check1.isSelected()) {
-                orden.apagar(hostname);
-            //Envia instrucción de apagado
-        } else if (check2.isSelected()) {
-            orden.autoApagado(hostname,tiempo.getText());
-            //Envia instrucción de apagado programado
-        }
         this.dispose();
     }//GEN-LAST:event_aceptarActionPerformed
 
@@ -215,11 +235,11 @@ public class Apagar extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_formWindowClosed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
 
        this.dispose();
-    }//GEN-LAST:event_jButton1ActionPerformed
-
+    }//GEN-LAST:event_btnCancelarActionPerformed
+    
     /**
      * @param args the command line arguments
      */
@@ -259,9 +279,9 @@ public class Apagar extends javax.swing.JFrame {
     private javax.swing.JButton aceptar;
     private javax.swing.JLabel aviso1;
     private javax.swing.JLabel aviso2;
+    private javax.swing.JButton btnCancelar;
     private javax.swing.JCheckBox check1;
     private javax.swing.JCheckBox check2;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JSeparator jSeparator1;
