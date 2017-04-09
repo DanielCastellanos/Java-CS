@@ -97,8 +97,7 @@ public class AppSystemTray {
         ActionListener cerrarSesión= new ActionListener(){
         @Override
         public void actionPerformed(ActionEvent ae) {
-            Cliente.sesion.cerrarSesion();
-            BuscarServidor.orden.login();
+            
         }
             
         };

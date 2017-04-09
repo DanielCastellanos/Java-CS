@@ -37,7 +37,7 @@ public class BuscarServidor {
     InetAddress direccion;
     Thread hilo, nuevoArchivo, con;
     static ArchivoConf configuracion = new ArchivoConf();
-    static Ordenes orden = new Ordenes();
+    Ordenes orden = new Ordenes();
     Timer t = new Timer();
     private ArrayList<Servidor_Inf> servidores = new ArrayList<>();
     GroupsProgressBar gi;

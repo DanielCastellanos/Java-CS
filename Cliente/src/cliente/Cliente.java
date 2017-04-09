@@ -4,16 +4,13 @@ package cliente;
  * @author Ricardo
  */
 public class Cliente {
-    
-    public static AppSystemTray notIcon= new AppSystemTray();               //Icono de bandeja del sistema
-    public static SesionCliente sesion;                                     //Manejo de datos de sesión
-    public static Monitor monitor;                                          //Monitoreo de tareas y páginas visitadas
+    public static AppSystemTray notIcon= new AppSystemTray();
+    public static Sesion sesion= new Sesion();
     
     public static void main(String[] args) {
-        
         BuscarServidor b=new BuscarServidor();
-        AppSystemTray.mostrarMensaje("Iniciando cliente", AppSystemTray.INFORMATION_MESSAGE);    
+        System.out.println("Iniciando cliente");
+        AppSystemTray.mostrarMensaje("Iniciando cliente", 1);    
         b.iniciarCliente();
-        
     }
 }
