@@ -21,15 +21,17 @@ public class Desbloquear extends javax.swing.JFrame {
      * Creates new form Desbloquear
      */
     private final Ordenes orden = new Ordenes();
-    private String hostname;
-    private InetAddress direccion;
+    private String hostname;        //guarda el nombre del usuario
+    private InetAddress direccion;      //guarda la direccion del usuario
 
     public Desbloquear(String hostname) {//contructor para grupal
         try {
             initComponents();
+            //guardamos el hostname/direccion del clietne
             this.hostname = hostname;
+            //obtenemos la direccion del usuario
             direccion = InetAddress.getByName(this.hostname);
-            this.setTitle("Desbloqueo");
+            //Ponemos el aviso de para quién es la orden
             lbAviso.setText("Desbloqueo de todos los equipos");
             conf();
         } catch (UnknownHostException ex) {
@@ -40,9 +42,11 @@ public class Desbloquear extends javax.swing.JFrame {
     public Desbloquear(String nombre, String hostname) {//contructor individual
         try {
             initComponents();
+            //guardamos el hostname/direccion del clietne
             this.hostname = hostname;
+            //obtenemos la direccion del usuario
             direccion = InetAddress.getByName(this.hostname);
-            this.setTitle("Desbloqueo");   
+            //Ponemos el aviso de para quién es la orden
             lbAviso.setText("Desbloqueo de " + nombre);
             conf();
         } catch (UnknownHostException ex) {
@@ -51,9 +55,14 @@ public class Desbloquear extends javax.swing.JFrame {
     }
 
     private void conf() {
+        //hacemos visible la ventana
         this.setVisible(true);
+        //prohibimos la redimención de la ventana
         this.setResizable(false);
+        //centramos la ventna
         this.setLocationRelativeTo(null);
+        //ponemos el titulo a la ventana
+        this.setTitle("Desbloqueo");   
     }
 
     /**
@@ -138,7 +147,7 @@ public class Desbloquear extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAceptarActionPerformed
-        // TODO add your handling code here:
+        //verificamos que tipo de desbloqueo se selecciono y mandamos la orden correspondiente
         if (rbLoggin.isSelected()) {
             orden.desbloqueo(this.hostname);
         } else {

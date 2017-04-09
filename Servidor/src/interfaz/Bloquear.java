@@ -15,40 +15,68 @@ import servidor.Ordenes;
  */
 public class Bloquear extends javax.swing.JFrame {
 
-    boolean individual=false;
-    String nombre;
-    String ip;
+    String nombre; //nombre del usuario
+    String ip;     //direccion del usuario
     Ordenes ordenes=new Ordenes();
+    
     public Bloquear(String grupo) {
         initComponents();
-        this.setLocationRelativeTo(null);
+        //ponemos el titulo a la ventana
         this.setTitle("Bloquear");
-        this.setIconImage(Principal.getLogo());
-        this.setResizable(false);
-        this.setVisible(true);
-        login.setSelected(true);
-        tiempo.setUI(new Hint("Tiempo"));
-        tiempo.setEnabled(false);
-        combo.setEnabled(false);
+        iniciarVentana();
+        //guardamos la direccion recibida
         this.ip=grupo;
     }
 
     public Bloquear(String nombre, String ip) {
         initComponents();
-        this.setLocationRelativeTo(null);
+        //ponemos el titulo a la ventana
         this.setTitle("Bloquear");
-        this.setIconImage(Principal.getLogo());
-        this.setResizable(false);
-        this.setVisible(true);
-        login.setSelected(true);
-        tiempo.setUI(new Hint("Tiempo"));
-        tiempo.setEnabled(false);
-        combo.setEnabled(false);
-        individual=true;
+        iniciarVentana();
+        //capturamos la información recibida
         this.nombre=nombre;
         this.ip=ip;
+        //personalizamos las etiquetas con el nombre del usuario
         this.aviso1.setText("El equipo '"+nombre+"' será bloqueado");
         this.aviso2.setText("Ingrese el tiempo que durará bloqueado '"+nombre+"'");
+    }
+    private void iniciarVentana()
+    {
+        //centramos la ventana
+        this.setLocationRelativeTo(null);
+        //colocamos el icono
+        this.setIconImage(Principal.getLogo());
+        //dejamos que la ventana no se pueda redimensionar
+        this.setResizable(false);
+        //hacemos la ventana visible
+        this.setVisible(true);
+        //seleccionamos la opción login ppor defecto
+        login.setSelected(true);
+        //agregamos pista/Hint al campo de texto de tiempo
+        tiempo.setUI(new Hint("Tiempo"));
+        //deshabilitamos los campos de bloqueo
+        tiempo.setEnabled(false);
+        medida.setEnabled(false);
+    }
+    //metodo para calcular las horas o minutos
+    private String calcularTiempo()
+    {
+        //obtenemos el texto del campo "Texto"
+        int cantidad=Integer.getInteger(this.tiempo.getText());
+        //Verificamos la opción seleccionada
+        if(medida.getSelectedIndex() == 0)
+        {
+            //si fueron minutos tomamos la cantidad y la multiplicamos por
+            //60000 que es un minuto en milisegundos
+            cantidad=cantidad*60000;
+        }
+        else
+        {
+            //si la seleccion fue de Horas multiplicaremos la cantidad por
+            //3600000 que es una hora en milisegundos
+            cantidad=cantidad*3600000;
+        }
+        return cantidad+"";
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -64,7 +92,7 @@ public class Bloquear extends javax.swing.JFrame {
         cancelar = new javax.swing.JButton();
         login = new javax.swing.JCheckBox();
         tiempo = new javax.swing.JTextField();
-        combo = new javax.swing.JComboBox();
+        medida = new javax.swing.JComboBox();
         aviso2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -92,7 +120,7 @@ public class Bloquear extends javax.swing.JFrame {
             }
         });
 
-        combo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Minutos", "Horas" }));
+        medida.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Minutos", "Horas" }));
 
         aviso2.setText("Tiempo de bloqueo sin login habilitado");
 
@@ -114,7 +142,7 @@ public class Bloquear extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(tiempo, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(combo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(medida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(aviso2)
                             .addComponent(login))
                         .addGap(0, 0, Short.MAX_VALUE)))
@@ -132,7 +160,7 @@ public class Bloquear extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tiempo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(combo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(medida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(aceptar)
@@ -150,10 +178,10 @@ public class Bloquear extends javax.swing.JFrame {
     private void loginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginActionPerformed
         if (!login.isSelected()) {
             tiempo.setEnabled(true);
-            combo.setEnabled(true);
+            medida.setEnabled(true);
         }else{
             tiempo.setEnabled(false);
-            combo.setEnabled(false);
+            medida.setEnabled(false);
         }
     }//GEN-LAST:event_loginActionPerformed
 
@@ -161,20 +189,14 @@ public class Bloquear extends javax.swing.JFrame {
         //Bloqueo sin contraseña
         if (!login.isSelected()) {
             try {
-                if ((Integer.parseInt(tiempo.getText()) > 12 && combo.getSelectedIndex() == 1) || (Integer.parseInt(tiempo.getText()) > 720 && combo.getSelectedIndex() == 0)) {
+                //verificamos que el tiempo de bloqueo no sobrepase las 12 horas
+                if ((Integer.parseInt(tiempo.getText()) > 12 && medida.getSelectedIndex() == 1) || (Integer.parseInt(tiempo.getText()) > 720 && medida.getSelectedIndex() == 0)) {
                     JOptionPane.showMessageDialog(null, "No puede establecer un bloqueo por más de 12 horas", "Error", JOptionPane.ERROR_MESSAGE);
                 } else {
-                    if (individual) {
-                        //Instrucción a una sola PC
-                        //this.nombre; esta variable contiene el hostname de la PC que se tiene que apagar
-                        //this.ip;      esta variable contiene la ip de la PC que se tiene que apagar
-                        System.out.println("entro a bloquo");
+                    //mandamos orden de bloqueo y el tiempo que durara bloqueada
                         ordenes.bloqueo(this.ip,tiempo.getText());
-                    } else {
-                        //Envio de orden a todo el grupo (Multicast)
-                        ordenes.bloqueo(this.ip, tiempo.getText());
-                    }
-                    this.dispose();
+                        //cerramos la ventana
+                        this.dispose();
                 }
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "El valor '" + tiempo.getText() + "' no es un valor numérico", "Error", JOptionPane.ERROR_MESSAGE);
@@ -182,16 +204,9 @@ public class Bloquear extends javax.swing.JFrame {
         }
         //bloqueo con contraseña
         else {
-            if(individual)
-            {
-                
+            //mandamos orden de login
             ordenes.login(this.ip);
-            System.out.println("Envia Login");
-            }
-            else
-            {
-                ordenes.login(this.ip);
-            }
+            //cerramos la ventana
             this.dispose();
         }
     }//GEN-LAST:event_aceptarActionPerformed
@@ -237,8 +252,8 @@ public class Bloquear extends javax.swing.JFrame {
     private javax.swing.JLabel aviso1;
     private javax.swing.JLabel aviso2;
     private javax.swing.JButton cancelar;
-    private javax.swing.JComboBox combo;
     private javax.swing.JCheckBox login;
+    private javax.swing.JComboBox medida;
     private javax.swing.JTextField tiempo;
     // End of variables declaration//GEN-END:variables
 }

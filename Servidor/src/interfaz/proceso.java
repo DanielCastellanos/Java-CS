@@ -1,22 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package interfaz;
 
 import java.net.InetAddress;
 import servidor.Ordenes;
 
-/**
- *
- * @author Redes
- */
 public class proceso extends javax.swing.JPanel {
 
-    /**
-     * Creates new form proceso
-     */
     InetAddress ip;
     Ordenes orden=new Ordenes();
     public proceso(String nombre,String nombreImagen,String pid,String memoria,InetAddress ip) {
@@ -112,7 +101,6 @@ public class proceso extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseClicked
-        // TODO add your handling code here:
         if(evt.getButton()==3)
         {
             popUpOpciones.show(evt.getComponent(), evt.getX(), evt.getY());
@@ -120,8 +108,7 @@ public class proceso extends javax.swing.JPanel {
     }//GEN-LAST:event_formMouseClicked
 
     private void MatarProcesoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MatarProcesoActionPerformed
-        orden.matar(ip,pid.getText());
-        //NO hayo como vergas quitarlo del panel XD
+        orden.matar(ip.getHostName(),pid.getText());
     }//GEN-LAST:event_MatarProcesoActionPerformed
 
 

@@ -25,173 +25,85 @@ import oshi.hardware.HardwareAbstractionLayer;
 import oshi.software.os.OperatingSystem;
 
 public class Ordenes {
-    MulticastSocket puerto;
-    DatagramPacket orden;
+    MulticastSocket puerto;  //declaramos el puerto multicast
+    DatagramPacket orden;    //datagraam para enviar los mensajes
     
+    //constructor
     public Ordenes(){
         try {
+            //inicializamos el constructor
             puerto=new MulticastSocket();
         } catch (IOException ex) {
             Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    public void matar(InetAddress hostName,String pid)
+    
+    //metodo para enviar orden de cierre de una tarea
+    public void matar(String hostname,String pid)
     {
-        try {
+            //estructuramos el mensaje con (la orden,id de proceso) y lo convertimos a arreglo de bits 
             byte mensaje[]=("cerrar,"+pid).getBytes();
-            orden=new DatagramPacket(mensaje,mensaje.length,hostName, 1001);
-            puerto.send(orden);
-        } catch (UnknownHostException ex) {
-            Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            enviarOrden(hostname,mensaje);
     }
-    public void pedirProcesos(String hostName)
-    {
-        try {
-            InetAddress direccion=InetAddress.getByName(hostName);
+    
+    //metodo para pedir tareas al cliente
+    public void pedirProcesos(String hostname)
+    {       //preparamos el mensaje
             byte mensaje[]=("procesos,").getBytes();
-            orden=new DatagramPacket(mensaje,mensaje.length,direccion, 1001);
-            puerto.send(orden);
-        } catch (UnknownHostException ex) {
-            Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            enviarOrden(hostname,mensaje);
     }
-    public void enviarArchivoSimultaneo(String dir,String hostname)
-    {
-        try {
-            if(InetAddress.getByName(hostname).isMulticastAddress())
-            {
-                String miIp=InetAddress.getLocalHost().getHostAddress();
-                for (int i = 0; i < BuscarGrupo.cliente.size(); i++) {
-                    new Thread(new EnviarSimultaneo(dir, BuscarGrupo.cliente.get(i).direccion,Principal.paneles.get(i))).start();
-                }
-            }
-            else
-            {
-                for (int i=0;i<BuscarGrupo.cliente.size();i++) {
-                    if(BuscarGrupo.cliente.get(i).direccion.equals(hostname))
-                    {
-                        new Thread(new EnviarSimultaneo(dir, hostname,Principal.paneles.get(i))).start();
-                    }
-                }
-            }
-        } catch (UnknownHostException ex) {
-            Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
-        }catch (IOException ex) {
-            Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    public void envioArchivoSecuencial(String archivo)
-    {
-        new Thread(new EnviarSecuencial(archivo));
-    }
-    public void apagar(String hostName)
-    {
-        try {
-            InetAddress direccion=InetAddress.getByName(hostName);
+    //metodo para enviar un apagado remoto 
+    public void apagar(String hostname)
+    {       //preparamos el mensaje
             byte mensaje[]=("apagar,").getBytes();
-            orden=new DatagramPacket(mensaje,mensaje.length,direccion, 1001);
-            puerto.send(orden);
-        } catch (UnknownHostException ex) {
-            Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            enviarOrden(hostname,mensaje);
+            
     }
-    public void autoApagado(String hostName,String tiempo)
-    {
-        try {
-            InetAddress direccion=InetAddress.getByName(hostName);
+    
+    //metodo para enviar un apagado remoto en determinado tiempo
+    public void autoApagado(String hostname,String tiempo)
+    {       
+            //preparamos el mensaje
             byte mensaje[]=("apagarAuto,"+tiempo).getBytes();
-            orden=new DatagramPacket(mensaje,mensaje.length,direccion, 1001);
-            puerto.send(orden);
-        } catch (UnknownHostException ex) {
-            Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            enviarOrden(hostname,mensaje);
     }
-    public void reiniciar(String hostName)
-    {
-        try {
-            InetAddress direccion=InetAddress.getByName(hostName);
+    
+    //metodo para enviar un reinicio
+    public void reiniciar(String hostname)
+    {       //se prepara el mensaje
             byte mensaje[]=("reinicar,").getBytes();
-            orden=new DatagramPacket(mensaje,mensaje.length,direccion, 1001);
-            puerto.send(orden);
-        } catch (UnknownHostException ex) {
-            Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            enviarOrden(hostname,mensaje);
     }
-    public void login(String hostName)
-    {
-        try {
-            InetAddress direccion=InetAddress.getByName(hostName);
+    
+    //metodo para enviar un bloqueo con login
+    public void login(String hostname)
+    {       //preparamos elmensaje
             byte mensaje[]=("login,").getBytes();
-            orden=new DatagramPacket(mensaje,mensaje.length,direccion, 1001);
-            puerto.send(orden);
-        } catch (UnknownHostException ex) {
-            Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            enviarOrden(hostname,mensaje);
     }
-    public void bloqueo(String hostName,String tiempo)
-    {
-        try {
-            InetAddress direccion=InetAddress.getByName(hostName);
+    
+    //metodo para enviar un bloqueo sin login
+    public void bloqueo(String hostname,String tiempo)
+    {       //preparamos el mensaje
             byte mensaje[]=("bloqueo,"+tiempo).getBytes();
-            orden=new DatagramPacket(mensaje,mensaje.length,direccion, 1001);
-            puerto.send(orden);
-        } catch (UnknownHostException ex) {
-            Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            enviarOrden(hostname,mensaje);
     }
-    public void desbloqueo(String hostName)
-    {
-        try {
-            InetAddress direccion=InetAddress.getByName(hostName);
+    public void desbloqueo(String hostname)
+    {       //preparamos el mensaje
             byte mensaje[]=("desbloqueo,").getBytes();
-            orden=new DatagramPacket(mensaje,mensaje.length,direccion, 1001);
-            puerto.send(orden);
-        } catch (UnknownHostException ex) {
-            Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            enviarOrden(hostname,mensaje);
     }
-    public void desbloqueoTotal (String hostName)
+    
+    //metodo para enviar el desbloqueo total del equipo
+    public void desbloqueoTotal (String hostname)
     {
-        try {
-            InetAddress direccion=InetAddress.getByName(hostName);
             byte mensaje[]=("desbloqueoTotal,").getBytes();
-            orden=new DatagramPacket(mensaje,mensaje.length,direccion, 1001);
-            puerto.send(orden);
-        } catch (UnknownHostException ex) {
-            Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            enviarOrden(hostname,mensaje);
     }
-    public void enviarPagina(String hostName,String pagina)
+    public void enviarPagina(String hostname,String pagina)
     {
-        try {
-            InetAddress direccion=InetAddress.getByName(hostName);
             byte mensaje[]=("CPagina,"+pagina).getBytes();
-            orden=new DatagramPacket(mensaje,mensaje.length,direccion, 1001);
-            puerto.send(orden);
-        } catch (UnknownHostException ex) {
-            Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            enviarOrden(hostname,mensaje);
     }
     public Runnable getInfoPc=new Runnable() {
         
@@ -221,7 +133,53 @@ public class Ordenes {
         String inf=marca+"|"+modelo+"|"+nSerie+"|"+hdd+"|"+ram+"|"+procesador+"|"+sistema;
         }
     };
-    
+    public void enviarOrden(String hostname,byte mensaje[])
+    {
+        try {
+            InetAddress direccion=InetAddress.getByName(hostname);
+            orden=new DatagramPacket(mensaje,mensaje.length,direccion, 1001);
+            puerto.send(orden);
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    //metodo para envar archivo de manera simultanea o individual
+    public void enviarArchivoSimultaneo(String dir,String hostname)
+    {
+        try {
+            //verificamos si la direccion es multicast o es una ip individual
+            if(InetAddress.getByName(hostname).isMulticastAddress())
+            {
+                //ciclo para enviar el archivo a todas las maquinas
+                for (int i = 0; i < BuscarGrupo.cliente.size(); i++) {
+                    //iniciamos un nuevo hilo que se encarga del envio 
+                    new Thread(new EnviarSimultaneo(dir, BuscarGrupo.cliente.get(i).direccion,Principal.paneles.get(i))).start();
+                }
+            }
+            else
+            {
+                //si la direccion no es multicast buscamos la direccion del cliente al que se enviara
+                for (int i=0;i<BuscarGrupo.cliente.size();i++) {
+                    if(BuscarGrupo.cliente.get(i).direccion.equals(hostname))
+                    {
+                        new Thread(new EnviarSimultaneo(dir, hostname,Principal.paneles.get(i))).start();
+                    }
+                }
+            }
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
+        }catch (IOException ex) {
+            Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    //envio secuencial de archivo a todos los usuarios
+    public void envioArchivoSecuencial(String archivo)
+    {
+        //iniciamos el hilo que se encargara del envio
+        new Thread(new EnviarSecuencial(archivo)).start();
+    }
     private void enviarArhivo(String dir,String hostname,Pc_info panel) {
             byte arreglo[];
             int in;
@@ -242,31 +200,51 @@ public class Ordenes {
                 dos.writeUTF(archivo.getName());
                 //arreglo de 4 KB para envio de datos
                 arreglo = new byte[4096];
-                //empezamos el envio de los datos
+                //hacemos la barra de progreso del panel
                 panel.barEnvio.setVisible(true);
+                //ponemos el valor maximo a la barra
                 panel.barEnvio.setMaximum((int)(archivo.length()/100));
+                //ponemos su valor minimo
                 panel.barEnvio.setMinimum(0);
-                panel.barEnvio.setValue(0);
+                //hablitamos el string del porcentaje 
                 panel.barEnvio.setStringPainted(true);
+                //cambiamos el color de la barra a verde
                 panel.barEnvio.setForeground(Color.GREEN);
+                //bloqueamos la opcion de enviar archivo al panel 
                 panel.bloquearEnviar();
+                //preparamos las variables
                 long leido=0;
                 long tamañoArch=archivo.length();
+                //ciclo para la lectura y envio del archivo
                 while (leido < tamañoArch) {
+                    //verificamos si aun se pueden enviar 4 KB
                     if ((leido + 4096) < tamañoArch) {
+                        //si aun se pueden enviar
+                        
+                        //leemos los 4 KB
                         bis.read(arreglo);
+                        //lo agregamos a la variable de progreso
                         leido += 4096;
+                        
                     } else {
+                        //de lo contrario calculamos el resto del archivo
                         int resto = (int) (tamañoArch - leido);
                         arreglo = new byte[resto];
+                        //leemos el resto del archivo
                         bis.read(arreglo);
+                        //agregamos el valor a la variable de progreso
                         leido += resto;
                     }
+                    //enviamos los bytes leidos
                     bos.write(arreglo);
+                    //agregamos el progreso a la barra
                     panel.barEnvio.setValue((int) (leido / 100));
+                    //ponemos el string del progreso
                     panel.barEnvio.setString(((int)(panel.barEnvio.getPercentComplete()*100))+"% Enviado");
                 }
+                //terminado el envio hacemos invisible la barra de progreso
                 panel.barEnvio.setVisible(false);
+                //y desbloqueamos el envio de archivos
                 panel.desBloqEnviar();
                 //cerramos BufferedInputStream
                 bis.close();
@@ -277,7 +255,9 @@ public class Ordenes {
                 //cerramos el Socket
                 s.close();
             } catch (IOException e) {
+                //En caso de error ponemos invisible la barra de progreso
                 panel.barEnvio.setVisible(false);
+                //habilitamos el envio de archivos nuevamente
                 panel.desBloqEnviar();
                 System.err.println(e.getLocalizedMessage());
             }

@@ -17,31 +17,46 @@ import servidor.Tarea;
 
 public class Principal extends javax.swing.JFrame{
     
+    //obtenemos el tamaño horizontal de la pantalla
     int width=Toolkit.getDefaultToolkit().getScreenSize().width;
+    //obtenenmos el tamaño vertical de la pantalla
     int height=Toolkit.getDefaultToolkit().getScreenSize().height;
     Ordenes orden=new Ordenes();
     Clientes clientes=new Clientes();
-    Timer t;
-    public ArchivoConf confPrincipal=new ArchivoConf();
-    public static ArrayList<Pc_info> paneles=new ArrayList<>();
+    Timer t; //timer para verificar la conexion con los clientes
+    public ArchivoConf confPrincipal=new ArchivoConf();//variable que guarda la configuracion
+    public static ArrayList<Pc_info> paneles=new ArrayList<>();//variable para guardar la lista de los paneles de los clientes
     public static Image logo=new ImageIcon(new ImageIcon("src/iconos/logo chico.png").getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH)).getImage();
+    
+    //constructor
     public Principal() {
         initComponents();
+        //damos la medida a la ventana
         this.setSize(300, 400);
+        //situamos la ventana
         this.setLocation(width-310, height-450);
+        //Prihibimos la redimencion de la ventana
         this.setResizable(false);
+        //hacemos la visible la ventana
         this.setVisible(true);
+        //colocamos el fondo de la ventana
         ColocarImagen("fondo.jpg");
+        //colocamos el icono a la ventana
         this.setIconImage(logo);
+        //colocamos el titulo a la ventana
         this.setTitle("Java Control Software");
+        //aumentamos la velocidad de desplasamiento de la barra vertical de desplazamiento
         panelScroll.getVerticalScrollBar().setUnitIncrement(10);
+        //iniciamos el icono de la barra de tareas
         AppSystemTray st = new AppSystemTray(logo, this);
-        llenarPanel(clientes.cargarClientes());  //<---------------------------------------------Aqui va el array list que le mandas con los clientes
+        //llenamos el panel con los paneles de los usuarios
+        llenarPanel(clientes.cargarClientes()); 
         //Timer con el cual verificaremos la coneccion con los clientes
         t=new Timer();
+        //iniciamos el timer con su tarea que se ejecutara cada 5 seg.
         t.schedule(verificarCon, 5000, 5000);
     }
-    //Recibe un arraylist de Strings
+    //En el inicio de la aplicaion agrega todos los usuarios guardados
     public void llenarPanel(ArrayList<Clientes> clientes){
         for (Clientes cliente : clientes) {
             //estado conexion mandar conectado="on" desconectado="off" 
@@ -49,7 +64,7 @@ public class Principal extends javax.swing.JFrame{
         }
     }
     
-    //Agrega paneles al Principal
+    //Agrega paneles de usuario al panel Principal
     public static void agregaEquipo(Clientes c){
         Pc_info p=new Pc_info(c.getNombre(),c.getDireccion());
         paneles.add(p);
@@ -66,14 +81,13 @@ public class Principal extends javax.swing.JFrame{
         this.add(p, BorderLayout.CENTER);
         p.repaint();
     }
-    //Tarea para verificar conexion
+    //Tarea para verificar conexion de los usuarios
     TimerTask verificarCon=new TimerTask()
     {
         @Override
         public void run() {
-            Component[]paneles=panel.getComponents();
-            for (Component panel : paneles) {
-                ((Pc_info)panel).conexion();
+            for (Pc_info panel : paneles) {
+                panel.conexion();
             }
         }
     };
@@ -187,11 +201,6 @@ public class Principal extends javax.swing.JFrame{
                 opcionesMouseClicked(evt);
             }
         });
-        opciones.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                opcionesActionPerformed(evt);
-            }
-        });
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
@@ -242,10 +251,6 @@ public class Principal extends javax.swing.JFrame{
     private void EnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EnviarActionPerformed
         new EnviarArchivo(confPrincipal.getGrupo());
     }//GEN-LAST:event_EnviarActionPerformed
-
-    private void opcionesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_opcionesActionPerformed
-        
-    }//GEN-LAST:event_opcionesActionPerformed
 
     private void opcionesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_opcionesMouseClicked
         if(evt.getButton()==1)

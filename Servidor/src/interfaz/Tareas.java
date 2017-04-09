@@ -14,23 +14,33 @@ import java.util.ArrayList;
 public class Tareas extends javax.swing.JFrame {
     public Tareas() {
         initComponents();
+        //centramos la ventana
         this.setLocationRelativeTo(null);
+        //damos dimension a la ventana
         this.setSize(650,315);
+        //Prohibimos la redimención de la ventana
         this.setResizable(false);
+        //hacemos visible la ventana
         this.setVisible(true);
+        //agregamos el icono a la ventana
         this.setIconImage(logo);
+        //poenmos el titulo a la ventana
         this.setTitle("Procesos");
-        
+        //seleccionamos elindex 0 del combobox u ordenamiento de las tareas por su nombre .exe
         comboOrden.setSelectedIndex(0);
     }
     public void agregar(ArrayList<String []> datos,InetAddress ip,String nombre){
+        //agregamos panel de tareas
         tab.addTab(nombre,new Panel(datos,ip));
     }
     public boolean revisar(String nombre)
     {
+        //revisamos si el usuario ya esta en los paneles agregados
         boolean encontrado=false;
+        //contamos la cantidad de pestañas
         int cantidad=tab.getTabCount();
         for (int i = 0; i < cantidad; i++) {
+            //verificamos si el usario ya esta agregado
             if(tab.getTitleAt(i).equalsIgnoreCase(nombre))
             {
                 encontrado=true;
@@ -49,22 +59,17 @@ public class Tareas extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
+        btnAceptar = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         comboOrden = new javax.swing.JComboBox<>();
         tab = new javax.swing.JTabbedPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosing(java.awt.event.WindowEvent evt) {
-                formWindowClosing(evt);
-            }
-        });
 
-        jButton1.setText("Aceptar");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnAceptar.setText("Aceptar");
+        btnAceptar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnAceptarActionPerformed(evt);
             }
         });
 
@@ -87,7 +92,7 @@ public class Tareas extends javax.swing.JFrame {
                     .addComponent(tab)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 322, Short.MAX_VALUE)
-                        .addComponent(jButton1))
+                        .addComponent(btnAceptar))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -105,7 +110,7 @@ public class Tareas extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(tab, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton1)
+                .addComponent(btnAceptar)
                 .addContainerGap())
         );
 
@@ -113,17 +118,22 @@ public class Tareas extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void comboOrdenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboOrdenActionPerformed
+        //obtenemos los componentes del tabbedPane
         Component co[]=tab.getComponents();
+        //ciclo para modificar el orden de las tareas
         for (Component co1 : co) {
+            //llamamos el metodo para ordenar las tareas
             ((Panel)co1).agregarProcesos(comboOrden.getSelectedIndex());
         }
     }//GEN-LAST:event_comboOrdenActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAceptarActionPerformed
+        //cerramos la ventana
         this.dispose();
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_btnAceptarActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        //cuando se este cerrando la ventana eliminamos todas las pestañas
         tab.removeAll();
     }//GEN-LAST:event_formWindowClosing
 
@@ -163,8 +173,8 @@ public class Tareas extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAceptar;
     private javax.swing.JComboBox<String> comboOrden;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JTabbedPane tab;
     // End of variables declaration//GEN-END:variables

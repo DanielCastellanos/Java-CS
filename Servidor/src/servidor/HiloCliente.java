@@ -20,10 +20,12 @@ import static servidor.BuscarGrupo.*;
  * @author Ricardo
  */
 public class HiloCliente implements Runnable{
-    private DatagramPacket dp;
-    private InetAddress miIp,
-                        multicast;
-    MulticastSocket puerto;
+    private DatagramPacket dp;  //paquete para envio de mensajes
+    private InetAddress miIp,   //ip de este despositivo
+                        multicast; //direccion multicast del grupo
+    MulticastSocket puerto;  //puertopara los mensajes multicast
+    
+    //Constructor del hilo 
     public HiloCliente(DatagramPacket dp,InetAddress multicast,MulticastSocket puerto)
     {
         try {
@@ -35,7 +37,8 @@ public class HiloCliente implements Runnable{
             Logger.getLogger(HiloCliente.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    public void contestar()//**
+    //metodo para contestar cuando otro servidor pregunta si el grupo esta libre
+    public void contestar()
     {
         try {
             byte buf[]="servidor,".getBytes();//preapra el mensaje 
@@ -64,7 +67,7 @@ public class HiloCliente implements Runnable{
         StringTokenizer token=new StringTokenizer(mensaje,",");
         int pos=0;
         String datos[]=new String[4];
-        //separamos los datos resividos
+        //separamos los datos resibidos
         while(token.hasMoreTokens())
         {
             datos[pos]=token.nextToken();

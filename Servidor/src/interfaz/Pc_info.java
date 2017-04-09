@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package interfaz;
 
 import java.awt.Color;
@@ -20,17 +15,18 @@ public class Pc_info extends javax.swing.JPanel {
 
     ImageIcon verde = new ImageIcon(new ImageIcon("src/iconos/verde.png").getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH));
     ImageIcon rojo = new ImageIcon(new ImageIcon("src/iconos/rojo.png").getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH));
-    private String nombre = "Nombre";
-    private String hostname;
-    Principal p;
-    Socket conexion;
+    private String nombre = "Nombre"; //guarda el nombre del usuario
+    private String hostname; //guarda el hotname/direccion del usuario
+    Socket conexion;    //socket  para enviar mensajes
     Ordenes ordenes=new Ordenes();
     //constructor recive toda la infomacion del usario 
     public Pc_info(String nombre ,String hostname) {
         initComponents();
         Color color = new Color(255, 255, 255, 255);
+        //hacemos visible la ventana
         barEnvio.setVisible(false);
         this.setBackground(color);
+        //guardamos los datos recibidos
         this.nombre=nombre;
         this.hostname=hostname;
         label.setText(nombre);
@@ -40,8 +36,8 @@ public class Pc_info extends javax.swing.JPanel {
     {
         try {
             conexion=new Socket();
-            //intentamos la coneccion a la direccion ip y puerto con un tiempo maximo de 200milisegundos
             SocketAddress sa=new InetSocketAddress(hostname, 4401);
+            //intentamos la coneccion a la direccion ip y puerto con un tiempo maximo de 200milisegundos
             conexion.connect(sa,200);
             //si hay conexion con el destino colocamos el icono verde
             estado.setIcon(verde);
