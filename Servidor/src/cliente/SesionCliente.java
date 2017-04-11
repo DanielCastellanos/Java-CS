@@ -1,11 +1,15 @@
-package servidor;
+package cliente;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-public class Sesion implements Serializable{
+public class SesionCliente implements Serializable{
     
     private static final long serialVersionUID = 2173L;
     private String usr;
@@ -15,12 +19,12 @@ public class Sesion implements Serializable{
     private ArrayList<Tarea> taskHistory;
     private StringBuffer webHistory;
     
-    public Sesion() {
+    public SesionCliente() {
     }
 
-    public Sesion(String usr, Date Entrada) {
+    public SesionCliente(String usr) {
         this.usr = usr;
-        this.Entrada = Entrada;
+        this.Entrada = new Date();
     }
     
     public String getUsr() {
@@ -59,7 +63,6 @@ public class Sesion implements Serializable{
     public StringBuffer getWebHistory() {
         return webHistory;
     }
-
     
     public void addWebHistory(StringBuffer buffer) {
         StringTokenizer line= new StringTokenizer(buffer.toString(), "|");
@@ -83,5 +86,19 @@ public class Sesion implements Serializable{
         }
         return array;
     }    
-    
+
+//    public void cerrarSesion(){
+//        try {
+//            this.setSalida(new Date());
+//            Cliente.monitor.detenerMonitoreoWeb();
+//            Monitor.guardarSesion(this, BuscarServidor.configuracion.getNombre());
+//            if(BuscarServidor.connectionStatus() == true){
+//                File file= new File(BuscarServidor.configuracion.getNombre()+"-"+this.usr);
+//                Monitor.enviarSesion(file);
+//            }
+//        } catch (IOException ex) {
+//            System.err.println("Error: "+ ex.toString());
+//            AppSystemTray.mostrarMensaje("Error al cerrar sesión", AppSystemTray.ERROR_MESSAGE);
+//        }
+//    }
 }

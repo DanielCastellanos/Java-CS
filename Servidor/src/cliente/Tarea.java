@@ -1,11 +1,13 @@
-package servidor;
+package cliente;
+
+import java.io.Serializable;
 
 /**
  *
  * @author Danniel
  */
-public class Tarea {
-    
+public class Tarea implements Serializable{
+    private static final long serialVersionUID = 2174L;
     private String nombreImagen,
                    PID,
                    usoMemoria,

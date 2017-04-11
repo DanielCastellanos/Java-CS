@@ -13,7 +13,7 @@ import servidor.ArchivoConf;
 import servidor.BuscarGrupo;
 import servidor.Clientes;
 import servidor.Ordenes;
-import servidor.Tarea;
+import cliente.Tarea;
 
 public class Principal extends javax.swing.JFrame{
     
@@ -303,14 +303,14 @@ public class Principal extends javax.swing.JFrame{
     }//GEN-LAST:event_CompartirPaginaActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        ArrayList<servidor.Sesion> lista=BuscarGrupo.listaSesiones;
-        for (servidor.Sesion sesion : lista) {
+        ArrayList<cliente.SesionCliente> lista=BuscarGrupo.listaSesiones;
+        for (cliente.SesionCliente sesion : lista) {
             System.out.println("*****************************************");
             System.out.println(sesion.getUsr()+"\r\n"+
                     sesion.getEntrada()+"\r\n"+
                     sesion.getSalida()+"\r\n"+
                     sesion.getWebHistory()+"\r\n");
-            ArrayList<servidor.Tarea> listaTareas=sesion.getTaskHistory();
+            ArrayList<cliente.Tarea> listaTareas=sesion.getTaskHistory();
             for (Tarea listaTarea : listaTareas) {
                 System.out.println("_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_");
                 System.out.println(listaTarea.getNombreImagen()+"\r\n"+

@@ -1,5 +1,6 @@
 package servidor;
 
+import cliente.SesionCliente;
 import interfaz.AppSystemTray;
 import interfaz.BDConfig;
 import interfaz.Principal;
@@ -40,7 +41,7 @@ public class BuscarGrupo extends Principal {
     Timer t=new Timer();    //Timer para preguntar en los grupos multicast
     static ArchivoConf conf = new ArchivoConf();        //Variable de la configuracion del servidor
     static ArrayList<Clientes> cliente=new ArrayList<>();   //Lista de clientes
-    public static ArrayList<Sesion> listaSesiones=new ArrayList<>(); //lista de pruebas para las sesiones
+    public static ArrayList<SesionCliente> listaSesiones=new ArrayList<>(); //lista de pruebas para las sesiones
     DatagramPacket pregunta;    //Datagrama para enviar los mensajes multicast
     static Tareas tareas=null;  //Objeto de tipo Tarea para los procesos de los clientes
     int ip=1;       //contador para preguntar a los grupos multicast
@@ -50,7 +51,9 @@ public class BuscarGrupo extends Principal {
     {
         try {
             miIp=InetAddress.getLocalHost();     //obtenemos la direccion IP de nuestro PC
+            System.out.println(miIp.toString());
             puerto=new MulticastSocket(1000);    //declaramos el puerto y lo situamos en el puerto 1000
+            sesiones=new Thread(HiloSesiones);  //hilo para la captura de sesiones
             escucha = new Thread(r);        //Iniciamos el timer para Preguntar a los grupos multicast
             con = new Thread(conexion);     //iniciamos el hilo para que los clientes verifiquen conexion 
         } catch (IOException ex) {
@@ -101,6 +104,7 @@ public class BuscarGrupo extends Principal {
     public void inicarHilos()
     {
             escucha.start();
+            sesiones.start();
             con.start();
     }
     public void buscarGrupo()
@@ -172,8 +176,10 @@ public class BuscarGrupo extends Principal {
                 {
                     Socket s=ss.accept();
                     s.close();
+                    System.out.println("El Cliente establecio conexion");
                 }
             } catch (Exception e) {
+                System.out.println("Error Conexion");
             }
         }
     };
@@ -209,13 +215,15 @@ public class BuscarGrupo extends Principal {
     {
         @Override
         public void run() {
-            ExecutorService excecutor=Executors.newCachedThreadPool();
+            ExecutorService executor=Executors.newCachedThreadPool();
             try
             {
                 ServerSocket ss=new ServerSocket(4600);
                 while(true)
                 {
+                    System.out.println("Esperando Sesion");
                     Socket s=ss.accept();
+                    executor.submit(new guardarSesion(s));
                     
                 }
             } catch (IOException ex) {
@@ -236,6 +244,7 @@ class guardarSesion implements Runnable
         DataInputStream dis=null;
         byte buffer[];
         try {
+            System.out.println("Guardando Sesion");
             dis = new DataInputStream(socket.getInputStream());
             //resivimos el nombre del archivo
             String nombre=dis.readUTF();
@@ -250,7 +259,7 @@ class guardarSesion implements Runnable
             //preparamos la entrada para obtener el objeto "Sesion"
             ObjectInputStream ois=new ObjectInputStream(bs);
             //obtenemos el objeto "Sesion"
-            Sesion s=(Sesion)ois.readObject();
+            SesionCliente s=(SesionCliente)ois.readObject();
             //lo añadimo a la lista se sesiones
             BuscarGrupo.listaSesiones.add(s);
             //preparamos el archivo para escribir el objeto
