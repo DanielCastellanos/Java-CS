@@ -14,13 +14,23 @@ import javax.swing.text.JTextComponent;
  */
 public class Hint extends BasicTextFieldUI implements KeyListener {
 
-    String hint;
-    Color hintColor=Color.gray;
-    boolean visible=true;
+    private String hint;
+    private Color hintColor=Color.gray;
+    private boolean visible=true;
+
     public Hint(String hint)
     {
         this.hint=hint;
     }
+    
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
+    
     @Override
     protected void paintSafely(Graphics g) {
         super.paintSafely(g);
@@ -63,15 +73,25 @@ public class Hint extends BasicTextFieldUI implements KeyListener {
         getComponent().addKeyListener(this);
     }
 }
-class passHint extends BasicPasswordFieldUI implements KeyListener
+class PassHint extends BasicPasswordFieldUI implements KeyListener
 {
-    String hint;
-    Color hintColor=Color.gray;
-    boolean visible=true;
-    public passHint(String hint)
+    private String hint;
+    private Color hintColor=Color.gray;
+    private boolean visible=true;
+
+    public PassHint(String hint)
     {
         this.hint=hint;
     }
+    
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
+    
     @Override
     protected void paintSafely(Graphics g) {
         super.paintSafely(g);

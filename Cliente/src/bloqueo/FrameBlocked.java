@@ -1,5 +1,7 @@
 package bloqueo;
 
+import cliente.Cliente;
+import cliente.SesionCliente;
 import java.awt.BorderLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -35,7 +37,7 @@ public class FrameBlocked extends javax.swing.JFrame {
         revisaConeccion();                                          //Revisa si hay conexión a internet
         carga();
         pass.setEchoChar('•');
-        pass.setUI(new passHint("Password"));
+        pass.setUI(new PassHint("Password"));
         user.setUI(new Hint("Codigo"));
     //Carga el keylistener y llama keepfocus
     }
@@ -102,7 +104,7 @@ public class FrameBlocked extends javax.swing.JFrame {
         } catch (AWTException e) {
             e.printStackTrace();
         }
-
+        
         pass.addKeyListener(listen);
         user.addKeyListener(listen);
         entrar.addKeyListener(listen);
@@ -167,7 +169,7 @@ public class FrameBlocked extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setBackground(new java.awt.Color(0, 0, 0));
 
-        panel.setBackground(new java.awt.Color(153, 153, 153));
+        panel.setBackground(new java.awt.Color(204, 204, 204));
         panel.setToolTipText("");
         panel.setFocusable(false);
 
@@ -175,6 +177,7 @@ public class FrameBlocked extends javax.swing.JFrame {
 
         entrar.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         entrar.setText("Entrar");
+        entrar.setFocusPainted(false);
         entrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 entrarActionPerformed(evt);
@@ -187,7 +190,9 @@ public class FrameBlocked extends javax.swing.JFrame {
             }
         });
 
+        jButton1.setBackground(new java.awt.Color(255, 255, 255));
         jButton1.setText("jButton1");
+        jButton1.setFocusPainted(false);
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -267,9 +272,12 @@ public class FrameBlocked extends javax.swing.JFrame {
             if (log.login(this.user.getText(), this.pass.getText())) {
                 try {
                     Thread.sleep(1000);
+                    this.dispose();
+                    Cliente.sesion = new SesionCliente(user.getText());
                     this.user.setText("");
                     this.pass.setText("");
-                    this.dispose();
+                    ((Hint)this.user.getUI()).setVisible(true);
+                    ((PassHint)this.pass.getUI()).setVisible(true);
                     Thread.sleep(1000);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(FrameBlocked.class.getName()).log(Level.SEVERE, null, ex);
@@ -348,14 +356,17 @@ public class FrameBlocked extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new FrameBlocked().setVisible(true);
+                panel.setBackground(new Color(0,0,0,40));
             }
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton entrar;
     private javax.swing.JButton jButton1;
-    private javax.swing.JPanel panel;
+    private static javax.swing.JPanel panel;
     private javax.swing.JPasswordField pass;
     private javax.swing.JTextField user;
     // End of variables declaration//GEN-END:variables
+ 
 }
+

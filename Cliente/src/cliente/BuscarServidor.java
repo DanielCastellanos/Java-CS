@@ -47,12 +47,11 @@ public class BuscarServidor {
     boolean flag= false;
         try {
             Socket socket=new Socket();
-            //falta capturar la direccion del servidor
-            socket.connect(new InetSocketAddress(serverHost,4500), 200);
+            socket.connect(new InetSocketAddress(serverHost,4500), 500);
             socket.close();
             flag=true;
         } catch (Exception e){
-            //accion si existe conexion con el cliente
+            System.out.println("Error al conectar");
         }
     return flag;
 }
@@ -77,6 +76,7 @@ public class BuscarServidor {
                 puerto.joinGroup(InetAddress.getByName(configuracion.getGrupo()));
                 serverHost=configuracion.getServerHost();
                 this.iniciarHilo();
+                orden.login();
             } catch (IOException ex) {
                 Logger.getLogger(BuscarServidor.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -315,6 +315,7 @@ public class BuscarServidor {
             configuracion.setGrupo(grupo);
             configuracion.setServerHost(serverHost);
             configuracion.archivoNuevo();
+            orden.login();
         } catch (UnknownHostException ex) {
             Logger.getLogger(BuscarServidor.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {

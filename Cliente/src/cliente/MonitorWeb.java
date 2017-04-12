@@ -23,7 +23,7 @@ public class MonitorWeb {
     List<PcapIf> allDevs = new ArrayList<>();               //Lista para almacenar las interfaces
     Pcap pcap;                                              //Variable Pcap para capturar los paquetes entrantes
     String ipTarget;                                        //Cadena correspondiente a la ip de la interfaz que se va a escuchar
-    StringBuffer webPages;                                  //Para guardar temporalmente las páginas
+    StringBuffer webPages=new StringBuffer();                                  //Para guardar temporalmente las páginas
     
     //Constructor de la clase
     public MonitorWeb(String ip) {
@@ -44,10 +44,20 @@ public class MonitorWeb {
                 AppSystemTray.mostrarMensaje("No hay dispositivos viables", AppSystemTray.ERROR_MESSAGE);
             }else{
                 openDevice(indexDev);
-                pcap.loop(-1, handler,"Paquete capturado");
+                new Thread(escucha).start();
             }
         }
     }
+    
+    Runnable escucha=new Runnable()
+    {
+
+        @Override
+        public void run() {
+            pcap.loop(-1, handler,"Paquete capturado");
+        }
+        
+    };
     /*Éste método encuentra las interfaces de red de las cuales se puede escuchar el tráfico. se retorna false si hay algún error, sino retorna true*/
     private boolean findDevices(){
         

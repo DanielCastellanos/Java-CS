@@ -1,10 +1,12 @@
 package cliente;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
 import java.net.Socket;
@@ -20,7 +22,7 @@ public class Monitor {
     long sendReportTime;
     String ipTarget;                                //Ip de la interfaz a monitorear
     MonitorWeb web;                                 //Clase para monitoreo de tráfico
-    ListaTareas taskList;                             //Clase para monitoreo de tareas
+    ListaTareas taskList=new ListaTareas();                             //Clase para monitoreo de tareas
 
     TimerTask task = new TimerTask() {
         @Override
@@ -55,6 +57,7 @@ public class Monitor {
         ipTarget = ip;
 
         web = new MonitorWeb(ip);
+        web.initMonitor();
         timer.schedule(task, sendReportTime);
     }
 

@@ -51,7 +51,7 @@ public class AppSystemTray {
                                                                     correspondientes, la imagen (objeto Image), la etiqueta a mostrar (String)
                                                                     */
                 icon.setImageAutoSize(true);            //Se activa el autoajuste de tamaño en la imagen del ícono
-                icon.addActionListener(cerrarSesión);
+//                icon.addActionListener(cerrarSesión);
                 icon.setPopupMenu(menu);                //Se agrega el menú popup
                 st.add(icon);                           //Se agrega el ícono configurado al SystemTray
                 
