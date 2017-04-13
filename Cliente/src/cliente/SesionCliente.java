@@ -19,7 +19,7 @@ public class SesionCliente implements Serializable{
     private Date salida;
     
     private ArrayList<Tarea> taskHistory=new ArrayList<>();
-    private StringBuffer webHistory;
+    private ArrayList<String> webHistory;
     
     public SesionCliente() {
     }
@@ -67,7 +67,7 @@ public class SesionCliente implements Serializable{
         this.taskHistory = taskHistory;
     }
 
-    public StringBuffer getWebHistory() {
+    public ArrayList<String> getWebHistory() {
         return webHistory;
     }
     
@@ -77,22 +77,18 @@ public class SesionCliente implements Serializable{
         while (line.hasMoreTokens()) {            
             String token= line.nextToken();
             if(this.webHistory.indexOf(token) != -1){
-                this.webHistory.append(token);
+                this.webHistory.add(token);
             }
         }
         
     }
    
-    public ArrayList getNewTasks(ArrayList<Tarea> newT) {
-        ArrayList<Tarea> array = new ArrayList<>();
-        
+    public void saveNewTasks(ArrayList<Tarea> newT) {        
         for (Tarea t : newT) {
             if (!taskHistory.contains(t)) {
-                array.add(t);
+                taskHistory.add(t);
             }
         }
-        
-        return array;
     }    
 
     public void cerrarSesion(){

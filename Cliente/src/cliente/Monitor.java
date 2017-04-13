@@ -1,12 +1,10 @@
 package cliente;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
 import java.net.Socket;
@@ -32,17 +30,11 @@ public class Monitor {
             taskList.escribirLista();
             ArrayList<Tarea> newTasks = taskList.getLista();
 
-            /*El método getNewTasks compara el arreglo de tareas que entra, devuelve uno nuevo
-            que se está guardando en el Array "toWrite" y agrega estas tareas al historial de 
+            /*El método saveNewTasks compara el arreglo de tareas que entra, 
+            y agrega estas tareas nuevas al historial de 
             las sesion.
             */
-            ArrayList<Tarea> toWrite = Cliente.sesion.getNewTasks(newTasks);
-            //Agrega las nuevas tareas al historial de la sesion
-            if (toWrite != null) {
-                for (Tarea t : toWrite) {
-                    Cliente.sesion.getTaskHistory().add(t);
-                }
-            }
+            Cliente.sesion.saveNewTasks(newTasks);
             
             //Obtiene historial web y las agrega al historial de sesión
             StringBuffer webPages = web.getReport();
