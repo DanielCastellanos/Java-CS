@@ -31,7 +31,7 @@ public class HibernateUtil {
             La ruta de la base de datos, el usuario y la contraseña de la misma
             si esta se ha definido.
              */
-            config.setProperty("hibernate.connection.url", url);
+            config.setProperty("hibernate.connection.url", "jdbc:mysql://"+url);
             config.setProperty("hibernate.connection.username", usr);
             if (pass != null) {
                 config.setProperty("hibernate.connection.password", pass);

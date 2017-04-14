@@ -9,16 +9,17 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -41,6 +42,7 @@ public class Sesion implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "idSesion")
     private Integer idSesion;
@@ -50,8 +52,16 @@ public class Sesion implements Serializable {
     @Column(name = "salida")
     @Temporal(TemporalType.TIMESTAMP)
     private Date salida;
-    @ManyToMany(mappedBy = "sesionCollection")
+    @JoinTable(name = "uso_programa", joinColumns = {
+        @JoinColumn(name = "SESION_idSesion", referencedColumnName = "idSesion")}, inverseJoinColumns = {
+        @JoinColumn(name = "PROGRAMA_idPROGRAMA", referencedColumnName = "idPROGRAMA")})
+    @ManyToMany
     private Collection<Programa> programaCollection;
+    @JoinTable(name = "acceso_pagina", joinColumns = {
+        @JoinColumn(name = "Sesion_idSesion", referencedColumnName = "idSesion")}, inverseJoinColumns = {
+        @JoinColumn(name = "Pagina_idPagina", referencedColumnName = "idPagina")})
+    @ManyToMany
+    private Collection<Pagina> paginaCollection;
     @JoinColumn(name = "Admin_idAdmin", referencedColumnName = "idAdmin")
     @ManyToOne
     private Admin adminidAdmin;
@@ -61,8 +71,6 @@ public class Sesion implements Serializable {
     @JoinColumn(name = "Usuario_idUsuario", referencedColumnName = "codigo")
     @ManyToOne
     private Usuario usuarioidUsuario;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sesionidSesion")
-    private Collection<AccesoPagina> accesoPaginaCollection;
 
     public Sesion() {
     }
@@ -104,6 +112,15 @@ public class Sesion implements Serializable {
         this.programaCollection = programaCollection;
     }
 
+    @XmlTransient
+    public Collection<Pagina> getPaginaCollection() {
+        return paginaCollection;
+    }
+
+    public void setPaginaCollection(Collection<Pagina> paginaCollection) {
+        this.paginaCollection = paginaCollection;
+    }
+
     public Admin getAdminidAdmin() {
         return adminidAdmin;
     }
@@ -126,15 +143,6 @@ public class Sesion implements Serializable {
 
     public void setUsuarioidUsuario(Usuario usuarioidUsuario) {
         this.usuarioidUsuario = usuarioidUsuario;
-    }
-
-    @XmlTransient
-    public Collection<AccesoPagina> getAccesoPaginaCollection() {
-        return accesoPaginaCollection;
-    }
-
-    public void setAccesoPaginaCollection(Collection<AccesoPagina> accesoPaginaCollection) {
-        this.accesoPaginaCollection = accesoPaginaCollection;
     }
 
     @Override

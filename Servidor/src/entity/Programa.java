@@ -51,10 +51,7 @@ public class Programa implements Serializable {
     private String proceso;
     @Column(name = "Descripci\u00f3n")
     private String descripción;
-    @JoinTable(name = "uso_programa", joinColumns = {
-        @JoinColumn(name = "PROGRAMA_idPROGRAMA", referencedColumnName = "idPROGRAMA")}, inverseJoinColumns = {
-        @JoinColumn(name = "SESION_idSesion", referencedColumnName = "idSesion")})
-    @ManyToMany
+    @ManyToMany(mappedBy = "programaCollection")
     private Collection<Sesion> sesionCollection;
 
     public Programa() {

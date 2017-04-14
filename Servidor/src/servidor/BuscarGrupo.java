@@ -246,7 +246,7 @@ class guardarSesion implements Runnable
         try {
             System.out.println("Guardando Sesion");
             dis = new DataInputStream(socket.getInputStream());
-            //resivimos el nombre del archivo
+            //recibimos el nombre del archivo
             String nombre=dis.readUTF();
             //obtenemos el tamaño del archivo
             long tamaño=dis.readLong();
