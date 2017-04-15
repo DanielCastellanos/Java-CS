@@ -23,13 +23,16 @@ public class bdUtil {
 
     Session sesionBD;
 
+    /*Este método crea y retorna un objeto Sesion*/
     public Sesion buildSesionObject(SesionCliente sesionCliente) {
 
         Sesion sesion = new Sesion();
         try {
+            /*Inicio de sesión de hibernate*/
             hibernate.HibernateUtil.openSessionAndBindToThread();
             sesionBD = hibernate.HibernateUtil.getSessionFactory().getCurrentSession();
-
+            /*Inicio de sesión de hibernate*/
+            
             /*Crear el objeto sesión*/
             sesion.setEntrada(sesionCliente.getEntrada());          //Se le escribe la hora de entrada
             if (sesionCliente.getSalida() != null) {                //Escribe hora de salida si existe
@@ -50,13 +53,15 @@ public class bdUtil {
         } catch (HibernateException he) {
             System.out.println(he.toString());
         } finally {
+            /*De cualquier manera se cierra la sesión*/
             hibernate.HibernateUtil.closeSessionAndUnbindFromThread();
+            /**/
         }
 
         return sesion;
     }
 
-    public Collection<Pagina> getPages(ArrayList<String> webReport) {
+    private Collection<Pagina> getPages(ArrayList<String> webReport) {
 
         List<Pagina> pages = new ArrayList<>();                                  //Lista para guardar las páginas
         sesionBD.beginTransaction();                                            //Inicia transaccion
@@ -82,7 +87,7 @@ public class bdUtil {
         return c;                                                   //Y se retorna
     }
 
-    public Collection<Programa> getProgramas(ArrayList<Tarea> taskReport){
+    private Collection<Programa> getProgramas(ArrayList<Tarea> taskReport){
         List<Programa> programas = new ArrayList<>();                                  //Lista para guardar los programas
         sesionBD.beginTransaction();                                                    //Inicia transaccion
         Query query = sesionBD.createQuery("from Programa where proceso = :name");   //Consulta a realizar con parámetro :name
@@ -107,8 +112,9 @@ public class bdUtil {
         Collection c = programas;                                       //Se guarda la lista en un Collection
         return c;  
     }
+    
     //Obtiene un usuario de la bd según un código
-    public Usuario getUsrByName(String usr) {
+    private Usuario getUsrByName(String usr) {
 
         Usuario objetoUsuario;                                                      //Declara un nuevo Usuario
         sesionBD.beginTransaction();                                                //Inicia transaccion en la sesion de hibernate
@@ -120,8 +126,8 @@ public class bdUtil {
         return objetoUsuario;
     }
 
-    public Usuario createUsuario(String cod) {
-        Usuario nuevo = new Usuario(210437652, true);        //Crea objeto usuario
+    private Usuario createUsuario(String cod) {
+        Usuario nuevo = new Usuario(Integer.parseInt(cod), true);        //Crea objeto usuario
         sesionBD.beginTransaction();                        //Inicia transacción en hibernate
         sesionBD.save(nuevo);                               //Guarda el objeto en la BD
         sesionBD.getTransaction().commit();                 //Realiza el commit de los cambios
@@ -129,14 +135,34 @@ public class bdUtil {
         return nuevo;
     }
 
+    public void saveSesion(Sesion s){
+        try{
+            /*Abre y obtiene la sesión*/
+            hibernate.HibernateUtil.openSessionAndBindToThread();
+            sesionBD= hibernate.HibernateUtil.getSessionFactory().getCurrentSession();
+            /**/
+            
+            /*Inicia la transacción*/
+            sesionBD.beginTransaction();
+            /*Guarda la sesión*/
+            sesionBD.save(s);
+            /*Realiza el commit de los cambios*/
+            sesionBD.getTransaction().commit();
+            
+        }catch(HibernateException ex){
+            System.err.println(ex.toString());
+        }finally{
+            hibernate.HibernateUtil.closeSessionAndUnbindFromThread();
+        }
+    }
+    
     public static void main(String[] args) {
 
         /**/
         hibernate.HibernateUtil.buildSessionFactory("localhost:3306/javacs_bd?zeroDateTimeBehavior=convertToNull", "root", "");
 
         /**/
-//        
-
+        
         SesionCliente sc = new SesionCliente();
         sc.setEntrada(new Date());
         sc.setSalida(new Date());
@@ -163,16 +189,15 @@ public class bdUtil {
         sess.beginTransaction();
         /*Fragmento de código temporal*/
         Pc maquina = new Pc();
-        maquina.setIdPC(2);
         maquina.setModelo("El que se me antoje");
         maquina.setOs("Windows 30000");
         sess.saveOrUpdate(maquina);
         nueva.setPCidPC(maquina);
-        /*Fragmento de código temporal*/
-        sess.save(nueva);
-        /**/
         sess.getTransaction().commit();
         hibernate.HibernateUtil.closeSessionAndUnbindFromThread();
-        hibernate.HibernateUtil.closeSessionFactory();
+        /*Fragmento de código temporal*/
+        
+
+        new bdUtil().saveSesion(nueva);
     }
 }

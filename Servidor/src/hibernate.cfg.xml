@@ -44,22 +44,20 @@ jdbc:mysql://localhost:3306/javacs_bd?zeroDateTimeBehavior=convertToNull
 -->
 <hibernate-configuration>
   <session-factory>
-    
     <!--propiedades de la conexión-->
     <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
     <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
-    <property name="hibernate.connection.url"></property>
-    <property name="hibernate.connection.username"></property>
+    <property name="hibernate.connection.url"/>
+    <property name="hibernate.connection.username"/>
     <property name="hibernate.current_session_context_class">thread</property>
     <property name="show_sql">true</property>
-    
     <!--mapping de las clases-->
-    <mapping class="entity.Usuario"/>
-    <mapping class="entity.Sesion"/>
-    <mapping class="entity.Programa"/>
-    <mapping class="entity.Pc"/>
-    <mapping class="entity.Pagina"/>
     <mapping class="entity.Admin"/>
+    <mapping class="entity.Pagina"/>
+    <mapping class="entity.Pc"/>
+    <mapping class="entity.Programa"/>
+    <mapping class="entity.Sesion"/>
     <mapping class="entity.UsoPc"/>
+    <mapping class="entity.Usuario"/>
   </session-factory>
 </hibernate-configuration>
