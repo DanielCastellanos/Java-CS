@@ -66,7 +66,7 @@ public class HiloCliente implements Runnable{
     {
         StringTokenizer token=new StringTokenizer(mensaje,",");
         int pos=0;
-        String datos[]=new String[4];
+        String datos[]=new String[12];
         //separamos los datos resibidos
         while(token.hasMoreTokens())
         {
@@ -78,10 +78,18 @@ public class HiloCliente implements Runnable{
         c.setNombre(datos[1]);
         c.setDireccion(datos[2]);
         c.setHostname(datos[3]);
+        c.setMarca(datos[4]);
+        c.setModelo(datos[5]);
+        c.setNumeroSerie(datos[6]);
+        c.setMac(datos[7]);
+        c.setProcesador(datos[8]);
+        c.setHdd(datos[9]);
+        c.setRam(datos[10]);
+        c.setSo(datos[11]);
         if(!verificarCliente(datos[3]))//verificamos que el usuario no este ya registrado
         {
             cliente.add(c);
-            c.crearArchivoLista(cliente);
+            Archivos.guardarListaClientes(cliente);
             Principal.agregaEquipo(c);
             AppSystemTray.mostrarMensaje("Nuevo Cliente",AppSystemTray.PLAIN_MESSAGE);
         }
@@ -126,9 +134,9 @@ public class HiloCliente implements Runnable{
     {
         String nombre=null;
         for (Clientes clientes : cliente) {
-            if(ia.getHostName().equalsIgnoreCase(clientes.hostname))
+            if(ia.getHostName().equalsIgnoreCase(clientes.getHostname()))
             {
-                nombre=clientes.nombre;
+                nombre=clientes.getNombre();
                 break;
             }
         }
@@ -157,7 +165,7 @@ public class HiloCliente implements Runnable{
                                     contestarCliente(dp.getAddress());
                                     break;
                                 case "cliente"://cuando un nuevo usuario se une al grupo
-                                    
+                                    System.out.println("Guardando Cliente");
                                     guardarCliente(mensaje);
                                     break;
                                 case "Tareas"://cuando se resiven las tareas solicitadas al cliente

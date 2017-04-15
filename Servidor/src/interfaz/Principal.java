@@ -9,11 +9,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
-import servidor.ArchivoConf;
+import servidor.Configuracion;
 import servidor.BuscarGrupo;
 import servidor.Clientes;
 import servidor.Ordenes;
 import cliente.Tarea;
+import servidor.Archivos;
 
 public class Principal extends javax.swing.JFrame{
     
@@ -21,10 +22,10 @@ public class Principal extends javax.swing.JFrame{
     int width=Toolkit.getDefaultToolkit().getScreenSize().width;
     //obtenenmos el tamaño vertical de la pantalla
     int height=Toolkit.getDefaultToolkit().getScreenSize().height;
+    private static ArrayList<Clientes> listaClientes=new ArrayList<>();
     Ordenes orden=new Ordenes();
-    Clientes clientes=new Clientes();
     Timer t; //timer para verificar la conexion con los clientes
-    public ArchivoConf confPrincipal=new ArchivoConf();//variable que guarda la configuracion
+    public static Configuracion confPrincipal=new Configuracion();//variable que guarda la configuracion
     public static ArrayList<Pc_info> paneles=new ArrayList<>();//variable para guardar la lista de los paneles de los clientes
     public static Image logo=new ImageIcon(new ImageIcon("src/iconos/logo chico.png").getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH)).getImage();
     
@@ -50,7 +51,8 @@ public class Principal extends javax.swing.JFrame{
         //iniciamos el icono de la barra de tareas
         AppSystemTray st = new AppSystemTray(logo, this);
         //llenamos el panel con los paneles de los usuarios
-        llenarPanel(clientes.cargarClientes()); 
+        listaClientes=Archivos.cargarListaClientes();
+        llenarPanel(listaClientes); 
         //Timer con el cual verificaremos la coneccion con los clientes
         t=new Timer();
         //iniciamos el timer con su tarea que se ejecutara cada 5 seg.
@@ -66,7 +68,8 @@ public class Principal extends javax.swing.JFrame{
     
     //Agrega paneles de usuario al panel Principal
     public static void agregaEquipo(Clientes c){
-        Pc_info p=new Pc_info(c.getNombre(),c.getDireccion());
+        Pc_info p=new Pc_info(c);
+        listaClientes.add(c);
         paneles.add(p);
         panel.add(p);
     }
@@ -74,7 +77,10 @@ public class Principal extends javax.swing.JFrame{
     public static Image getLogo() {
         return logo;
     }
-   
+    public static void setConf(Configuracion conf)
+    {
+        confPrincipal=conf;
+    }
     //fondo de la ventana
     public void ColocarImagen(String img) {
         Background p = new Background(300, 400, "src/iconos/" + img);
@@ -105,6 +111,7 @@ public class Principal extends javax.swing.JFrame{
         configuracion = new javax.swing.JMenuItem();
         CompartirPagina = new javax.swing.JMenuItem();
         Salir = new javax.swing.JMenuItem();
+        PropiedadesCliente = new javax.swing.JMenuItem();
         panelScroll = new javax.swing.JScrollPane();
         panel = new javax.swing.JPanel();
         opciones = new javax.swing.JButton();
@@ -184,6 +191,14 @@ public class Principal extends javax.swing.JFrame{
             }
         });
         popUp.add(Salir);
+
+        PropiedadesCliente.setText("Propiedades Clientes");
+        PropiedadesCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                PropiedadesClienteActionPerformed(evt);
+            }
+        });
+        popUp.add(PropiedadesCliente);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setBackground(new java.awt.Color(255, 0, 0));
@@ -295,7 +310,7 @@ public class Principal extends javax.swing.JFrame{
 
     private void configuracionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_configuracionActionPerformed
 
-        new VConf().setVisible(true);
+        new VConf(confPrincipal).setVisible(true);
     }//GEN-LAST:event_configuracionActionPerformed
 
     private void CompartirPaginaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CompartirPaginaActionPerformed
@@ -319,6 +334,16 @@ public class Principal extends javax.swing.JFrame{
             }
         }
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void PropiedadesClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PropiedadesClienteActionPerformed
+        if(BuscarGrupo.propiedades==null)
+        {
+            BuscarGrupo.propiedades=new VentanaPropiedades("Grupal");
+        }
+        for (Clientes cliente : listaClientes) {
+            BuscarGrupo.propiedades.agregarPanel(cliente);
+        }
+    }//GEN-LAST:event_PropiedadesClienteActionPerformed
     
     
     public static void main(String args[]) {
@@ -359,6 +384,7 @@ public class Principal extends javax.swing.JFrame{
     private javax.swing.JMenuItem Bloquear;
     private javax.swing.JMenuItem CompartirPagina;
     private javax.swing.JMenuItem Enviar;
+    private javax.swing.JMenuItem PropiedadesCliente;
     private javax.swing.JMenuItem Salir;
     private javax.swing.JMenuItem Tareas;
     private javax.swing.JMenuItem configuracion;

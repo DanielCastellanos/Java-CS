@@ -1,15 +1,9 @@
 package cliente;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class SesionCliente implements Serializable{
     
@@ -93,7 +87,6 @@ public class SesionCliente implements Serializable{
 
 //    public void cerrarSesion(){
 //        try {
-//            System.out.println("cerrando...");
 //            this.setSalida(new Date());
 //            Cliente.monitor.detenerMonitoreoWeb();
 //            Monitor.guardarSesion(this, BuscarServidor.configuracion.getNombre());

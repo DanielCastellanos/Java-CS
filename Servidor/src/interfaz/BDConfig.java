@@ -8,7 +8,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import static javax.swing.JOptionPane.showMessageDialog;
 import org.hibernate.HibernateException;
-import servidor.ArchivoConf;
+import servidor.Archivos;
+import servidor.Configuracion;
 
 public class BDConfig extends javax.swing.JFrame {
 
@@ -16,17 +17,17 @@ public class BDConfig extends javax.swing.JFrame {
     private String URL;
     private String usr;
     private String pass;
-    ArchivoConf settingsFile;
+    Configuracion settingsFile;
     ImageIcon icon = new ImageIcon("src/iconos/logo chico.png");
 
-    public BDConfig(ArchivoConf conf) {
+    public BDConfig(Configuracion conf) {
         initComponents();
         this.setIconImage(icon.getImage());
         this.settingsFile= conf;
     }
     
     //Este constructor tiene el propósito de mostrar al usuario configuración previamente definida
-    public BDConfig(ArchivoConf conf, String ur, String u, String p) {
+    public BDConfig(Configuracion conf, String ur, String u, String p) {
         initComponents();
         this.setIconImage(icon.getImage());
         this.settingsFile= conf;
@@ -207,7 +208,7 @@ public class BDConfig extends javax.swing.JFrame {
                 settingsFile.setURLBD(URL);
                 settingsFile.setUserBD(usr);
                 settingsFile.setPassBD(pass);       
-                settingsFile.nuevoArchivo();        //Y le diremos que guarde esa configuración en el archivo
+                Archivos.guardarConf(settingsFile);        //Y le diremos que guarde esa configuración en el archivo
                 //Después notificaremos al usuario que la conexión fue realizada
                 JOptionPane.showMessageDialog(null, "Conexión con BD establecida", "Conexión establecida", JOptionPane.INFORMATION_MESSAGE);
                 //Y se cerrará este frame.

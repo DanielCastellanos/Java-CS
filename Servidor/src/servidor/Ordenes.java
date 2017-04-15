@@ -10,9 +10,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -105,6 +107,38 @@ public class Ordenes {
             byte mensaje[]=("CPagina,"+pagina).getBytes();
             enviarOrden(hostname,mensaje);
     }
+    public void WakeOnLAN(byte[] mac,String grupo)
+    {
+        try {
+            // El paquete WakeOnLAN se manda por puertos udp 255.255.255.0:40000.
+            // El paquete WakeOnLAN contiene un trailer de 6-bytes y 16 veces una secuencia de 6-bytes que contienen la direccion MAC de destino.
+            //preparamos el arreglo de bytes que conformara el paquete
+            byte[] packet = new byte[17 * 6];
+            DatagramPacket data = new DatagramPacket(packet, packet.length,InetAddress.getByName(grupo),40000);
+            DatagramSocket client=new DatagramSocket();
+            // Trailer de 6 veces 0xFF o FF en Hexadecimal.
+            for (int i = 0; i < 6; i++)
+            {
+                packet[i] =(byte)0xff;
+            }
+            // Cuerpo del paquete magico que contiene 16 veces la direccion MAC.
+            for (int i = 1; i <= 16; i++)
+            {
+                for (int j = 0; j < 6; j++)
+                {
+                    packet[i * 6 + j] = mac[j];
+                }
+            }
+            // Enviamos el paquete WOL(WakeOnLAN).
+            client.send(data);
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SocketException ex) {
+            Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     public Runnable getInfoPc=new Runnable() {
         
 
@@ -155,14 +189,14 @@ public class Ordenes {
                 //ciclo para enviar el archivo a todas las maquinas
                 for (int i = 0; i < BuscarGrupo.cliente.size(); i++) {
                     //iniciamos un nuevo hilo que se encarga del envio 
-                    new Thread(new EnviarSimultaneo(dir, BuscarGrupo.cliente.get(i).direccion,Principal.paneles.get(i))).start();
+                    new Thread(new EnviarSimultaneo(dir, BuscarGrupo.cliente.get(i).getHostname(),Principal.paneles.get(i))).start();
                 }
             }
             else
             {
                 //si la direccion no es multicast buscamos la direccion del cliente al que se enviara
                 for (int i=0;i<BuscarGrupo.cliente.size();i++) {
-                    if(BuscarGrupo.cliente.get(i).direccion.equals(hostname))
+                    if(BuscarGrupo.cliente.get(i).getHostname().equals(hostname))
                     {
                         new Thread(new EnviarSimultaneo(dir, hostname,Principal.paneles.get(i))).start();
                     }
@@ -292,7 +326,7 @@ public class Ordenes {
         public void run() {
             
             for (int i = 0; i < BuscarGrupo.cliente.size(); i++) {
-                enviarArhivo(archivo,BuscarGrupo.cliente.get(i).hostname,Principal.paneles.get(i));
+                enviarArhivo(archivo,BuscarGrupo.cliente.get(i).getHostname(),Principal.paneles.get(i));
             }
         }
         

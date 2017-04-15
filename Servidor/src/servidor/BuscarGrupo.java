@@ -5,6 +5,7 @@ import interfaz.AppSystemTray;
 import interfaz.BDConfig;
 import interfaz.Principal;
 import interfaz.Tareas;
+import interfaz.VentanaPropiedades;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -39,11 +40,12 @@ public class BuscarGrupo extends Principal {
     static boolean libre=false;         //Variable para verificar si el grupo Multicast esta ocupado
     InetAddress ia;         //InetAddress para los grupos multicast
     Timer t=new Timer();    //Timer para preguntar en los grupos multicast
-    static ArchivoConf conf = new ArchivoConf();        //Variable de la configuracion del servidor
+    static Configuracion conf = new Configuracion();        //Variable de la configuracion del servidor
     static ArrayList<Clientes> cliente=new ArrayList<>();   //Lista de clientes
     public static ArrayList<SesionCliente> listaSesiones=new ArrayList<>(); //lista de pruebas para las sesiones
     DatagramPacket pregunta;    //Datagrama para enviar los mensajes multicast
     static Tareas tareas=null;  //Objeto de tipo Tarea para los procesos de los clientes
+    public static VentanaPropiedades propiedades=null;
     int ip=1;       //contador para preguntar a los grupos multicast
     ThreadPoolExecutor pool; //variable para ayuda en control de los hilos
 
@@ -60,22 +62,14 @@ public class BuscarGrupo extends Principal {
             Logger.getLogger(BuscarGrupo.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    //obtiene la configuracion
-    public ArchivoConf getConf() {
-        return conf;
-    }
-
-    //guarda cambios en la configuracion del servidor
-    public void setConf(ArchivoConf conf) {
-        BuscarGrupo.conf = conf;
-    }
     //metodo que se llama para iniciar el seridor
     public void iniciarServidor()
     {
         //cargamos la lista de clientes
-        cliente=new Clientes().cargarClientes();
+        cliente=Archivos.cargarListaClientes();
         //verificamos si existe configuracion
-        if(conf.CargarConf())
+        conf=Archivos.cargarConf();
+        if(conf!=null)
         {
             try {
                 //mostramos mensaje de carga de configuracion
@@ -85,18 +79,18 @@ public class BuscarGrupo extends Principal {
                 //Iniciamos los hilos
                 this.inicarHilos();
                 //pasamos la configuracion a Principal(Interfaz)
-                confPrincipal=this.getConf();
+                Principal.setConf(conf);
             } catch (IOException ex) {
                 System.out.println("Error");
             }
         }
         else
         {
+            conf=new Configuracion();
             //mostramos mensaje de que no se encontro configuracion
             AppSystemTray.mostrarMensaje("no se encontro configuración", AppSystemTray.INFORMATION_MESSAGE);
             this.buscarGrupo();
-            //pasamos la configuracion a Principal(Interfaz)
-            confPrincipal=this.getConf();
+            
         }
     }
     /*metodo que inicia los hilos de busqueda y escuha
@@ -128,7 +122,9 @@ public class BuscarGrupo extends Principal {
                 //Mostramos la configuracion de la BD
                 new BDConfig(conf).setVisible(true);
                 //Creamos el nuevo archivo de configuracion
-                conf.nuevoArchivo();
+                new Archivos().guardarConf(conf);
+                //pasamos la configuracion a Principal(Interfaz)
+                Principal.setConf(conf);
             }
             else
             {
@@ -246,7 +242,7 @@ class guardarSesion implements Runnable
         try {
             System.out.println("Guardando Sesion");
             dis = new DataInputStream(socket.getInputStream());
-            //recibimos el nombre del archivo
+            //resivimos el nombre del archivo
             String nombre=dis.readUTF();
             //obtenemos el tamaño del archivo
             long tamaño=dis.readLong();
@@ -254,26 +250,10 @@ class guardarSesion implements Runnable
             buffer=new byte[(int)tamaño];
             //leemos el objeto entrante
             dis.read(buffer);
-            //preparamos la entrada de datos del array
-            ByteArrayInputStream bs=new ByteArrayInputStream(buffer);
-            //preparamos la entrada para obtener el objeto "Sesion"
-            ObjectInputStream ois=new ObjectInputStream(bs);
-            //obtenemos el objeto "Sesion"
-            SesionCliente s=(SesionCliente)ois.readObject();
-            //lo añadimo a la lista se sesiones
-            BuscarGrupo.listaSesiones.add(s);
-            //preparamos el archivo para escribir el objeto
-            RandomAccessFile archivo=new RandomAccessFile(nombre,"rw");
-            //cerramos toda entrada y salida de datos 
-            archivo.write(buffer);
-            archivo.close();
-            ois.close();
-            bs.close();
+            Archivos.guardarSesion(nombre, buffer);
             dis.close();
             socket.close();
                     } catch (IOException ex) {
-            Logger.getLogger(guardarSesion.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex) {
             Logger.getLogger(guardarSesion.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {

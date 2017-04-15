@@ -3,40 +3,38 @@ package interfaz;
 import java.awt.Color;
 import java.awt.Image;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
+import servidor.BuscarGrupo;
+import servidor.Clientes;
 import servidor.Ordenes;
 
 public class Pc_info extends javax.swing.JPanel {
 
     ImageIcon verde = new ImageIcon(new ImageIcon("src/iconos/verde.png").getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH));
     ImageIcon rojo = new ImageIcon(new ImageIcon("src/iconos/rojo.png").getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH));
-    private String nombre = "Nombre"; //guarda el nombre del usuario
-    private String hostname; //guarda el hotname/direccion del usuario
+    Clientes cliente;
     Socket conexion;    //socket  para enviar mensajes
     Ordenes ordenes=new Ordenes();
     //constructor recive toda la infomacion del usario 
-    public Pc_info(String nombre ,String hostname) {
+    public Pc_info(Clientes cliente) {
         initComponents();
         Color color = new Color(255, 255, 255, 255);
         //hacemos visible la ventana
         barEnvio.setVisible(false);
         this.setBackground(color);
         //guardamos los datos recibidos
-        this.nombre=nombre;
-        this.hostname=hostname;
-        label.setText(nombre);
+        this.cliente=cliente;
+        label.setText(this.cliente.getNombre());
         iconos();
     }
     public void conexion()
     {
         try {
             conexion=new Socket();
-            SocketAddress sa=new InetSocketAddress(hostname, 4401);
+            SocketAddress sa=new InetSocketAddress(cliente.getHostname(), 4401);
             //intentamos la coneccion a la direccion ip y puerto con un tiempo maximo de 200milisegundos
             conexion.connect(sa,200);
             //si hay conexion con el destino colocamos el icono verde
@@ -64,7 +62,7 @@ public class Pc_info extends javax.swing.JPanel {
         label.setIcon(verde);
     }
     public void setNombre(String nombre) {
-        this.nombre = nombre;
+        this.cliente.setNombre(nombre);
         label.setText(nombre);
     }
     public void bloquearEnviar()
@@ -80,7 +78,7 @@ public class Pc_info extends javax.swing.JPanel {
         return !Enviar.isEnabled();
     }
     public String getNombre() {
-        return nombre;
+        return cliente.getNombre();
     }
     public void iconos(){
     ImageIcon configuracion = new ImageIcon(new ImageIcon("src/iconos/configuracion.png").getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH));
@@ -104,6 +102,7 @@ public class Pc_info extends javax.swing.JPanel {
         Cpagina = new javax.swing.JMenuItem();
         reiniciar = new javax.swing.JMenuItem();
         Tareas = new javax.swing.JMenuItem();
+        Propiedades = new javax.swing.JMenuItem();
         estado = new javax.swing.JLabel();
         conf = new javax.swing.JLabel();
         label = new javax.swing.JLabel();
@@ -164,6 +163,14 @@ public class Pc_info extends javax.swing.JPanel {
             }
         });
         menu.add(Tareas);
+
+        Propiedades.setText("Propiedades");
+        Propiedades.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                PropiedadesActionPerformed(evt);
+            }
+        });
+        menu.add(Propiedades);
 
         setBackground(new java.awt.Color(255, 255, 255));
         setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
@@ -239,34 +246,39 @@ public class Pc_info extends javax.swing.JPanel {
     }//GEN-LAST:event_confMouseClicked
 
     private void EnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EnviarActionPerformed
-        new EnviarArchivo(this.nombre,hostname);
+        new EnviarArchivo(this.cliente.getNombre(),this.cliente.getHostname());
     }//GEN-LAST:event_EnviarActionPerformed
 
     private void ApagarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ApagarActionPerformed
-        new Apagar(this.nombre,hostname);//Ingresar IP de la pc que se apagará
+        new Apagar(this.cliente.getNombre(),this.cliente.getHostname());//Ingresar IP de la pc que se apagará
     }//GEN-LAST:event_ApagarActionPerformed
 
     private void BloquearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BloquearActionPerformed
-        new Bloquear(this.nombre,hostname);//Ingresar IP de la pc que se bloqueará
+        new Bloquear(this.cliente.getNombre(),this.cliente.getHostname());//Ingresar IP de la pc que se bloqueará
     }//GEN-LAST:event_BloquearActionPerformed
 
     private void desbloquearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_desbloquearActionPerformed
-        new Desbloquear(this.nombre, hostname);
+        new Desbloquear(this.cliente.getNombre(),this.cliente.getHostname());
     }//GEN-LAST:event_desbloquearActionPerformed
 
     private void reiniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reiniciarActionPerformed
-        new Reiniciar(this.nombre,hostname);
+        new Reiniciar(this.cliente.getNombre(),this.cliente.getHostname());
     }//GEN-LAST:event_reiniciarActionPerformed
 
     private void TareasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TareasActionPerformed
-        ordenes.pedirProcesos(hostname);
-        System.out.println("orden pc_info"+hostname);
+        ordenes.pedirProcesos(this.cliente.getHostname());
+        System.out.println("orden pc_info"+this.cliente.getHostname());
     }//GEN-LAST:event_TareasActionPerformed
 
     private void CpaginaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CpaginaActionPerformed
         
-        new Desbloquear(this.nombre, hostname);
+        new Desbloquear(this.cliente.getNombre(),this.cliente.getHostname());
     }//GEN-LAST:event_CpaginaActionPerformed
+
+    private void PropiedadesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PropiedadesActionPerformed
+        BuscarGrupo.propiedades=new VentanaPropiedades("Individual");
+        BuscarGrupo.propiedades.agregarPanel(this.cliente);
+    }//GEN-LAST:event_PropiedadesActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -274,6 +286,7 @@ public class Pc_info extends javax.swing.JPanel {
     private javax.swing.JMenuItem Bloquear;
     private javax.swing.JMenuItem Cpagina;
     private javax.swing.JMenuItem Enviar;
+    private javax.swing.JMenuItem Propiedades;
     private javax.swing.JMenuItem Tareas;
     public javax.swing.JProgressBar barEnvio;
     private javax.swing.JLabel conf;
