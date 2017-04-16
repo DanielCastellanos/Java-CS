@@ -6,10 +6,12 @@ package servidor;
 
 import cliente.SesionCliente;
 import cliente.Tarea;
+import entity.Admin;
 import entity.Pagina;
 import entity.Pc;
 import entity.Programa;
 import entity.Sesion;
+import entity.UsoPc;
 import entity.Usuario;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,12 +45,18 @@ public class bdUtil {
             if (sesion.getUsuarioidUsuario() == null) {
                 sesion.setUsuarioidUsuario(createUsuario(sesionCliente.getUsr()));
             }
-
+            
+            /*Colleciones de páginas y grogramas*/
             sesion.setPaginaCollection(getPages(sesionCliente.getWebHistory()));
             /*Se agrega el collection de Pagina a partir
                                                     el arrayList que contiene los nombres de las páginas en sesionCliente*/
             //Posteriormente se realiza lo mismo con los programas.
             sesion.setProgramaCollection(getProgramas(sesionCliente.getTaskHistory()));
+            /*Colleciones de páginas y grogramas*/
+            
+            /*Agregar referencia de pc en sesion*/            
+//            sesion.setPCidPC(pc);
+            
 
         } catch (HibernateException he) {
             System.out.println(he.toString());
@@ -156,13 +164,57 @@ public class bdUtil {
         }
     }
     
+    public Admin logginAdmin(String usr, String pass){
+        
+        /*Abre sesión*/
+        hibernate.HibernateUtil.closeSessionAndUnbindFromThread();
+        sesionBD.getSessionFactory().getCurrentSession();
+        /*Construye consulta*/
+        Query query= sesionBD.createQuery("from Admin where usrName = "+usr+" and pass = "+pass);
+        /*Inicia transacción*/
+        sesionBD.beginTransaction();
+        /*Ejecuta consulta, resultado único*/
+        Admin admin= (Admin)query.uniqueResult();
+        /*Realiza commit y cierra sesión*/
+        sesionBD.getTransaction().commit();
+        hibernate.HibernateUtil.closeSessionAndUnbindFromThread();
+        /*Retorna objeto entonctrado, null si no entonctró nada*/
+        return admin;
+    }
+    
+    /*Guarda un registro en BD recibiendo una Pc y hora de entrada y salida*/
+    public void saveUsoPc(Pc pc, Date entrada, Date salida){
+        try{
+            
+            UsoPc nuevoUso= new UsoPc();
+            nuevoUso.setEncendido(entrada);
+            nuevoUso.setApagado(salida);
+            nuevoUso.setPCidPC(pc);
+            
+            /*Percistencia con hibernate*/
+            hibernate.HibernateUtil.openSessionAndBindToThread();
+            sesionBD= hibernate.HibernateUtil.getSessionFactory().getCurrentSession();
+            sesionBD.beginTransaction();
+            sesionBD.saveOrUpdate(pc);
+            sesionBD.save(nuevoUso);
+            sesionBD.getTransaction().commit();
+            /*-----------------------------*/
+            
+        }catch(HibernateException ex){
+            System.err.println("Error al registrar uso \n"+ex.toString());
+        }
+    }
+    
+//    public boolean adminLogin(String usr, String pass){
+//        
+//    }
     public static void main(String[] args) {
 
-        /**/
-        hibernate.HibernateUtil.buildSessionFactory("localhost:3306/javacs_bd?zeroDateTimeBehavior=convertToNull", "root", "");
+        /*                                              IP      Port DB name     User   Pass*/                                        
+        hibernate.HibernateUtil.buildSessionFactory("localhost:3306/javacs_bd", "root", "");
 
         /**/
-        
+        /*Construcción de sesionCliente de prueba*/
         SesionCliente sc = new SesionCliente();
         sc.setEntrada(new Date());
         sc.setSalida(new Date());
@@ -181,23 +233,28 @@ public class bdUtil {
         StringBuffer sb = new StringBuffer();
         sb.append("facebook.com|es.wikipedia.org|hackstore.net|cinepremiere.com.mx");
         sc.addWebHistory(sb);
-
+        /*-------------------------------------------------------------*/
+        
         Sesion nueva = new bdUtil().buildSesionObject(sc);
-
+        
+        
+        /*Fragmento de código de prueba------para la máquina*/
         hibernate.HibernateUtil.openSessionAndBindToThread();
         Session sess = hibernate.HibernateUtil.getSessionFactory().getCurrentSession();
         sess.beginTransaction();
-        /*Fragmento de código temporal*/
+        
+        
         Pc maquina = new Pc();
-        maquina.setModelo("El que se me antoje");
+        maquina.setIdPC(8);
+        maquina.setModelo("miNueva maquina");
         maquina.setOs("Windows 30000");
         sess.saveOrUpdate(maquina);
         nueva.setPCidPC(maquina);
         sess.getTransaction().commit();
         hibernate.HibernateUtil.closeSessionAndUnbindFromThread();
-        /*Fragmento de código temporal*/
+        /*Fragmento de código de prueba*/
         
-
         new bdUtil().saveSesion(nueva);
+        new bdUtil().saveUsoPc(maquina, new Date(), new Date());
     }
 }
