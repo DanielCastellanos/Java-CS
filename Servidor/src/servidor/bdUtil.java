@@ -54,12 +54,15 @@ public class bdUtil {
             sesion.setProgramaCollection(getProgramas(sesionCliente.getTaskHistory()));
             /*Colleciones de páginas y grogramas*/
             
-            /*Agregar referencia de pc en sesion*/            
-//            sesion.setPCidPC(pc);
-            
+            /*Agregar referencia de pc en sesion*/   
+            Pc p= new Pc();
+            sesionBD.saveOrUpdate(p);
+            sesion.setPCidPC(p);
+            /*----bloque en construcción*/
 
         } catch (HibernateException he) {
             System.out.println(he.toString());
+            sesionBD.getTransaction().rollback();
         } finally {
             /*De cualquier manera se cierra la sesión*/
             hibernate.HibernateUtil.closeSessionAndUnbindFromThread();
@@ -68,6 +71,8 @@ public class bdUtil {
 
         return sesion;
     }
+    
+    
 
     private Collection<Pagina> getPages(ArrayList<String> webReport) {
 
@@ -158,7 +163,7 @@ public class bdUtil {
             sesionBD.getTransaction().commit();
             
         }catch(HibernateException ex){
-            System.err.println(ex.toString());
+            System.err.println("Error al registrar sesión "+ex.toString());
         }finally{
             hibernate.HibernateUtil.closeSessionAndUnbindFromThread();
         }
@@ -239,22 +244,22 @@ public class bdUtil {
         
         
         /*Fragmento de código de prueba------para la máquina*/
-        hibernate.HibernateUtil.openSessionAndBindToThread();
-        Session sess = hibernate.HibernateUtil.getSessionFactory().getCurrentSession();
-        sess.beginTransaction();
-        
-        
-        Pc maquina = new Pc();
-        maquina.setIdPC(8);
-        maquina.setModelo("miNueva maquina");
-        maquina.setOs("Windows 30000");
-        sess.saveOrUpdate(maquina);
-        nueva.setPCidPC(maquina);
-        sess.getTransaction().commit();
-        hibernate.HibernateUtil.closeSessionAndUnbindFromThread();
+//        hibernate.HibernateUtil.openSessionAndBindToThread();
+//        Session sess = hibernate.HibernateUtil.getSessionFactory().getCurrentSession();
+//        sess.beginTransaction();
+//        
+//        
+//        Pc maquina = new Pc();
+//        maquina.setIdPC(1);
+//        maquina.setModelo("miNueva maquina");
+//        maquina.setOs("Windows 30000");
+//        sess.saveOrUpdate(maquina);
+//        nueva.setPCidPC(maquina);
+//        sess.getTransaction().commit();
+//        hibernate.HibernateUtil.closeSessionAndUnbindFromThread();
         /*Fragmento de código de prueba*/
         
         new bdUtil().saveSesion(nueva);
-        new bdUtil().saveUsoPc(maquina, new Date(), new Date());
+//        new bdUtil().saveUsoPc(maquina, new Date(), new Date());
     }
 }
