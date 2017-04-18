@@ -5,10 +5,12 @@
  */
 package interfaz;
 
+import entity.Pc;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.Toolkit;
+import java.util.ArrayList;
 import javax.swing.ImageIcon;
-import servidor.Clientes;
 
 /**
  *
@@ -19,26 +21,23 @@ public class VentanaPropiedades extends javax.swing.JFrame {
     /**
      * Creates new form VentanaPropiedades
      */
-    private Image iconoPC=new ImageIcon("src/iconos/IconoPC.png").getImage();
-    private static String tipo;
-    public VentanaPropiedades(String tipo){
+    private Image iconoPC=new ImageIcon("src/iconos/computer.png").getImage();
+    public VentanaPropiedades(Pc pc){
         initComponents();
-        this.tipo=tipo;
-        if(tipo.equalsIgnoreCase("Individual"))
-        {
-            this.setLayout(new GridLayout(0,1));
-        }
-        else if(tipo.equalsIgnoreCase("Grupal"))
-        {
-            this.setLayout(new GridLayout(0,5));
-        }
+        jPanel1.setLayout(new GridLayout(1,1));
         this.setVisible(true);
+        jPanel1.add(new PanelPropiedades(iconoPC, pc));
     }
-    public void agregarPanel(Clientes cliente)
+    public VentanaPropiedades(ArrayList<Pc> equipos)
     {
-        this.add(new PropiedadesCliente(iconoPC,cliente));
+        initComponents();
+        jPanel1.setLayout(new GridLayout(0,3));
+         this.setSize(Toolkit.getDefaultToolkit().getScreenSize().getSize().width-(Toolkit.getDefaultToolkit().getScreenSize().getSize().width/4),this.getHeight());   
+         this.setVisible(true);
+         for (Pc equipo : equipos) {
+            jPanel1.add(new PanelPropiedades(iconoPC, equipo));
+        }
     }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -48,17 +47,33 @@ public class VentanaPropiedades extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        scrollPane = new javax.swing.JScrollPane();
+        jPanel1 = new javax.swing.JPanel();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 367, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 370, Short.MAX_VALUE)
+        );
+
+        scrollPane.setViewportView(jPanel1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 295, Short.MAX_VALUE)
+            .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 369, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 342, Short.MAX_VALUE)
+            .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
         );
 
         pack();
@@ -94,11 +109,13 @@ public class VentanaPropiedades extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new VentanaPropiedades(tipo).setVisible(true);
+                new VentanaPropiedades(new Pc()).setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane scrollPane;
     // End of variables declaration//GEN-END:variables
 }

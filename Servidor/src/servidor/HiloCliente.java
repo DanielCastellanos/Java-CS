@@ -1,5 +1,6 @@
 package servidor;
 
+import entity.Pc;
 import interfaz.AppSystemTray;
 import interfaz.Principal;
 import interfaz.Tareas;
@@ -74,23 +75,23 @@ public class HiloCliente implements Runnable{
             pos++;
         }
         // creamos un nuevo objeto cliente
-        Clientes c=new Clientes();
-        c.setNombre(datos[1]);
-        c.setDireccion(datos[2]);
-        c.setHostname(datos[3]);
-        c.setMarca(datos[4]);
-        c.setModelo(datos[5]);
-        c.setNumeroSerie(datos[6]);
-        c.setMac(datos[7]);
-        c.setProcesador(datos[8]);
-        c.setHdd(datos[9]);
-        c.setRam(datos[10]);
-        c.setSo(datos[11]);
+        Pc pc=new Pc();
+        pc.setNombre(datos[1]);
+        pc.setDireccion(datos[2]);
+        pc.setHostname(datos[3]);
+        pc.setMarca(datos[4]);
+        pc.setModelo(datos[5]);
+        pc.setNoSerie(datos[6]);
+        pc.setMac(datos[7]);
+        pc.setProcesador(datos[8]);
+        pc.setDiscoDuro(datos[9]);
+        pc.setRam(datos[10]);
+        pc.setOs(datos[11]);
         if(!verificarCliente(datos[3]))//verificamos que el usuario no este ya registrado
         {
-            cliente.add(c);
-            Archivos.guardarListaClientes(cliente);
-            Principal.agregaEquipo(c);
+            equipos.add(pc);
+            Archivos.guardarListaClientes(equipos);
+            Principal.agregaEquipo(pc);
             AppSystemTray.mostrarMensaje("Nuevo Cliente",AppSystemTray.PLAIN_MESSAGE);
         }
         else{
@@ -102,7 +103,7 @@ public class HiloCliente implements Runnable{
     private boolean verificarCliente(String host)
     {
         boolean existe=false;
-        for (Clientes clientes : cliente) {
+        for (Pc clientes : equipos) {
             if(clientes.getHostname().equals(host))
             {
                 existe=true;
@@ -133,7 +134,7 @@ public class HiloCliente implements Runnable{
     private String nombreCliente(InetAddress ia)
     {
         String nombre=null;
-        for (Clientes clientes : cliente) {
+        for (Pc clientes : equipos) {
             if(ia.getHostName().equalsIgnoreCase(clientes.getHostname()))
             {
                 nombre=clientes.getNombre();

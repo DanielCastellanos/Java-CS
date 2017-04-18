@@ -1,6 +1,7 @@
 package servidor;
 
 import cliente.SesionCliente;
+import entity.Pc;
 import entity.Sesion;
 import interfaz.AppSystemTray;
 import interfaz.BDConfig;
@@ -43,7 +44,7 @@ public class BuscarGrupo extends Principal {
     InetAddress ia;         //InetAddress para los grupos multicast
     Timer t = new Timer();    //Timer para preguntar en los grupos multicast
     static Configuracion conf = new Configuracion();        //Variable de la configuracion del servidor
-    static ArrayList<Clientes> cliente = new ArrayList<>();   //Lista de clientes
+    public static ArrayList<Pc> equipos = new ArrayList<>();   //Lista de clientes
     public static ArrayList<SesionCliente> listaSesiones = new ArrayList<>(); //lista de pruebas para las sesiones
     DatagramPacket pregunta;    //Datagrama para enviar los mensajes multicast
     static Tareas tareas = null;  //Objeto de tipo Tarea para los procesos de los clientes
@@ -67,7 +68,7 @@ public class BuscarGrupo extends Principal {
     //metodo que se llama para iniciar el seridor
     public void iniciarServidor() {
         //cargamos la lista de clientes
-        cliente = Archivos.cargarListaClientes();
+        equipos = Archivos.cargarListaClientes();
         //verificamos si existe configuracion
         conf = Archivos.cargarConf();
         if (conf != null) {

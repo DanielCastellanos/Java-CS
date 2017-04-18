@@ -1,5 +1,6 @@
 package interfaz;
 
+import entity.Pc;
 import java.awt.Color;
 import java.awt.Image;
 import java.io.IOException;
@@ -8,18 +9,17 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import javax.swing.ImageIcon;
 import servidor.BuscarGrupo;
-import servidor.Clientes;
 import servidor.Ordenes;
 
 public class Pc_info extends javax.swing.JPanel {
 
     ImageIcon verde = new ImageIcon(new ImageIcon("src/iconos/verde.png").getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH));
     ImageIcon rojo = new ImageIcon(new ImageIcon("src/iconos/rojo.png").getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH));
-    Clientes cliente;
+    Pc cliente;
     Socket conexion;    //socket  para enviar mensajes
     Ordenes ordenes=new Ordenes();
     //constructor recive toda la infomacion del usario 
-    public Pc_info(Clientes cliente) {
+    public Pc_info(Pc cliente) {
         initComponents();
         Color color = new Color(255, 255, 255, 255);
         //hacemos visible la ventana
@@ -276,8 +276,7 @@ public class Pc_info extends javax.swing.JPanel {
     }//GEN-LAST:event_CpaginaActionPerformed
 
     private void PropiedadesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PropiedadesActionPerformed
-        BuscarGrupo.propiedades=new VentanaPropiedades("Individual");
-        BuscarGrupo.propiedades.agregarPanel(this.cliente);
+        BuscarGrupo.propiedades=new VentanaPropiedades(this.cliente);
     }//GEN-LAST:event_PropiedadesActionPerformed
 
 

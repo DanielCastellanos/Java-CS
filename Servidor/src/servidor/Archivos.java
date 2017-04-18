@@ -1,6 +1,7 @@
 package servidor;
 
 import cliente.SesionCliente;
+import entity.Pc;
 import hibernate.HibernateUtil;
 import interfaz.BDConfig;
 import java.io.ByteArrayInputStream;
@@ -85,7 +86,7 @@ public class Archivos {
         }
         return conf;
     }
-    public static void guardarListaClientes(ArrayList<Clientes> lista)
+    public static void guardarListaClientes(ArrayList<Pc> lista)
     {
         try {
             File archivo=new File("ListaClientes.txt");
@@ -107,10 +108,10 @@ public class Archivos {
             Logger.getLogger(Archivos.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    public static ArrayList<Clientes> cargarListaClientes()
+    public static ArrayList<Pc> cargarListaClientes()
     {
         File archivo=new File("ListaClientes.txt");
-        ArrayList<Clientes> lista=null;
+        ArrayList<Pc> lista=new ArrayList<>();
         try {
             RandomAccessFile leer=new RandomAccessFile(archivo,"r");
             byte clientes[]=new byte[(int)leer.length()];
@@ -118,12 +119,12 @@ public class Archivos {
             clientes=Cifrado.descifrar(clientes);
             ByteArrayInputStream bis=new ByteArrayInputStream(clientes);
             ObjectInputStream is=new ObjectInputStream(bis);
-            lista=(ArrayList<Clientes>)is.readObject();
+            lista=(ArrayList<Pc>)is.readObject();
             leer.close();
             bis.close();
             is.close();
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(Archivos.class.getName()).log(Level.SEVERE, null, ex);
+            System.err.println("Lista Clientes inexistente");
         } catch (IOException ex) {
             Logger.getLogger(Archivos.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {

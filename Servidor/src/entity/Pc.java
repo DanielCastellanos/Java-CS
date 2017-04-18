@@ -25,7 +25,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import servidor.Clientes;
 
 /**
  *
@@ -237,7 +236,7 @@ public class Pc implements Serializable {
                 host=true;
             }
         } catch (UnknownHostException ex) {
-            Logger.getLogger(Clientes.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Pc.class.getName()).log(Level.SEVERE, null, ex);
         }
         return host;
     }

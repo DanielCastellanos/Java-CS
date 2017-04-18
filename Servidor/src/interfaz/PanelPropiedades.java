@@ -5,32 +5,35 @@
  */
 package interfaz;
 
+import entity.Pc;
+import java.awt.Color;
 import java.awt.Image;
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
-import servidor.Clientes;
 
 /**
  *
  * @author Ricar
  */
-public class PropiedadesCliente extends javax.swing.JPanel {
+public class PanelPropiedades extends javax.swing.JPanel {
 
     /**
      * Creates new form PropiedadesCliente
      */
-    public PropiedadesCliente(Image icono,Clientes cliente) {
+    public PanelPropiedades(Image icono,Pc cliente) {
         initComponents();
-        lblIcono.setIcon(new ImageIcon(icono.getScaledInstance(lblIcono.getWidth(), lblIcono.getHeight(), Image.SCALE_DEFAULT)));
+        this.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        lblIcono.setIcon(new ImageIcon(icono.getScaledInstance(100, 100, Image.SCALE_DEFAULT)));
         lblNombre.setText(lblNombre.getText()+" "+cliente.getNombre());
         lblHost.setText(lblHost.getText()+" "+cliente.getHostname());
         lblMarca.setText(lblMarca.getText()+" "+cliente.getMarca());
         lblModelo.setText(lblModelo.getText()+" "+cliente.getModelo());
-        lblNumeroSerie.setText(lblNumeroSerie.getText()+" "+cliente.getNumeroSerie());
+        lblNumeroSerie.setText(lblNumeroSerie.getText()+" "+cliente.getNoSerie());
         lblMAC.setText(lblMAC.getText()+" "+cliente.getMac());
         lblProcesador.setText(lblProcesador.getText()+" "+cliente.getProcesador());
-        lblHDD.setText(lblHDD.getText()+" "+cliente.getHdd());
+        lblHDD.setText(lblHDD.getText()+" "+cliente.getDiscoDuro());
         lblRAM.setText(lblRAM.getText()+" "+cliente.getRam());
-        lblSistema.setText(lblSistema.getText()+" "+cliente.getSo());
+        lblSistema.setText(lblSistema.getText()+" "+cliente.getOs());
     }
 
     /**
@@ -83,7 +86,6 @@ public class PropiedadesCliente extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblIcono, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(lblNombre)
                             .addComponent(lblHost)
                             .addComponent(lblHDD)
@@ -91,21 +93,23 @@ public class PropiedadesCliente extends javax.swing.JPanel {
                             .addComponent(lblNumeroSerie)
                             .addComponent(lblMAC)
                             .addComponent(lblProcesador)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(lblModelo)
-                                .addGap(47, 47, 47)))
-                        .addGap(19, 156, Short.MAX_VALUE))
+                            .addComponent(lblModelo))
+                        .addGap(21, 158, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblMarca)
                             .addComponent(lblSistema))
                         .addGap(0, 0, Short.MAX_VALUE))))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lblIcono, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lblIcono, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lblIcono, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(lblNombre)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)

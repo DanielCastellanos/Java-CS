@@ -1,20 +1,19 @@
 
 package interfaz;
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
 import servidor.Configuracion;
 import servidor.BuscarGrupo;
-import servidor.Clientes;
 import servidor.Ordenes;
 import cliente.Tarea;
+import entity.Pc;
 import servidor.Archivos;
+import servidor.BuscarGrupo;
 
 public class Principal extends javax.swing.JFrame{
     
@@ -22,7 +21,6 @@ public class Principal extends javax.swing.JFrame{
     int width=Toolkit.getDefaultToolkit().getScreenSize().width;
     //obtenenmos el tamaño vertical de la pantalla
     int height=Toolkit.getDefaultToolkit().getScreenSize().height;
-    private static ArrayList<Clientes> listaClientes=new ArrayList<>();
     Ordenes orden=new Ordenes();
     Timer t; //timer para verificar la conexion con los clientes
     public static Configuracion confPrincipal=new Configuracion();//variable que guarda la configuracion
@@ -51,25 +49,23 @@ public class Principal extends javax.swing.JFrame{
         //iniciamos el icono de la barra de tareas
         AppSystemTray st = new AppSystemTray(logo, this);
         //llenamos el panel con los paneles de los usuarios
-        listaClientes=Archivos.cargarListaClientes();
-        llenarPanel(listaClientes); 
+        llenarPanel(Archivos.cargarListaClientes()); 
         //Timer con el cual verificaremos la coneccion con los clientes
         t=new Timer();
         //iniciamos el timer con su tarea que se ejecutara cada 5 seg.
         t.schedule(verificarCon, 5000, 5000);
     }
     //En el inicio de la aplicaion agrega todos los usuarios guardados
-    public void llenarPanel(ArrayList<Clientes> clientes){
-        for (Clientes cliente : clientes) {
+    public void llenarPanel(ArrayList<Pc> equipos){
+        for (Pc pc : equipos) {
             //estado conexion mandar conectado="on" desconectado="off" 
-            agregaEquipo(cliente);
+            agregaEquipo(pc);
         }
     }
     
     //Agrega paneles de usuario al panel Principal
-    public static void agregaEquipo(Clientes c){
-        Pc_info p=new Pc_info(c);
-        listaClientes.add(c);
+    public static void agregaEquipo(Pc pc){
+        Pc_info p=new Pc_info(pc);
         paneles.add(p);
         panel.add(p);
     }
@@ -102,6 +98,7 @@ public class Principal extends javax.swing.JFrame{
     private void initComponents() {
 
         popUp = new javax.swing.JPopupMenu();
+        menuCliente = new javax.swing.JMenu();
         Enviar = new javax.swing.JMenuItem();
         Apagar = new javax.swing.JMenuItem();
         Bloquear = new javax.swing.JMenuItem();
@@ -110,8 +107,8 @@ public class Principal extends javax.swing.JFrame{
         Tareas = new javax.swing.JMenuItem();
         configuracion = new javax.swing.JMenuItem();
         CompartirPagina = new javax.swing.JMenuItem();
-        Salir = new javax.swing.JMenuItem();
         PropiedadesCliente = new javax.swing.JMenuItem();
+        Salir = new javax.swing.JMenuItem();
         panelScroll = new javax.swing.JScrollPane();
         panel = new javax.swing.JPanel();
         opciones = new javax.swing.JButton();
@@ -120,13 +117,15 @@ public class Principal extends javax.swing.JFrame{
 
         popUp.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
 
+        menuCliente.setText("Opciones Cliente");
+
         Enviar.setText("Enviar Archivo");
         Enviar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 EnviarActionPerformed(evt);
             }
         });
-        popUp.add(Enviar);
+        menuCliente.add(Enviar);
 
         Apagar.setText("Apagar...");
         Apagar.addActionListener(new java.awt.event.ActionListener() {
@@ -134,7 +133,7 @@ public class Principal extends javax.swing.JFrame{
                 ApagarActionPerformed(evt);
             }
         });
-        popUp.add(Apagar);
+        menuCliente.add(Apagar);
 
         Bloquear.setText("Bloquear");
         Bloquear.addActionListener(new java.awt.event.ActionListener() {
@@ -142,7 +141,7 @@ public class Principal extends javax.swing.JFrame{
                 BloquearActionPerformed(evt);
             }
         });
-        popUp.add(Bloquear);
+        menuCliente.add(Bloquear);
 
         desbloquear.setText("Desbloquear");
         desbloquear.addActionListener(new java.awt.event.ActionListener() {
@@ -150,7 +149,7 @@ public class Principal extends javax.swing.JFrame{
                 desbloquearActionPerformed(evt);
             }
         });
-        popUp.add(desbloquear);
+        menuCliente.add(desbloquear);
 
         reiniciar.setText("Reiniciar");
         reiniciar.addActionListener(new java.awt.event.ActionListener() {
@@ -158,7 +157,7 @@ public class Principal extends javax.swing.JFrame{
                 reiniciarActionPerformed(evt);
             }
         });
-        popUp.add(reiniciar);
+        menuCliente.add(reiniciar);
 
         Tareas.setText("Obtener Procesos");
         Tareas.addActionListener(new java.awt.event.ActionListener() {
@@ -166,7 +165,9 @@ public class Principal extends javax.swing.JFrame{
                 TareasActionPerformed(evt);
             }
         });
-        popUp.add(Tareas);
+        menuCliente.add(Tareas);
+
+        popUp.add(menuCliente);
 
         configuracion.setText("Configuración");
         configuracion.addActionListener(new java.awt.event.ActionListener() {
@@ -184,14 +185,6 @@ public class Principal extends javax.swing.JFrame{
         });
         popUp.add(CompartirPagina);
 
-        Salir.setText("Salir");
-        Salir.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                SalirActionPerformed(evt);
-            }
-        });
-        popUp.add(Salir);
-
         PropiedadesCliente.setText("Propiedades Clientes");
         PropiedadesCliente.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -199,6 +192,14 @@ public class Principal extends javax.swing.JFrame{
             }
         });
         popUp.add(PropiedadesCliente);
+
+        Salir.setText("Salir");
+        Salir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SalirActionPerformed(evt);
+            }
+        });
+        popUp.add(Salir);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setBackground(new java.awt.Color(255, 0, 0));
@@ -336,13 +337,7 @@ public class Principal extends javax.swing.JFrame{
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void PropiedadesClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PropiedadesClienteActionPerformed
-        if(BuscarGrupo.propiedades==null)
-        {
-            BuscarGrupo.propiedades=new VentanaPropiedades("Grupal");
-        }
-        for (Clientes cliente : listaClientes) {
-            BuscarGrupo.propiedades.agregarPanel(cliente);
-        }
+        BuscarGrupo.propiedades=new VentanaPropiedades(BuscarGrupo.equipos);
     }//GEN-LAST:event_PropiedadesClienteActionPerformed
     
     
@@ -391,6 +386,7 @@ public class Principal extends javax.swing.JFrame{
     private javax.swing.JMenuItem desbloquear;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JMenu menuCliente;
     private javax.swing.JButton opciones;
     private static javax.swing.JPanel panel;
     private javax.swing.JScrollPane panelScroll;

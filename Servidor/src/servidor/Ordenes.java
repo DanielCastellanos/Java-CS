@@ -187,16 +187,16 @@ public class Ordenes {
             if(InetAddress.getByName(hostname).isMulticastAddress())
             {
                 //ciclo para enviar el archivo a todas las maquinas
-                for (int i = 0; i < BuscarGrupo.cliente.size(); i++) {
+                for (int i = 0; i < BuscarGrupo.equipos.size(); i++) {
                     //iniciamos un nuevo hilo que se encarga del envio 
-                    new Thread(new EnviarSimultaneo(dir, BuscarGrupo.cliente.get(i).getHostname(),Principal.paneles.get(i))).start();
+                    new Thread(new EnviarSimultaneo(dir, BuscarGrupo.equipos.get(i).getHostname(),Principal.paneles.get(i))).start();
                 }
             }
             else
             {
                 //si la direccion no es multicast buscamos la direccion del cliente al que se enviara
-                for (int i=0;i<BuscarGrupo.cliente.size();i++) {
-                    if(BuscarGrupo.cliente.get(i).getHostname().equals(hostname))
+                for (int i=0;i<BuscarGrupo.equipos.size();i++) {
+                    if(BuscarGrupo.equipos.get(i).getHostname().equals(hostname))
                     {
                         new Thread(new EnviarSimultaneo(dir, hostname,Principal.paneles.get(i))).start();
                     }
@@ -325,8 +325,8 @@ public class Ordenes {
         @Override
         public void run() {
             
-            for (int i = 0; i < BuscarGrupo.cliente.size(); i++) {
-                enviarArhivo(archivo,BuscarGrupo.cliente.get(i).getHostname(),Principal.paneles.get(i));
+            for (int i = 0; i < BuscarGrupo.equipos.size(); i++) {
+                enviarArhivo(archivo,BuscarGrupo.equipos.get(i).getHostname(),Principal.paneles.get(i));
             }
         }
         
