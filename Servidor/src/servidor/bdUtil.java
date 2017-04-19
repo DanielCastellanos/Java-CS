@@ -26,7 +26,7 @@ public class bdUtil {
     Session sesionBD;
 
     /*Este método crea y retorna un objeto Sesion*/
-    public Sesion buildSesionObject(SesionCliente sesionCliente) {
+    public Sesion buildSesionObject(SesionCliente sesionCliente, Pc pc) {
 
         Sesion sesion = new Sesion();
         try {
@@ -55,9 +55,7 @@ public class bdUtil {
             /*Colleciones de páginas y grogramas*/
             
             /*Agregar referencia de pc en sesion*/   
-            Pc p= new Pc();
-            sesionBD.saveOrUpdate(p);
-            sesion.setPCidPC(p);
+            sesion.setPCidPC(pc);
             /*----bloque en construcción*/
 
         } catch (HibernateException he) {
@@ -72,8 +70,6 @@ public class bdUtil {
         return sesion;
     }
     
-    
-
     private Collection<Pagina> getPages(ArrayList<String> webReport) {
 
         List<Pagina> pages = new ArrayList<>();                                  //Lista para guardar las páginas
@@ -240,7 +236,8 @@ public class bdUtil {
         sc.addWebHistory(sb);
         /*-------------------------------------------------------------*/
         
-        Sesion nueva = new bdUtil().buildSesionObject(sc);
+        Pc pc= new Pc(1);
+        Sesion nueva = new bdUtil().buildSesionObject(sc, pc);
         
         
         /*Fragmento de código de prueba------para la máquina*/

@@ -89,6 +89,9 @@ public class HiloCliente implements Runnable{
         pc.setOs(datos[11]);
         if(!verificarCliente(datos[3]))//verificamos que el usuario no este ya registrado
         {
+            /*Buscar pc en la BD*/
+            
+            /**/
             equipos.add(pc);
             Archivos.guardarListaClientes(equipos);
             Principal.agregaEquipo(pc);
