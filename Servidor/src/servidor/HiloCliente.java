@@ -15,67 +15,66 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import static servidor.BuscarGrupo.*;
 
-
 /**
  *
  * @author Ricardo
  */
-public class HiloCliente implements Runnable{
+public class HiloCliente implements Runnable {
+
     private DatagramPacket dp;  //paquete para envio de mensajes
-    private InetAddress miIp,   //ip de este despositivo
-                        multicast; //direccion multicast del grupo
+    private InetAddress miIp, //ip de este despositivo
+            multicast; //direccion multicast del grupo
     MulticastSocket puerto;  //puertopara los mensajes multicast
-    
+
     //Constructor del hilo 
-    public HiloCliente(DatagramPacket dp,InetAddress multicast,MulticastSocket puerto)
-    {
+    public HiloCliente(DatagramPacket dp, InetAddress multicast, MulticastSocket puerto) {
         try {
-            this.miIp=InetAddress.getLocalHost();
-            this.dp=dp;
-            this.multicast=multicast;
-            this.puerto=puerto;
+            this.miIp = InetAddress.getLocalHost();
+            this.dp = dp;
+            this.multicast = multicast;
+            this.puerto = puerto;
         } catch (UnknownHostException ex) {
             Logger.getLogger(HiloCliente.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
     //metodo para contestar cuando otro servidor pregunta si el grupo esta libre
-    public void contestar()
-    {
+    public void contestar() {
         try {
-            byte buf[]="servidor,".getBytes();//preapra el mensaje 
-            DatagramPacket info=new DatagramPacket(buf, buf.length,multicast,1000); // lo agrega al paquete
+            byte buf[] = "servidor,".getBytes();//preapra el mensaje 
+            DatagramPacket info = new DatagramPacket(buf, buf.length, multicast, 1000); // lo agrega al paquete
             puerto.send(info);//lo envia
         } catch (IOException ex) {
             Logger.getLogger(BuscarGrupo.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }
+
     /*metodo que contesta a usuarios que solicitan informacion 
     parametros ip del usuario que solicito la informacion*/
-    public void contestarCliente(InetAddress direccion)
-    {
+    public void contestarCliente(InetAddress direccion) {
         try {
             System.out.println(direccion.getHostAddress());
-            byte buf[]=("serv,"+conf.getNombreServ()+","+conf.getGrupo()).getBytes();
-            DatagramPacket info=new DatagramPacket(buf, buf.length,direccion,1001);
+            byte buf[] = ("serv," + conf.getNombreServ() + "," + conf.getGrupo()).getBytes();
+            DatagramPacket info = new DatagramPacket(buf, buf.length, direccion, 1001);
             puerto.send(info);
         } catch (IOException ex) {
             System.out.println("asd");
         }
     }
+
     private void guardarCliente(String mensaje)//**
     {
-        StringTokenizer token=new StringTokenizer(mensaje,",");
-        int pos=0;
-        String datos[]=new String[12];
+        StringTokenizer token = new StringTokenizer(mensaje, ",");
+        int pos = 0;
+        String datos[] = new String[12];
         //separamos los datos resibidos
-        while(token.hasMoreTokens())
-        {
-            datos[pos]=token.nextToken();
+        while (token.hasMoreTokens()) {
+            datos[pos] = token.nextToken();
             pos++;
         }
         // creamos un nuevo objeto cliente
-        Pc pc=new Pc();
+        Pc pc = new Pc();
         pc.setNombre(datos[1]);
         pc.setDireccion(datos[2]);
         pc.setHostname(datos[3]);
@@ -87,113 +86,109 @@ public class HiloCliente implements Runnable{
         pc.setDiscoDuro(datos[9]);
         pc.setRam(datos[10]);
         pc.setOs(datos[11]);
-        if(!verificarCliente(datos[3]))//verificamos que el usuario no este ya registrado
+        if (!verificarCliente(datos[3]))//verificamos que el usuario no este ya registrado
         {
             /*Buscar pc en la BD*/
-            
+            if (hibernate.HibernateUtil.isConnected()) {
+                int idPc = new bdUtil().getPcIdByMac(pc.getMac());       //Uso la mac para verificar si existe la máquina en bd
+                if (idPc == -1) {
+                    new bdUtil().savePc(pc);
+                }else{
+                    pc.setIdPC(idPc);
+                }
+            }
             /**/
             equipos.add(pc);
             Archivos.guardarListaClientes(equipos);
             Principal.agregaEquipo(pc);
-            AppSystemTray.mostrarMensaje("Nuevo Cliente",AppSystemTray.PLAIN_MESSAGE);
-        }
-        else{
+            AppSystemTray.mostrarMensaje("Nuevo Cliente", AppSystemTray.PLAIN_MESSAGE);
+        } else {
             System.out.println("El usuario ya esta registrado");
+        }
     }
-    }
-    
+
     //veficacion del cliente si existe o no
-    private boolean verificarCliente(String host)
-    {
-        boolean existe=false;
+    private boolean verificarCliente(String host) {
+        boolean existe = false;
         for (Pc clientes : equipos) {
-            if(clientes.getHostname().equals(host))
-            {
-                existe=true;
+            if (clientes.getHostname().equals(host)) {
+                existe = true;
             }
         }
         return (existe);
     }
+
     //separa las tareas enviadas por el usuario
-    private ArrayList<String []> separarTareas(String tareas)
-    {
-        ArrayList<String []> lista=new ArrayList<>();
-       StringTokenizer registro=new StringTokenizer(tareas,"#");
-       StringTokenizer datos;
-       String info[];
-       while(registro.hasMoreTokens())
-       {
-           datos=new StringTokenizer(registro.nextToken(), "|");
-           int cont=0;
-           info=new String[4];
-           while(datos.hasMoreTokens()){
-               info[cont]=datos.nextToken();
-               cont++;
-           }
-           lista.add(info);
-       }
-       return lista;
+    private ArrayList<String[]> separarTareas(String tareas) {
+        ArrayList<String[]> lista = new ArrayList<>();
+        StringTokenizer registro = new StringTokenizer(tareas, "#");
+        StringTokenizer datos;
+        String info[];
+        while (registro.hasMoreTokens()) {
+            datos = new StringTokenizer(registro.nextToken(), "|");
+            int cont = 0;
+            info = new String[4];
+            while (datos.hasMoreTokens()) {
+                info[cont] = datos.nextToken();
+                cont++;
+            }
+            lista.add(info);
+        }
+        return lista;
     }
-    private String nombreCliente(InetAddress ia)
-    {
-        String nombre=null;
+
+    private String nombreCliente(InetAddress ia) {
+        String nombre = null;
         for (Pc clientes : equipos) {
-            if(ia.getHostName().equalsIgnoreCase(clientes.getHostname()))
-            {
-                nombre=clientes.getNombre();
+            if (ia.getHostName().equalsIgnoreCase(clientes.getHostname())) {
+                nombre = clientes.getNombre();
                 break;
             }
         }
         return nombre;
     }
+
     @Override
     public void run() {
-        if(!(dp.getAddress().getHostAddress().equals(miIp.getHostAddress())))//evita la respuesta de nuestra misma pc
-                        {   
-            
-                            String mensaje=new String(dp.getData());
-                            mensaje=mensaje.trim();
-                            String aux=mensaje.substring(0,mensaje.indexOf(","));
-                            InetAddress direccion=dp.getAddress();
-                            System.out.println(mensaje);
-                            switch(aux)
-                            {
-                                case "?"://Cuando otro servidor pregunta por si el grupo esta libre
-                                    contestar();
-                                    break;
-                                case "servidor"://resive respuesta del servdor obtiene nombre y direccion
-                                    BuscarGrupo.libre=false;
-                                    System.err.println("Grupo ocupado por la direccion ip: "+dp.getAddress().getHostAddress());
-                                    break;
-                                case "info"://cuando el cliente solicita informacion del servidor (IP y nombre)
-                                    contestarCliente(dp.getAddress());
-                                    break;
-                                case "cliente"://cuando un nuevo usuario se une al grupo
-                                    System.out.println("Guardando Cliente");
-                                    guardarCliente(mensaje);
-                                    break;
-                                case "Tareas"://cuando se resiven las tareas solicitadas al cliente
-                                    String tarea=mensaje.substring(mensaje.indexOf(",")+1,mensaje.length());
-                                    String nomCliente=nombreCliente(direccion);
-                                    if(BuscarGrupo.tareas==null)
-                                    {
-                                        BuscarGrupo.tareas=new Tareas();
-                                        BuscarGrupo.tareas.agregar(separarTareas(tarea),direccion,nomCliente);
-                                    }
-                                    else
-                                    {
-                                        tareas.setVisible(true);
-                                        if(!tareas.revisar(nomCliente))
-                                        {
-                                        BuscarGrupo.tareas.agregar(separarTareas(tarea),dp.getAddress(),nomCliente);
-                                        }
-                                    }
-                                    break;
-                            } 
+        if (!(dp.getAddress().getHostAddress().equals(miIp.getHostAddress())))//evita la respuesta de nuestra misma pc
+        {
+
+            String mensaje = new String(dp.getData());
+            mensaje = mensaje.trim();
+            String aux = mensaje.substring(0, mensaje.indexOf(","));
+            InetAddress direccion = dp.getAddress();
+            System.out.println(mensaje);
+            switch (aux) {
+                case "?"://Cuando otro servidor pregunta por si el grupo esta libre
+                    contestar();
+                    break;
+                case "servidor"://resive respuesta del servdor obtiene nombre y direccion
+                    BuscarGrupo.libre = false;
+                    System.err.println("Grupo ocupado por la direccion ip: " + dp.getAddress().getHostAddress());
+                    break;
+                case "info"://cuando el cliente solicita informacion del servidor (IP y nombre)
+                    contestarCliente(dp.getAddress());
+                    break;
+                case "cliente"://cuando un nuevo usuario se une al grupo
+                    System.out.println("Guardando Cliente");
+                    guardarCliente(mensaje);
+                    break;
+                case "Tareas"://cuando se resiven las tareas solicitadas al cliente
+                    String tarea = mensaje.substring(mensaje.indexOf(",") + 1, mensaje.length());
+                    String nomCliente = nombreCliente(direccion);
+                    if (BuscarGrupo.tareas == null) {
+                        BuscarGrupo.tareas = new Tareas();
+                        BuscarGrupo.tareas.agregar(separarTareas(tarea), direccion, nomCliente);
+                    } else {
+                        tareas.setVisible(true);
+                        if (!tareas.revisar(nomCliente)) {
+                            BuscarGrupo.tareas.agregar(separarTareas(tarea), dp.getAddress(), nomCliente);
                         }
-                        else
-                        {
-                            BuscarGrupo.libre=true; 
-                        }
+                    }
+                    break;
+            }
+        } else {
+            BuscarGrupo.libre = true;
+        }
     }
 }

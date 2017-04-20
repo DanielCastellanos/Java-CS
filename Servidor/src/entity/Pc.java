@@ -62,6 +62,8 @@ public class Pc implements Serializable {
     private String noSerie;
     @Column(name = "os")
     private String os;
+    @Column(name = "mac")
+    private String mac;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "pCidPC")
     private Collection<Sesion> sesionCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "pCidPC")
@@ -76,8 +78,6 @@ public class Pc implements Serializable {
     private String hostname= null;
     @Transient
     private String marca= null;
-    @Transient
-    private String mac= null;
     
     public Pc() {
     }

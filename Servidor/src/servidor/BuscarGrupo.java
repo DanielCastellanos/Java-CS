@@ -260,7 +260,7 @@ class guardarSesion implements Runnable {
                 Pc pc = null;
                 String nombreEquipo = nombre.substring(0, nombre.indexOf("-"));
                 for (Pc equipo : BuscarGrupo.equipos) {
-                    if (pc.getNombre().equals(nombreEquipo)) {
+                    if (nombreEquipo.equals(equipo.getNombre())) {
                         pc = equipo;
                     }
                 }

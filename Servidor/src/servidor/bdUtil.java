@@ -135,6 +135,49 @@ public class bdUtil {
         return objetoUsuario;
     }
 
+    public int getPcIdByMac(String mac){
+        hibernate.HibernateUtil.openSessionAndBindToThread();
+        sesionBD = hibernate.HibernateUtil.getSessionFactory().getCurrentSession();
+        sesionBD.beginTransaction();
+        
+        Query q= sesionBD.createQuery("from Pc where mac = "+mac);
+        Pc returnedPc=(Pc)q.uniqueResult();
+        
+        sesionBD.getTransaction().commit();
+        hibernate.HibernateUtil.closeSessionAndUnbindFromThread();
+        
+        int val;
+        
+        if(returnedPc == null){
+            val= -1 ;
+        }else{
+            val= returnedPc.getIdPC();
+        }
+        System.out.println("\n"+val+"\n");
+        return val;
+    }
+    
+    public boolean savePc(Pc pc){
+        
+        try{
+        hibernate.HibernateUtil.openSessionAndBindToThread();
+        sesionBD= hibernate.HibernateUtil.getSessionFactory().getCurrentSession();
+        
+        sesionBD.beginTransaction();
+
+        sesionBD.saveOrUpdate(pc);
+        sesionBD.getTransaction().commit();
+        
+        return true;
+        }catch(HibernateException ex){
+            System.err.println("Error al persistir datos de pc"+ ex.toString());
+            return false;
+        }finally{
+            hibernate.HibernateUtil.closeSessionAndUnbindFromThread();
+        }
+        
+    }
+    
     private Usuario createUsuario(String cod) {
         Usuario nuevo = new Usuario(Integer.parseInt(cod), true);        //Crea objeto usuario
         sesionBD.beginTransaction();                        //Inicia transacción en hibernate
@@ -205,12 +248,10 @@ public class bdUtil {
             System.err.println("Error al registrar uso \n"+ex.toString());
         }
     }
-    
-//    public boolean adminLogin(String usr, String pass){
-//        
-//    }
-    public static void main(String[] args) {
 
+    /*Pare pruebas*/
+    public static void prueba1(){
+        
         /*                                              IP      Port DB name     User   Pass*/                                        
         hibernate.HibernateUtil.buildSessionFactory("localhost:3306/javacs_bd", "root", "");
 
@@ -258,5 +299,55 @@ public class bdUtil {
         
         new bdUtil().saveSesion(nueva);
 //        new bdUtil().saveUsoPc(maquina, new Date(), new Date());
+
+    }
+    /**/
+
+    public static void prueba2(){
+        hibernate.HibernateUtil.buildSessionFactory("localhost:3306/javacs_bd", "root", "");
+        Pc pc= new Pc();
+        pc.setMac("54354");
+        pc.setModelo("Aspire E5");
+        pc.setOs("Guidos equispe");
+        
+        int id= new bdUtil().getPcIdByMac(pc.getMac());
+        if(id!=-1)
+            pc.setIdPC(id);
+        new bdUtil().savePc(pc);
+        
+        hibernate.HibernateUtil.openSessionAndBindToThread();
+        Session sess= hibernate.HibernateUtil.getSessionFactory().getCurrentSession();
+        sess.beginTransaction();
+        
+        /*Construcción de sesionCliente de prueba*/
+        SesionCliente sc = new SesionCliente();
+        sc.setEntrada(new Date());
+        sc.setSalida(new Date());
+        sc.setUsr("210437652");
+
+        ArrayList<Tarea> taskHistory = new ArrayList();
+        for (int i = 0; i < 4; i++) {
+            Tarea t = new Tarea();
+            t.setNombreImagen("nomnre" + i);
+            t.setPID(i + "12" + i);
+            t.setTituloVentana("titulo " + i);
+            t.setUsoMemoria("128736");
+            taskHistory.add(t);
+        }
+        sc.setTaskHistory(taskHistory);
+        StringBuffer sb = new StringBuffer();
+        sb.append("facebook.com|es.wikipedia.org|hackstore.net|cinepremiere.com.mx");
+        sc.addWebHistory(sb);
+        /*-------------------------------------------------------------*/
+        
+        
+        sess.getTransaction().commit();
+        hibernate.HibernateUtil.closeSessionAndUnbindFromThread();
+        Sesion s= new bdUtil().buildSesionObject(sc, pc);
+        new bdUtil().saveSesion(s);
+    }
+    
+    public static void main(String[] args) {
+        prueba2();
     }
 }
