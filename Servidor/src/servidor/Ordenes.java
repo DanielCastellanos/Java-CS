@@ -326,7 +326,10 @@ public class Ordenes {
         public void run() {
             
             for (int i = 0; i < BuscarGrupo.equipos.size(); i++) {
+                if(Principal.paneles.get(i).conexion())
+                {
                 enviarArhivo(archivo,BuscarGrupo.equipos.get(i).getHostname(),Principal.paneles.get(i));
+                }
             }
         }
         

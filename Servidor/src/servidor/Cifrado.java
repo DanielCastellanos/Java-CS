@@ -14,13 +14,33 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public class Cifrado {
     private static Cipher cipher;
-    private static String llave="holamundocruel12";
+    private static String llaves[] = {"holamundocruel12",
+        "TGrjieH8g1AoWE6h",
+        "vO5YSKb0Kqn3BWbf",
+        "xZctw8LBBx2WZe9w",
+        "fqWwGuxARcZUdaV2",
+        "7c5WX9QUg96q9o77",
+        "4Ia7GNW0LjVS28Rb",
+        "EOCzdULS3NFtKmol",
+        "RPt47ldbVXHqyuKw",
+        "dMohuzhNxz7u37up",
+        "gECOb32hrwr3uXFx",
+        "XA4feooQS8dIh3El",
+        "NmVuyHwrBfga37Ow",
+        "8WimCIUupASoZt69",
+        "ozIwZtRpfKq7MXA1",
+        "2MZcrA19ol68aodh",
+        "zWWPyamCSkqfq2Sk",
+        "ESRFN54zSXhDuUBa",
+        "gT8CNvYL1i2M9oCn",
+        "3SdSE0A7LXsfjjgy",
+        "RrElEMnVxqLt7JP1"};
     public static byte[] cifrar(byte texto[])
     {
         byte cifrado[]=null;
         try {
             cipher=Cipher.getInstance("AES");
-            cipher.init(Cipher.ENCRYPT_MODE,new SecretKeySpec(llave.getBytes(), "AES"));
+            cipher.init(Cipher.ENCRYPT_MODE,new SecretKeySpec(llaves[0].getBytes(), "AES"));
             cifrado=cipher.doFinal(texto);
         } catch (InvalidKeyException ex) {
             Logger.getLogger(Cifrado.class.getName()).log(Level.SEVERE, null, ex);
@@ -40,7 +60,7 @@ public class Cifrado {
         byte texto[]=null;
         try {
             cipher=Cipher.getInstance("AES");
-            cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(llave.getBytes(),"AES"));
+            cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(llaves[0].getBytes(),"AES"));
             texto=cipher.doFinal(cifrado);
         } catch (InvalidKeyException ex) {
             Logger.getLogger(Cifrado.class.getName()).log(Level.SEVERE, null, ex);

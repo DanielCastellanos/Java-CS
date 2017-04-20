@@ -30,8 +30,9 @@ public class Pc_info extends javax.swing.JPanel {
         label.setText(this.cliente.getNombre());
         iconos();
     }
-    public void conexion()
+    public boolean conexion()
     {
+        boolean con=false;
         try {
             conexion=new Socket();
             SocketAddress sa=new InetSocketAddress(cliente.getHostname(), 4401);
@@ -39,7 +40,7 @@ public class Pc_info extends javax.swing.JPanel {
             conexion.connect(sa,200);
             //si hay conexion con el destino colocamos el icono verde
             estado.setIcon(verde);
-            
+            con=true;
         } catch (IOException e) {
             //si el tiempo de conexion se agoto ponemos el inono rojo
             estado.setIcon(rojo);
@@ -54,6 +55,7 @@ public class Pc_info extends javax.swing.JPanel {
                 System.err.println("Error al cerrar coneccion en Pc_info Linea 52");
             }
         }
+        return con;
     }
     public void estadoRojo() {
         label.setIcon(rojo);
@@ -103,6 +105,7 @@ public class Pc_info extends javax.swing.JPanel {
         reiniciar = new javax.swing.JMenuItem();
         Tareas = new javax.swing.JMenuItem();
         Propiedades = new javax.swing.JMenuItem();
+        Encender = new javax.swing.JMenuItem();
         estado = new javax.swing.JLabel();
         conf = new javax.swing.JLabel();
         label = new javax.swing.JLabel();
@@ -171,6 +174,14 @@ public class Pc_info extends javax.swing.JPanel {
             }
         });
         menu.add(Propiedades);
+
+        Encender.setText("Encender");
+        Encender.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                EncenderActionPerformed(evt);
+            }
+        });
+        menu.add(Encender);
 
         setBackground(new java.awt.Color(255, 255, 255));
         setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
@@ -271,7 +282,6 @@ public class Pc_info extends javax.swing.JPanel {
     }//GEN-LAST:event_TareasActionPerformed
 
     private void CpaginaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CpaginaActionPerformed
-        
         new Desbloquear(this.cliente.getNombre(),this.cliente.getHostname());
     }//GEN-LAST:event_CpaginaActionPerformed
 
@@ -279,11 +289,16 @@ public class Pc_info extends javax.swing.JPanel {
         BuscarGrupo.propiedades=new VentanaPropiedades(this.cliente);
     }//GEN-LAST:event_PropiedadesActionPerformed
 
+    private void EncenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EncenderActionPerformed
+        //codigo para encender la pc
+    }//GEN-LAST:event_EncenderActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem Apagar;
     private javax.swing.JMenuItem Bloquear;
     private javax.swing.JMenuItem Cpagina;
+    private javax.swing.JMenuItem Encender;
     private javax.swing.JMenuItem Enviar;
     private javax.swing.JMenuItem Propiedades;
     private javax.swing.JMenuItem Tareas;

@@ -93,10 +93,16 @@ public class HiloCliente implements Runnable {
                 int idPc = new bdUtil().getPcIdByMac(pc.getMac());       //Uso la mac para verificar si existe la máquina en bd
                 if (idPc == -1) {
                     new bdUtil().savePc(pc);
+                    idPc = new bdUtil().getPcIdByMac(pc.getMac());
+                    if(idPc != -1)
+                    {
+                        pc.setIdPC(idPc);
+                    }
                 }else{
                     pc.setIdPC(idPc);
                 }
             }
+            System.out.println(pc.getIdPC());
             /**/
             equipos.add(pc);
             Archivos.guardarListaClientes(equipos);
