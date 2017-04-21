@@ -324,8 +324,10 @@ class guardarSesion implements Runnable {
                 //obtenemos el objeto "Sesion"
                 SesionCliente s = (SesionCliente) ois.readObject();
                 /*Despúes de obtener el objeto queda obtener la pc usada*/
+                BuscarGrupo.listaSesiones.add(s);
                 Pc pc = null;
                 String nombreEquipo = nombre.substring(0, nombre.indexOf("-"));
+                System.out.println(nombreEquipo);
                 for (Pc equipo : BuscarGrupo.equipos) {
                     if (equipo.getNombre().equals(nombreEquipo)) {
                         pc = equipo;

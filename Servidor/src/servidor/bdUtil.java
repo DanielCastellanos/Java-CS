@@ -99,11 +99,12 @@ public class bdUtil {
     private Collection<Programa> getProgramas(ArrayList<Tarea> taskReport){
         List<Programa> programas = new ArrayList<>();                                  //Lista para guardar los programas
         sesionBD.beginTransaction();                                                    //Inicia transaccion
-        Query query = sesionBD.createQuery("from Programa where proceso = :name");   //Consulta a realizar con parámetro :name
+        Query query = sesionBD.createQuery("from Programa where proceso = :name and nombre = :frame");   //Consulta a realizar con parámetro :name
 
         for (Tarea task : taskReport) {                            //Loop a travez del arreglo de Tarea con la info de los programas
             System.out.println(task.getNombreImagen());
             query.setParameter("name", task.getNombreImagen());                      //Asigna nombre a buscar en parámetro
+            query.setParameter("frame", task.getTituloVentana());                      //Asigna nombre a buscar en parámetro
             Programa p = (Programa) query.uniqueResult();                 //Ejecuta la consulta con el parámetro y obtiene un solo resultado
 
             if (p == null) {                                          //Si la consulta no arrojó resultado el programa no existe en bd
@@ -149,7 +150,7 @@ public class bdUtil {
         return returnedPc;
     }
     
-    public Pc savePc(Pc pc){
+    public int savePc(Pc pc){
         
         
         try{
@@ -169,7 +170,10 @@ public class bdUtil {
             hibernate.HibernateUtil.closeSessionAndUnbindFromThread();    
         }
         pc=getPcByMac(pc.getMac());
-        return pc;
+        int id=-1;
+        id=pc.getIdPC();
+        System.out.println("-----> "+id);
+        return id;
     }
     
     private Usuario createUsuario(String cod) {
@@ -303,11 +307,15 @@ public class bdUtil {
         pc.setMac("54354");
         pc.setModelo("Aspire E5");
         pc.setOs("Guidos equispe");
-        
-       // int id= new bdUtil().getPcByMac(pc.getMac());
-//        if(id!=-1)
-//            pc.setIdPC(id);
-//        new bdUtil().savePc(pc);
+        Pc p=new bdUtil().getPcByMac(pc.getMac());
+        if(p == null)
+        {
+        pc.setIdPC(new bdUtil().savePc(pc));
+        }
+        else
+        {
+            pc.setIdPC(p.getIdPC());
+        }
         
         hibernate.HibernateUtil.openSessionAndBindToThread();
         Session sess= hibernate.HibernateUtil.getSessionFactory().getCurrentSession();
@@ -322,9 +330,9 @@ public class bdUtil {
         ArrayList<Tarea> taskHistory = new ArrayList();
         for (int i = 0; i < 4; i++) {
             Tarea t = new Tarea();
-            t.setNombreImagen("nomnre" + i);
-            t.setPID(i + "12" + i);
-            t.setTituloVentana("titulo " + i);
+            t.setNombreImagen("nomnre");
+            t.setPID( "12" );
+            t.setTituloVentana("titulo ");
             t.setUsoMemoria("128736");
             taskHistory.add(t);
         }
@@ -342,7 +350,8 @@ public class bdUtil {
     }
     
     public static void main(String[] args) {
-        hibernate.HibernateUtil.buildSessionFactory("localhost:3306/javacs_bd", "root", "");
+        prueba2();
+//        hibernate.HibernateUtil.buildSessionFactory("localhost:3306/javacs_bd", "root", "");
         
 //        
 //        Session sess= hibernate.HibernateUtil.getSessionFactory().getCurrentSession();
@@ -353,14 +362,14 @@ public class bdUtil {
 //        hibernate.HibernateUtil.closeSessionAndUnbindFromThread();
 //        hibernate.HibernateUtil.closeSessionFactory();
 
-            Pc p= new Pc();
-            
-            p.setModelo("nuevo modelo");
-            p.setMac("vivalavida");
-            p.setOs("un os");
-            
-            p= new bdUtil().savePc(p);
-            
-            System.out.println(p.getIdPC());
+//            Pc p= new Pc();
+//            
+//            p.setModelo("nuevo modelo");
+//            p.setMac("vivalavida");
+//            p.setOs("un os");
+//            
+//            new bdUtil().savePc(p);
+//            
+//            System.out.println(p.getIdPC());
     }
 }
