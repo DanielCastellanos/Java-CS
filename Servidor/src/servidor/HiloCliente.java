@@ -90,16 +90,12 @@ public class HiloCliente implements Runnable {
         {
             /*Buscar pc en la BD*/
             if (hibernate.HibernateUtil.isConnected()) {
-                int idPc = new bdUtil().getPcIdByMac(pc.getMac());       //Uso la mac para verificar si existe la máquina en bd
-                if (idPc == -1) {
-                    new bdUtil().savePc(pc);
-                    idPc = new bdUtil().getPcIdByMac(pc.getMac());
-                    if(idPc != -1)
-                    {
-                        pc.setIdPC(idPc);
-                    }
+                bdUtil bd= new bdUtil();
+                Pc aux = bd.getPcByMac(pc.getMac());       //Uso la mac para verificar si existe la máquina en bd
+                if (aux == null) {
+                    pc= bd.savePc(pc);
                 }else{
-                    pc.setIdPC(idPc);
+                    pc= aux;
                 }
             }
             System.out.println(pc.getIdPC());

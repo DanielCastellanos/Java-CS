@@ -135,29 +135,22 @@ public class bdUtil {
         return objetoUsuario;
     }
 
-    public int getPcIdByMac(String mac){
+    public Pc getPcByMac(String mac){
         hibernate.HibernateUtil.openSessionAndBindToThread();
         sesionBD = hibernate.HibernateUtil.getSessionFactory().getCurrentSession();
         sesionBD.beginTransaction();
         
-        Query q= sesionBD.createQuery("from Pc where mac = "+mac);
+        Query q= sesionBD.createQuery("from Pc where mac = '"+mac+"'");
         Pc returnedPc=(Pc)q.uniqueResult();
         
         sesionBD.getTransaction().commit();
         hibernate.HibernateUtil.closeSessionAndUnbindFromThread();
         
-        int val;
-        
-        if(returnedPc == null){
-            val= -1 ;
-        }else{
-            val= returnedPc.getIdPC();
-        }
-        System.out.println("\n"+val+"\n");
-        return val;
+        return returnedPc;
     }
     
-    public boolean savePc(Pc pc){
+    public Pc savePc(Pc pc){
+        
         
         try{
         hibernate.HibernateUtil.openSessionAndBindToThread();
@@ -165,17 +158,18 @@ public class bdUtil {
         
         sesionBD.beginTransaction();
 
-        sesionBD.saveOrUpdate(pc);
+        sesionBD.save(pc);
         sesionBD.getTransaction().commit();
         
-        return true;
+        
         }catch(HibernateException ex){
             System.err.println("Error al persistir datos de pc"+ ex.toString());
-            return false;
+            pc=null;
         }finally{
-            hibernate.HibernateUtil.closeSessionAndUnbindFromThread();
+            hibernate.HibernateUtil.closeSessionAndUnbindFromThread();    
         }
-        
+        pc=getPcByMac(pc.getMac());
+        return pc;
     }
     
     private Usuario createUsuario(String cod) {
@@ -310,10 +304,10 @@ public class bdUtil {
         pc.setModelo("Aspire E5");
         pc.setOs("Guidos equispe");
         
-        int id= new bdUtil().getPcIdByMac(pc.getMac());
-        if(id!=-1)
-            pc.setIdPC(id);
-        new bdUtil().savePc(pc);
+       // int id= new bdUtil().getPcByMac(pc.getMac());
+//        if(id!=-1)
+//            pc.setIdPC(id);
+//        new bdUtil().savePc(pc);
         
         hibernate.HibernateUtil.openSessionAndBindToThread();
         Session sess= hibernate.HibernateUtil.getSessionFactory().getCurrentSession();
@@ -348,6 +342,25 @@ public class bdUtil {
     }
     
     public static void main(String[] args) {
-        prueba2();
+        hibernate.HibernateUtil.buildSessionFactory("localhost:3306/javacs_bd", "root", "");
+        
+//        
+//        Session sess= hibernate.HibernateUtil.getSessionFactory().getCurrentSession();
+//        sess.beginTransaction();
+//        
+//        
+//        sess.getTransaction().commit();
+//        hibernate.HibernateUtil.closeSessionAndUnbindFromThread();
+//        hibernate.HibernateUtil.closeSessionFactory();
+
+            Pc p= new Pc();
+            
+            p.setModelo("nuevo modelo");
+            p.setMac("vivalavida");
+            p.setOs("un os");
+            
+            p= new bdUtil().savePc(p);
+            
+            System.out.println(p.getIdPC());
     }
 }
