@@ -19,7 +19,7 @@ public class SesionCliente implements Serializable{
     private Date salida;
     
     private ArrayList<Tarea> taskHistory=new ArrayList<>();
-    private ArrayList<String> webHistory;
+    private ArrayList<String> webHistory=new ArrayList<>();
     
     public SesionCliente() {
     }
@@ -71,23 +71,24 @@ public class SesionCliente implements Serializable{
         return webHistory;
     }
     
-    public void addWebHistory(StringBuffer buffer) {
-        StringTokenizer line= new StringTokenizer(buffer.toString(), "|");
-        
-        while (line.hasMoreTokens()) {            
-            String token= line.nextToken();
-            if(this.webHistory.indexOf(token) != -1){
-                this.webHistory.add(token);
-            }
-        }
-        
+    public void addWebHistory(ArrayList<String> pages) {
+        webHistory=pages;
     }
    
-    public void saveNewTasks(ArrayList<Tarea> newT) {        
+    public void saveNewTasks(ArrayList<Tarea> newT) {
+        if(taskHistory.isEmpty())
+        {
+         taskHistory=newT;   
+        }
+        else
+        {
         for (Tarea t : newT) {
-            if (!taskHistory.contains(t)) {
+            for (Tarea t1 : taskHistory) {
+             if (!(t.getNombreImagen().equals(t1.getNombreImagen()) || !(t.getTituloVentana().equals(t1.getTituloVentana())))) {
                 taskHistory.add(t);
+            }   
             }
+        }
         }
     }    
 

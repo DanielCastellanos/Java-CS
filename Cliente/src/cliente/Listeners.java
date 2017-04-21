@@ -3,7 +3,13 @@
  */
 package cliente;
 
+import java.awt.AWTException;
 import java.awt.Color;
+import java.awt.Robot;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
@@ -51,9 +57,7 @@ public class Listeners implements NativeKeyListener, NativeMouseListener, Native
             }
         }
     };
-
     public void beginListeners(Ordenes o){
-        
         Listeners.orden= o;
         try{
         cleanLog();
@@ -166,4 +170,5 @@ class aviso extends javax.swing.JFrame{             //se extiende de JFrame
         
         this.setIconImage(img.getImage());
     }
+    
 }

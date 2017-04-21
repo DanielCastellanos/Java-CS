@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
@@ -23,7 +24,7 @@ public class MonitorWeb {
     List<PcapIf> allDevs = new ArrayList<>();               //Lista para almacenar las interfaces
     Pcap pcap;                                              //Variable Pcap para capturar los paquetes entrantes
     String ipTarget;                                        //Cadena correspondiente a la ip de la interfaz que se va a escuchar
-    StringBuffer webPages=new StringBuffer();                                  //Para guardar temporalmente las páginas
+    ArrayList<String> webPages=new ArrayList<>();                                  //Para guardar temporalmente las páginas
     
     //Constructor de la clase
     public MonitorWeb(String ip) {
@@ -32,7 +33,6 @@ public class MonitorWeb {
     }
     
     public void initMonitor(){
-        webPages= new StringBuffer();
         if(!findDevices()){
             System.err.printf("No se pudo obtener lista de interfaces %s", errorBuffer
             .toString());
@@ -112,17 +112,15 @@ public class MonitorWeb {
     private void pageRecieved(String page){
         if(page!=null){
             if(webPages.indexOf(page) == -1){
-                webPages.append(page).append("|");
+                webPages.add(page);
                 System.out.println(page);
             }
+            System.out.println(Arrays.toString(webPages.toArray()));
         }
     }
     
-    public StringBuffer getReport(){
-        
-        StringBuffer aux= webPages;
-        webPages.setLength(0);
-        return aux;
+    public ArrayList<String> getReport(){
+        return webPages;
     }
     /*De haber conexión se enviará la información al equipo administrador dek grupo
     para su análisis y persistencia*/

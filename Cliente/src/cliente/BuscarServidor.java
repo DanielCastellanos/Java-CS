@@ -223,13 +223,14 @@ public class BuscarServidor {
                         case "procesos":
                             sendProcesos(dp.getAddress());
                             break;
+                        case "propiedades":
+                            orden.getInfoPc();
+                            break;
                         case "CPagina":
                             String pagina = mensaje.substring(mensaje.indexOf(",") + 1, mensaje.length());
                             abrirPagina(pagina);
-
                             break;
                         case "cerrar":
-
                             orden.cerrar(obtenerTiempo(mensaje) + "");
                             break;
                     }
@@ -306,15 +307,17 @@ public class BuscarServidor {
             InetAddress ia = InetAddress.getByName(servidor.getGrupo());
             System.out.println(ia);
             puerto.joinGroup(ia);
-            byte registro[] = ("cliente," + nombre + "," + dir + "," + hostname).getBytes();
-            DatagramPacket dp = new DatagramPacket(registro, registro.length, ia, 1000);
-            puerto.send(dp);
+            
             grupo = servidor.getGrupo();
             serverHost=servidor.getHostName();
             configuracion.setNombre(nombre);
             configuracion.setGrupo(grupo);
             configuracion.setServerHost(serverHost);
             configuracion.archivoNuevo();
+            System.out.println(orden.getInfoPc());
+            byte registro[] = ("cliente," + nombre + "," + dir + "," + hostname+","+orden.getInfoPc()).getBytes();
+            DatagramPacket dp = new DatagramPacket(registro, registro.length, ia, 1000);
+            puerto.send(dp);
             orden.login();
         } catch (UnknownHostException ex) {
             Logger.getLogger(BuscarServidor.class.getName()).log(Level.SEVERE, null, ex);

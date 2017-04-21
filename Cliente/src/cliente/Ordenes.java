@@ -1,18 +1,14 @@
 package cliente;
 
 import bloqueo.FrameBlocked;
-import static cliente.Cliente.sesion;
-import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
 import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
@@ -143,33 +139,50 @@ public class Ordenes {
         }
     }
     
-    public Runnable getInfoPc = new Runnable() {
-
-        @Override
-        public void run() {
-            //falta agregar la direccion MAC
+    public String getInfoPc(){
+        String info=null;
+            //inicializamos la variable de informacion del sistema
             SystemInfo si = new SystemInfo();
+            //inicializamos la variable para la informacion del Hardware
             HardwareAbstractionLayer hal = si.getHardware();
+            //iniciamos la variable para la informacion del Sistema Operativo
             OperatingSystem os = si.getOperatingSystem();
+            //obtenemos la informacion del Procesador
             CentralProcessor cp = hal.getProcessor();
+            //Obtenemos la informacion general del PC
             ComputerSystem cs = hal.getComputerSystem();
+            //Obtenemos la memoria RAM total 
             GlobalMemory gm = hal.getMemory();
+            //Obtenemos los discos
             HWDiskStore disks[] = hal.getDiskStores();
+            //Obtenemos la marca de la pc
             String marca = cs.getManufacturer();
+            //Obtenemos el modelo de la PC
             String modelo = cs.getModel();
+            //Obtenemos el Numero de serie
             String nSerie = cs.getSerialNumber();
-            String hdd = null;
+            //Obtenemos los discos duros del sistema
+            String hdd ="";
             for (int i = 0; i < disks.length; i++) {
-                if (disks[i].getModel().contains("SATA")) {
-                    hdd += (i > 0 ? "," : "") + (((disks[i].getSize() / 1024) / 1024) / 1024) + " GB";
+                if(disks[i].getModel().contains("SATA") || (disks[i].getModel().contains("ATA") && !disks[i].getModel().contains("USB"))){
+                    System.out.println(disks[i].getModel());
+                    hdd += (i > 0 ? " | " : "") + (((disks[i].getSize() / 1024) / 1024) / 1024) + " GB";
                 }
             }
+            //Calculamos la memoria RAM y la comvertimos en GB
             String ram = ((((gm.getTotal() / 1024) / 1024) / 1024) + 1) + " GB";
+            //Obtenemos el nombre del procesador
             String procesador = cp.getName();
+            //Obtenemos el nombre del S.O
             String sistema = os.getFamily() + " " + os.getVersion().getVersion();
-            String inf = marca + "|" + modelo + "|" + nSerie + "|" + hdd + "|" + ram + "|" + procesador + "|" + sistema;
-        }
-    };
+            //Obtenemos las direcciones mac de las Tarjetas de red
+            String MAC=new Interfaces().getMAC();
+            //preparamos la informacion para su envio
+            info = marca + "," + modelo + "," + nSerie + ","+ MAC +","+ procesador +","+hdd+ "," + ram + "," + sistema;
+            
+            System.out.println("Propiedades Enviadas");
+        return info;
+    }
 
     public void archivo() {
         try {

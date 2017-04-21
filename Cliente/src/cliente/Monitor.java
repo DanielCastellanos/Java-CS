@@ -9,6 +9,7 @@ import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
@@ -37,7 +38,8 @@ public class Monitor {
             Cliente.sesion.saveNewTasks(newTasks);
             
             //Obtiene historial web y las agrega al historial de sesión
-            StringBuffer webPages = web.getReport();
+            
+            ArrayList<String> webPages = web.getReport();
             Cliente.sesion.addWebHistory(webPages);
             
         }
@@ -50,11 +52,12 @@ public class Monitor {
 
         web = new MonitorWeb(ip);
         web.initMonitor();
-        timer.schedule(task, sendReportTime);
+        timer.schedule(task,0,sendReportTime);
     }
 
     public static void guardarSesion(SesionCliente sesion,String nombreCliente) throws IOException{
         try {
+            System.out.println("------>?"+sesion.getWebHistory().size());
             RandomAccessFile raf=new RandomAccessFile(nombreCliente+"-"+sesion.getUsr(), "rw");
             byte buffer[];
             ByteArrayOutputStream bs=new ByteArrayOutputStream();

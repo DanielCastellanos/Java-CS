@@ -60,19 +60,21 @@ public class Interfaces {
     {
         String directions="";
         for (int i = 0; i < interfaces.size(); i++) {
-            try {
-                directions+=String.format("%s%s",byteToHex(interfaces.get(i).getHardwareAddress()),(i<(interfaces.size()-1))?",":"");
-            } catch (SocketException ex) {
-                Logger.getLogger(Interfaces.class.getName()).log(Level.SEVERE, null, ex);
-            }
+                directions+=String.format("%s%s",byteToHex(interfaces.get(i)),(i<(interfaces.size()-1))?",":"");
         }
         return (directions.isEmpty()? null:directions);
     }
-    public static String byteToHex(byte array[])
+    public static String byteToHex(NetworkInterface ni)
     {
-        String hex="[";
-        for (int i = 0; i < array.length; i++) {
+       
+            String hex="[";
+        try {
+            byte array[]=ni.getHardwareAddress();
+            for (int i = 0; i < array.length; i++) {
             hex+=String.format("%02X%s%s",array[i],(i<array.length-1)?"-":"",((i+1)==array.length)?"]":"");
+            }
+        } catch (SocketException ex) {
+            Logger.getLogger(Interfaces.class.getName()).log(Level.SEVERE, null, ex);
         }
         return (hex.equals("[")? null:hex);
     }
