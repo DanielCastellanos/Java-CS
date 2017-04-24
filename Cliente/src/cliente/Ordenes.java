@@ -164,6 +164,7 @@ public class Ordenes {
             //Obtenemos los discos duros del sistema
             String hdd ="";
             for (int i = 0; i < disks.length; i++) {
+                System.out.println("Entrando al for de Ricardo "+disks[i].getModel());
                 if(disks[i].getModel().contains("SATA") || (disks[i].getModel().contains("ATA") && !disks[i].getModel().contains("USB"))){
                     System.out.println(disks[i].getModel());
                     hdd += (i > 0 ? " | " : "") + (((disks[i].getSize() / 1024) / 1024) / 1024) + " GB";
@@ -178,7 +179,7 @@ public class Ordenes {
             //Obtenemos las direcciones mac de las Tarjetas de red
             String MAC=new Interfaces().getMAC();
             //preparamos la informacion para su envio
-            info = marca + "," + modelo + "," + nSerie + ","+ MAC +","+ procesador +","+hdd+ "," + ram + "," + sistema;
+            info = marca + "," + modelo + "," + nSerie + ","+ MAC +","+ procesador +","+hdd+ "1 TB," + ram + "," + sistema;
             
             System.out.println("Propiedades Enviadas");
         return info;

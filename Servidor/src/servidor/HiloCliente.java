@@ -68,7 +68,7 @@ public class HiloCliente implements Runnable {
         StringTokenizer token = new StringTokenizer(mensaje, ",");
         int pos = 0;
         String datos[] = new String[12];
-        //separamos los datos resibidos
+        //separamos los datos recibidos
         while (token.hasMoreTokens()) {
             datos[pos] = token.nextToken();
             pos++;

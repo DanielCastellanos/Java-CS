@@ -60,7 +60,7 @@ public class Interfaces {
     {
         String directions="";
         for (int i = 0; i < interfaces.size(); i++) {
-                directions+=String.format("%s%s",byteToHex(interfaces.get(i)),(i<(interfaces.size()-1))?",":"");
+                directions+=String.format("%s%s",byteToHex(interfaces.get(i)),(i<(interfaces.size()-1))?"|":"");
         }
         return (directions.isEmpty()? null:directions);
     }

@@ -7,20 +7,20 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.StringTokenizer;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class SesionCliente implements Serializable{
-    
+public class SesionCliente implements Serializable {
+
     private static final long serialVersionUID = 2173L;
     private String usr;
-    private  Date Entrada;
+    private Date Entrada;
     private Date salida;
-    
-    private ArrayList<Tarea> taskHistory=new ArrayList<>();
-    private ArrayList<String> webHistory=new ArrayList<>();
-    
+
+    private ArrayList<Tarea> taskHistory = new ArrayList<>();
+    private ArrayList<String> webHistory = new ArrayList<>();
+
     public SesionCliente() {
     }
 
@@ -28,12 +28,12 @@ public class SesionCliente implements Serializable{
         this.usr = usr;
         this.Entrada = new Date();
         try {
-            Cliente.monitor=new Monitor(InetAddress.getLocalHost().getHostAddress(),5000L);
+            Cliente.monitor = new Monitor(InetAddress.getLocalHost().getHostAddress(), 5000L);
         } catch (UnknownHostException ex) {
             Logger.getLogger(SesionCliente.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public String getUsr() {
         return usr;
     }
@@ -47,7 +47,7 @@ public class SesionCliente implements Serializable{
     }
 
     public void setEntrada(Date Entrada) {
-        
+
         this.Entrada = Entrada;
     }
 
@@ -70,40 +70,55 @@ public class SesionCliente implements Serializable{
     public ArrayList<String> getWebHistory() {
         return webHistory;
     }
-    
-    public void addWebHistory(ArrayList<String> pages) {
-        webHistory=pages;
-    }
-   
-    public void saveNewTasks(ArrayList<Tarea> newT) {
-        if(taskHistory.isEmpty())
-        {
-         taskHistory=newT;   
-        }
-        else
-        {
-        for (Tarea t : newT) {
-            for (Tarea t1 : taskHistory) {
-             if (!(t.getNombreImagen().equals(t1.getNombreImagen()) || !(t.getTituloVentana().equals(t1.getTituloVentana())))) {
-                taskHistory.add(t);
-            }   
-            }
-        }
-        }
-    }    
 
-    public void cerrarSesion(){
+    public void addWebHistory(ArrayList<String> pages) {
+        webHistory = pages;
+    }
+
+    public void saveNewTasks(ArrayList<Tarea> newT) {
+
+        if (taskHistory.isEmpty()) {
+            taskHistory = newT;
+        } else {
+            for (Tarea tarea : newT) {
+                System.out.println(taskHistory.indexOf(tarea));
+            }
+//            Object nombreDeLaVariable[] = taskHistory.toArray();
+//            for (Tarea t : newT) {
+//                boolean encontrado=false;
+//                for (Object obj : nombreDeLaVariable) {
+//                    Tarea t1= (Tarea)obj;
+//                    if (!(t1.getNombreImagen().equals(t.getNombreImagen()))) {
+//                        encontrado=true;
+//                    }
+//                }
+//                if(!encontrado)
+//                {
+//                    taskHistory.add(t);
+//                }
+//            }
+
+            System.out.println("**************************");
+            for (Tarea tarea : taskHistory) {
+                System.out.println(tarea.getNombreImagen()+"----->"+tarea.getTituloVentana());
+            }
+            System.out.println("**************************");
+
+        }
+    }
+
+    public void cerrarSesion() {
         try {
             System.out.println("cerrando...");
             this.setSalida(new Date());
             Cliente.monitor.detenerMonitoreoWeb();
             Monitor.guardarSesion(this, BuscarServidor.configuracion.getNombre());
-            if(BuscarServidor.connectionStatus() == true){
-                File file= new File(BuscarServidor.configuracion.getNombre()+"-"+this.usr);
+            if (BuscarServidor.connectionStatus() == true) {
+                File file = new File(BuscarServidor.configuracion.getNombre() + "-" + this.usr);
                 Monitor.enviarSesion(file);
             }
         } catch (IOException ex) {
-            System.err.println("Error: "+ ex.toString());
+            System.err.println("Error: " + ex.toString());
             AppSystemTray.mostrarMensaje("Error al cerrar sesión", AppSystemTray.ERROR_MESSAGE);
         }
     }
