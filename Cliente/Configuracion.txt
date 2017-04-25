@@ -1,3 +1,0 @@
-nombre=dasd
-grupo=224.0.0.2
-server hostname=DESKTOP-15OL6DO

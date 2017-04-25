@@ -80,23 +80,20 @@ public class SesionCliente implements Serializable {
         if (taskHistory.isEmpty()) {
             taskHistory = newT;
         } else {
-            for (Tarea tarea : newT) {
-                System.out.println(taskHistory.indexOf(tarea));
+            Object nombreDeLaVariable[] = taskHistory.toArray();
+            for (Tarea t : newT) {
+                boolean encontrado=false;
+                for (Object obj : nombreDeLaVariable) {
+                    Tarea t1= (Tarea)obj;
+                    if (!(t1.getNombreImagen().equals(t.getNombreImagen()))) {
+                        encontrado=true;
+                    }
+                }
+                if(!encontrado)
+                {
+                    taskHistory.add(t);
+                }
             }
-//            Object nombreDeLaVariable[] = taskHistory.toArray();
-//            for (Tarea t : newT) {
-//                boolean encontrado=false;
-//                for (Object obj : nombreDeLaVariable) {
-//                    Tarea t1= (Tarea)obj;
-//                    if (!(t1.getNombreImagen().equals(t.getNombreImagen()))) {
-//                        encontrado=true;
-//                    }
-//                }
-//                if(!encontrado)
-//                {
-//                    taskHistory.add(t);
-//                }
-//            }
 
             System.out.println("**************************");
             for (Tarea tarea : taskHistory) {
@@ -113,7 +110,7 @@ public class SesionCliente implements Serializable {
             this.setSalida(new Date());
             Cliente.monitor.detenerMonitoreoWeb();
             Monitor.guardarSesion(this, BuscarServidor.configuracion.getNombre());
-            if (BuscarServidor.connectionStatus() == true) {
+            if (BuscarServidor.connectionStatus()) {
                 File file = new File(BuscarServidor.configuracion.getNombre() + "-" + this.usr);
                 Monitor.enviarSesion(file);
             }

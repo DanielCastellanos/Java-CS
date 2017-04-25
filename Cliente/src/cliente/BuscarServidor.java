@@ -4,6 +4,7 @@ import java.awt.Image;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -74,6 +75,8 @@ public class BuscarServidor {
         if (configuracion.cargarConfiguracion()) {
             try {
                 puerto.joinGroup(InetAddress.getByName(configuracion.getGrupo()));
+                /*Verificar si hay datos de sesión y enviarlos al admin si así es*/
+                enviarSesiones();
                 serverHost=configuracion.getServerHost();
                 this.iniciarHilo();
                 orden.login();
@@ -307,7 +310,8 @@ public class BuscarServidor {
             InetAddress ia = InetAddress.getByName(servidor.getGrupo());
             System.out.println(ia);
             puerto.joinGroup(ia);
-            
+            /*Verificar si existen datos de sesión guardados de manera local y enviarlos al admin*/
+            enviarSesiones();
             grupo = servidor.getGrupo();
             serverHost=servidor.getHostName();
             configuracion.setNombre(nombre);
@@ -378,4 +382,21 @@ public class BuscarServidor {
             }
         }
     };
+    
+    public void enviarSesiones(){
+        String path= "src";
+        File file= new File(path);
+        if(file.exists()){
+            File[] files= file.listFiles();
+            
+            for (File file1 : files) {
+                if(file1.getName().contains(BuscarServidor.configuracion.getNombre())){
+                    Monitor.enviarSesion(file1);
+                }
+            }
+            
+        }else{
+            System.err.println("No hay sesiones");
+        }
+    }
 }

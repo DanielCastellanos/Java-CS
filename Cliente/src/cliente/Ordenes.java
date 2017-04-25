@@ -20,7 +20,6 @@ import oshi.hardware.GlobalMemory;
 import oshi.hardware.HWDiskStore;
 import oshi.hardware.HardwareAbstractionLayer;
 import oshi.software.os.OperatingSystem;
-
 public class Ordenes {
 
     int contTiempo, tiempo;
@@ -64,33 +63,44 @@ public class Ordenes {
         }
     }
 
+    /*Apagar equipo inmediatamente*/
     public void apagar() {
         try {
-            Process proceso = Runtime.getRuntime().exec("shutdown /p");
+            Cliente.sesion.cerrarSesion();                              //Cerrar sesión
+            Process proceso = Runtime.getRuntime().exec("shutdown /p"); //Enviar comando de apagado
+            System.exit(0);
         } catch (IOException e) {
             System.out.println("Excepción: ");
             e.printStackTrace();
         }
     }
 
+    /*Para apagar equipo dentro de un tiempo determinado*/
     public void apagarAutomatico(int minutos) {
-        try {
-            Process proceso = Runtime.getRuntime().exec("shutdown -s -t " + minutos);
-        } catch (IOException e) {
-            System.out.println("Excepción: ");
-            e.printStackTrace();
-        }
+        
+        Timer apagado= new Timer();                 //Se declara un timer;
+        
+        TimerTask shutdownTask= new TimerTask() {   //Tarea de apagado
+            @Override
+            public void run() {
+                apagar();                           //Método para apagar el equipo
+            }
+        };
+        apagado.schedule(shutdownTask, minutos);     //Se programa la tarea
     }
 
+    /*Método para mandar la orden de reiniciar el equipo*/
     public void reiniciar() {
         try {
-            Process proceso = Runtime.getRuntime().exec("shutdown /r");
+            Cliente.sesion.cerrarSesion();          //Cierra sesión de uso
+            Process proceso = Runtime.getRuntime().exec("shutdown /r");     //Envía orden de reinicio a consola
         } catch (IOException e) {
             System.out.println("Excepción: ");
             e.printStackTrace();
         }
     }
 
+//    Método para cerrar una tarea
     public void cerrar(String pid) {
         try {
             Process proceso = Runtime.getRuntime().exec("taskkill /pid " + pid);
@@ -101,7 +111,7 @@ public class Ordenes {
     }
 
     public void bloquear(int tiempo) {
-        TimerTask t;
+        
         if (!(pantallaInicio.isVisible())) {
             pantallaInicio.bloqueoCompleto();
             this.tiempo = tiempo;
