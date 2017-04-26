@@ -8,6 +8,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.context.internal.ThreadLocalSessionContext;
+import org.hibernate.exception.JDBCConnectionException;
 import org.hibernate.service.ServiceRegistry;
 
 public class HibernateUtil {
@@ -38,13 +39,20 @@ public class HibernateUtil {
             }
             //Una vez creado el objeto de configuración procedemos a construir nuestro service registry
             ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings(config.getProperties()).build();
+            try{
             sessionFactory = config.buildSessionFactory(serviceRegistry);
+            }catch(JDBCConnectionException conn){
+                System.out.println("Falla en driver, estado de conexion: "+hibernate.HibernateUtil.isConnected());
+                
+            }
         }
     }
 
     public static void openSessionAndBindToThread() {
+        if(sessionFactory != null){
         Session session = sessionFactory.openSession();
         ThreadLocalSessionContext.bind(session);
+        }
     }
 
     public static SessionFactory getSessionFactory() {
@@ -61,6 +69,7 @@ public class HibernateUtil {
     public static void closeSessionFactory() {
         if ((sessionFactory != null) && (sessionFactory.isClosed() == false)) {
             sessionFactory.close();
+            sessionFactory = null;
         }
     }
 }

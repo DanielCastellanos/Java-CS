@@ -6,7 +6,6 @@ package interfaz;
 import hibernate.HibernateUtil;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
-import static javax.swing.JOptionPane.showMessageDialog;
 import org.hibernate.HibernateException;
 import servidor.Archivos;
 import servidor.Configuracion;
@@ -28,6 +27,7 @@ public class BDConfig extends javax.swing.JFrame {
     
     //Este constructor tiene el propósito de mostrar al usuario configuración previamente definida
     public BDConfig(Configuracion conf, String ur, String u, String p) {
+        
         initComponents();
         this.setIconImage(icon.getImage());
         this.settingsFile= conf;

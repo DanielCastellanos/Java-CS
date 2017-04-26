@@ -17,9 +17,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Scanner;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.TransactionException;
+import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
 
 public class bdUtil {
 
@@ -60,8 +63,11 @@ public class bdUtil {
 
         } catch (HibernateException he) {
             System.out.println(he.toString());
-            sesionBD.getTransaction().rollback();
-        } finally {
+//            sesionBD.getTransaction().rollback();
+        }catch(NullPointerException npe){
+            System.out.println("Error, estado de conexion: "+hibernate.HibernateUtil.isConnected());
+            npe.printStackTrace();
+        }finally {
             /*De cualquier manera se cierra la sesión*/
             hibernate.HibernateUtil.closeSessionAndUnbindFromThread();
             /**/
@@ -126,13 +132,15 @@ public class bdUtil {
     //Obtiene un usuario de la bd según un código
     private Usuario getUsrByName(String usr) {
 
+        
         Usuario objetoUsuario;                                                      //Declara un nuevo Usuario
         sesionBD.beginTransaction();                                                //Inicia transaccion en la sesion de hibernate
         Query query = sesionBD.createQuery("from Usuario where codigo = " + usr);      //Declaro una consulta HQL 
         objetoUsuario = (Usuario) query.uniqueResult();
 
         sesionBD.getTransaction().commit();
-
+        
+        
         return objetoUsuario;
     }
 
@@ -166,7 +174,9 @@ public class bdUtil {
         }catch(HibernateException ex){
             System.err.println("Error al persistir datos de pc"+ ex.toString());
             pc=null;
+            exception();
         }finally{
+            if(hibernate.HibernateUtil.isConnected())
             hibernate.HibernateUtil.closeSessionAndUnbindFromThread();    
         }
         pc=getPcByMac(pc.getMac());
@@ -185,6 +195,12 @@ public class bdUtil {
         return nuevo;
     }
 
+    private void exception(){
+        hibernate.HibernateUtil.closeSessionFactory();
+//        Configuracion conf= BuscarGrupo.conf;
+//        new interfaz.BDConfig(conf, conf.getURLBD(), conf.getUserBD(), conf.getPassBD()).setVisible(true);
+    }
+    
     public void saveSesion(Sesion s){
         try{
             /*Abre y obtiene la sesión*/
@@ -201,18 +217,37 @@ public class bdUtil {
             
         }catch(HibernateException ex){
             System.err.println("Error al registrar sesión "+ex.toString());
+            exception();
         }finally{
+            if(hibernate.HibernateUtil.isConnected())
             hibernate.HibernateUtil.closeSessionAndUnbindFromThread();
         }
     }
     
-    public Admin logginAdmin(String usr, String pass){
+    public boolean logginAdmin(String usr, String pass){
         
+        boolean success= false;
+        
+        try{
+            Admin admin= getAdmin(usr);
+            if(admin != null){
+                if(admin.getPass().equals(pass) && admin.getStatus()){
+                    success = true;
+                }
+            }
+        }catch(HibernateException ex){
+            ex.printStackTrace();
+        }
+        /*Retorna la bandera*/
+        return success;
+    }
+    
+    public Admin getAdmin(String username){
         /*Abre sesión*/
-        hibernate.HibernateUtil.closeSessionAndUnbindFromThread();
-        sesionBD.getSessionFactory().getCurrentSession();
+        hibernate.HibernateUtil.openSessionAndBindToThread();
+        sesionBD= hibernate.HibernateUtil.getSessionFactory().getCurrentSession();
         /*Construye consulta*/
-        Query query= sesionBD.createQuery("from Admin where usrName = "+usr+" and pass = "+pass);
+        Query query= sesionBD.createQuery("from Admin where usrName = '"+username+"'");
         /*Inicia transacción*/
         sesionBD.beginTransaction();
         /*Ejecuta consulta, resultado único*/
@@ -250,9 +285,7 @@ public class bdUtil {
     /*Pare pruebas*/
     public static void prueba1(){
         
-        /*                                              IP      Port DB name     User   Pass*/                                        
-        hibernate.HibernateUtil.buildSessionFactory("localhost:3306/javacs_bd", "root", "");
-
+        
         /**/
         /*Construcción de sesionCliente de prueba*/
         SesionCliente sc = new SesionCliente();
@@ -276,6 +309,7 @@ public class bdUtil {
         /*-------------------------------------------------------------*/
         
         Pc pc= new Pc(1);
+        if(hibernate.HibernateUtil.isConnected()){
         Sesion nueva = new bdUtil().buildSesionObject(sc, pc);
         
         
@@ -296,6 +330,8 @@ public class bdUtil {
         /*Fragmento de código de prueba*/
         
         new bdUtil().saveSesion(nueva);
+        }
+        System.out.println("Termina");
 //        new bdUtil().saveUsoPc(maquina, new Date(), new Date());
 
     }
@@ -350,26 +386,17 @@ public class bdUtil {
     }
     
     public static void main(String[] args) {
-        prueba2();
-//        hibernate.HibernateUtil.buildSessionFactory("localhost:3306/javacs_bd", "root", "");
-        
-//        
-//        Session sess= hibernate.HibernateUtil.getSessionFactory().getCurrentSession();
-//        sess.beginTransaction();
-//        
-//        
-//        sess.getTransaction().commit();
-//        hibernate.HibernateUtil.closeSessionAndUnbindFromThread();
-//        hibernate.HibernateUtil.closeSessionFactory();
+        /*                                              IP      Port DB name     User   Pass*/                                        
+        hibernate.HibernateUtil.buildSessionFactory("localhost:3306/javacs_bd", "root", "");
 
-//            Pc p= new Pc();
-//            
-//            p.setModelo("nuevo modelo");
-//            p.setMac("vivalavida");
-//            p.setOs("un os");
-//            
-//            new bdUtil().savePc(p);
-//            
-//            System.out.println(p.getIdPC());
+        System.out.println("User");
+        Scanner sc= new Scanner(System.in);
+        String usr= sc.next();
+        System.out.println("Pass");
+        String pass= sc.next();
+        if(new bdUtil().logginAdmin(usr, pass)){
+            System.out.println("entra");
+        }else
+        System.out.println("rechazado!");
     }
 }
