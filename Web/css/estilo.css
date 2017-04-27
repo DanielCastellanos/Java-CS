@@ -74,7 +74,7 @@ body
 
 #Principal
 {
-    width: 30%;
+    width: 40%;
     min-width: 150px;
     height: auto;
     text-align: center;
@@ -86,16 +86,19 @@ body
 }
 
 #frase{
-    margin-top: 10%;
-    font-size: 250%;
+    
+    font-size: 200%;
     color: white;
-    width: 70%;
     display: inline-block;
     text-align: center;
-    max-width: 500px;
+    max-width: 80%;
     padding: 20px;
     background-color: rgba(239, 6, 0,.5);
     border-radius: 5px
+}
+
+img{
+    max-width: 30%;
 }
 
 footer
@@ -186,6 +189,7 @@ label{
         margin:auto;
        
     }
+    
     
     #Principal{
         width: 80%;

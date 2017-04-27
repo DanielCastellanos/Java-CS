@@ -38,7 +38,7 @@ header{
 }
 header #lab 
 {
-    background: rgba(48,170,85,.6);
+    background: rgba(239, 6, 0,.7);
     margin-top: -10000000000000000px;
     display: inline-block;
     padding: 18px;
@@ -61,7 +61,7 @@ header nav ul {
 }
 header nav ul li:hover
 {
-    background: rgba(48,170,85,.8);
+    background: rgba(239, 6, 0,.7);
 }
 header nav ul li{
     display: inline-block;
@@ -97,27 +97,38 @@ display: inline-block;
     border-radius: 10px;
 }
 
-table {
-    border-collapse: collapse;
-    border: 1px solid white;
-    width: 100%;
-}
-
 
 table, th, td {
     padding: 15px;
     text-align: center;
     border: 1px solid white;
 }
-
-td{
-    border: 1px solid white;
-    
-}
 #contenedor
 {
-    padding: 20px;
+    display: inline-flex;
+    width: 100%;
     background-color: rgba(0,0,0,.6);
+}
+
+table {
+    border: 1px solid white;
+    margin: auto;
+    flex-grow: 6;
+    
+}
+
+#navegador{
+    
+    list-style: none;
+    flex-grow: 1;
+    text-decoration: none;
+}
+#navegador a{
+        color: white;
+       text-decoration: none;
+}
+#navegador a:hover{
+        background-color:rgba(239, 6, 0,.7); 
 }
 tr
 {
@@ -134,7 +145,7 @@ tr:hover {
 
 th{
     height: 40px;
-    background-color:rgba(48,170,85,1);
+    background-color:rgba(239, 6, 0,.7);
     border-right: 1px solid #ddd;
 }
 
