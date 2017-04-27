@@ -16,6 +16,8 @@ import java.net.MulticastSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import oshi.SystemInfo;
@@ -107,9 +109,15 @@ public class Ordenes {
             byte mensaje[]=("CPagina,"+pagina).getBytes();
             enviarOrden(hostname,mensaje);
     }
-    public void WakeOnLAN(byte[] mac,String grupo)
+    public void WakeOnLAN(String mac,String grupo)
     {
         try {
+            //Temporal
+            grupo=grupo.substring(0,grupo.lastIndexOf(".")+1);
+            grupo= grupo+"255";
+            System.out.println(mac);
+            ArrayList<byte[]> byteMAC=getMacBytes(mac);
+            for (byte[] bs : byteMAC) {
             // El paquete WakeOnLAN se manda por puertos udp 255.255.255.0:40000.
             // El paquete WakeOnLAN contiene un trailer de 6-bytes y 16 veces una secuencia de 6-bytes que contienen la direccion MAC de destino.
             //preparamos el arreglo de bytes que conformara el paquete
@@ -126,11 +134,13 @@ public class Ordenes {
             {
                 for (int j = 0; j < 6; j++)
                 {
-                    packet[i * 6 + j] = mac[j];
+                    packet[i * 6 + j] = bs[j];
                 }
             }
             // Enviamos el paquete WOL(WakeOnLAN).
             client.send(data);
+            }
+            System.out.println("Orden enviada a las direcciones mac: "+mac);
         } catch (UnknownHostException ex) {
             Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SocketException ex) {
@@ -138,6 +148,27 @@ public class Ordenes {
         } catch (IOException ex) {
             Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    private ArrayList<byte[]> getMacBytes(String mac)
+    {
+        ArrayList<byte []> MAC=new ArrayList<>();
+        StringTokenizer token=new StringTokenizer(mac,"|");
+        String macs[]=mac.split("|");
+        while(token.hasMoreTokens()) {
+            String mac1=token.nextToken();
+            mac1=mac1.substring(1, mac1.length()-1);
+            System.out.println(mac1+"<<<<<");
+            String aux[]=mac1.split("-");
+            if(aux.length == 6)
+            {
+            byte[] macBytes=new byte[6];
+            for (int i=0 ; i < macBytes.length ; i++) {
+                macBytes[i]=(byte) Integer.parseInt(aux[i],16);
+            }
+            MAC.add(macBytes);
+            }
+        }
+        return MAC;
     }
     public Runnable getInfoPc=new Runnable() {
         
