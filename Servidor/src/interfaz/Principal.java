@@ -12,6 +12,7 @@ import servidor.BuscarGrupo;
 import servidor.Ordenes;
 import cliente.Tarea;
 import entity.Pc;
+import javax.swing.JOptionPane;
 import servidor.Archivos;
 import servidor.BuscarGrupo;
 
@@ -350,7 +351,14 @@ public class Principal extends javax.swing.JFrame{
     }//GEN-LAST:event_PropiedadesClienteActionPerformed
 
     private void EncenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EncenderActionPerformed
-        //ciclo para encender todas las pc
+        int opc=JOptionPane.showConfirmDialog(null, "Esta Seguro de que quiere encender todos los equipos? ",
+                "Encendido Remoto", JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE,new ImageIcon(Principal.getLogo()));
+        if(opc==0)
+        {
+        for (Pc equipo : BuscarGrupo.equipos){
+            orden.WakeOnLAN(equipo.getMac(), equipo.getDireccion());
+        }
+        }
     }//GEN-LAST:event_EncenderActionPerformed
     
     

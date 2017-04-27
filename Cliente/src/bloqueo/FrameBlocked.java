@@ -37,8 +37,8 @@ public class FrameBlocked extends javax.swing.JFrame {
         revisaConeccion();                                          //Revisa si hay conexión a internet
         carga();
         pass.setEchoChar('•');
-        pass.setUI(new PassHint("Password"));
-        user.setUI(new Hint("Codigo"));
+//        pass.setUI(new PassHint("Password"));
+//        user.setUI(new Hint("Codigo"));
     //Carga el keylistener y llama keepfocus
     }
     ////////////////////////////////////////////
@@ -82,8 +82,10 @@ public class FrameBlocked extends javax.swing.JFrame {
     public void bloqueoCompleto()
     {
         this.setVisible(true);
+        panel.setEnabled(false);
         panel.setVisible(false);
         estilos();
+        this.repaint();
     }
     public boolean estaBloqueado()
     {
@@ -322,7 +324,7 @@ public class FrameBlocked extends javax.swing.JFrame {
         Color c=new Color(145,145,145);
         Color a=new Color(235,37,37,150);
         panel.setBackground(c);
-        panel.setBorder( BorderFactory.createLineBorder(a, 3, true));
+        panel.setBorder( BorderFactory.createLineBorder(a, 1, true));
     }
     /**
      * @param args the command line arguments
@@ -356,14 +358,13 @@ public class FrameBlocked extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new FrameBlocked().setVisible(true);
-                panel.setBackground(new Color(0,0,0,40));
             }
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton entrar;
     private javax.swing.JButton jButton1;
-    private static javax.swing.JPanel panel;
+    private javax.swing.JPanel panel;
     private javax.swing.JPasswordField pass;
     private javax.swing.JTextField user;
     // End of variables declaration//GEN-END:variables

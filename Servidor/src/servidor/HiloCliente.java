@@ -110,10 +110,10 @@ public class HiloCliente implements Runnable {
     }
 
     //veficacion del cliente si existe o no
-    private boolean verificarCliente(String host) {
+    private boolean verificarCliente(String Mac) {
         boolean existe = false;
         for (Pc clientes : equipos) {
-            if (clientes.getHostname().equals(host)) {
+            if (Mac.contains(clientes.getMac())) {
                 existe = true;
             }
         }

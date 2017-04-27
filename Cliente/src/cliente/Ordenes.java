@@ -2,6 +2,7 @@ package cliente;
 
 import bloqueo.FrameBlocked;
 import java.io.DataInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.net.Inet4Address;
@@ -115,6 +116,7 @@ public class Ordenes {
         if (!(pantallaInicio.isVisible())) {
             pantallaInicio.bloqueoCompleto();
             this.tiempo = tiempo;
+            this.bloqueo=new Timer();
             this.bloqueo.schedule(new Task(), 1000, 1000);//poner 60000 para medir en minutos
         } else if (pantallaInicio.isVisible() && pantallaInicio.estaBloqueado()) {
             pantallaInicio.bloqueoCompleto();
@@ -173,13 +175,13 @@ public class Ordenes {
             String nSerie = cs.getSerialNumber();
             //Obtenemos los discos duros del sistema
             String hdd ="";
-            for (int i = 0; i < disks.length; i++) {
-                System.out.println("Entrando al for de Ricardo "+disks[i].getModel());
-                if(disks[i].getModel().contains("SATA") || (disks[i].getModel().contains("ATA") && !disks[i].getModel().contains("USB"))){
-                    System.out.println(disks[i].getModel());
-                    hdd += (i > 0 ? " | " : "") + (((disks[i].getSize() / 1024) / 1024) / 1024) + " GB";
-                }
+            File[] discos=File.listRoots();
+        for (File disco : discos) {
+            if(disco.getPath().contains("C:\\"))
+            {
+                hdd=(((disco.getTotalSpace()/ 1024) / 1024) / 1024) + " GB";
             }
+        }
             //Calculamos la memoria RAM y la comvertimos en GB
             String ram = ((((gm.getTotal() / 1024) / 1024) / 1024) + 1) + " GB";
             //Obtenemos el nombre del procesador
@@ -189,7 +191,7 @@ public class Ordenes {
             //Obtenemos las direcciones mac de las Tarjetas de red
             String MAC=new Interfaces().getMAC();
             //preparamos la informacion para su envio
-            info = marca + "," + modelo + "," + nSerie + ","+ MAC +","+ procesador +","+hdd+ "1 TB," + ram + "," + sistema;
+            info = marca + "," + modelo + "," + nSerie + ","+ MAC +","+ procesador +","+hdd+ "," + ram + "," + sistema;
             
             System.out.println("Propiedades Enviadas");
         return info;

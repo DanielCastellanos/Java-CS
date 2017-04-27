@@ -8,6 +8,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import servidor.BuscarGrupo;
 import servidor.Ordenes;
 
@@ -282,7 +283,7 @@ public class Pc_info extends javax.swing.JPanel {
     }//GEN-LAST:event_TareasActionPerformed
 
     private void CpaginaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CpaginaActionPerformed
-        new Desbloquear(this.cliente.getNombre(),this.cliente.getHostname());
+        new CompartirPagina(this.cliente.getNombre(),this.cliente.getHostname());
     }//GEN-LAST:event_CpaginaActionPerformed
 
     private void PropiedadesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PropiedadesActionPerformed
@@ -290,7 +291,12 @@ public class Pc_info extends javax.swing.JPanel {
     }//GEN-LAST:event_PropiedadesActionPerformed
 
     private void EncenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EncenderActionPerformed
-        //codigo para encender la pc
+        int opc=JOptionPane.showConfirmDialog(null, "Esta Seguro de que quiere encender\r\n el equipo "+this.cliente.getNombre()+" ?",
+                "Encendido Remoto", JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE,new ImageIcon(Principal.getLogo()));
+        if(opc==0)
+        {
+            ordenes.WakeOnLAN(this.cliente.getMac(),this.cliente.getDireccion());
+        }
     }//GEN-LAST:event_EncenderActionPerformed
 
 

@@ -75,10 +75,10 @@ public class BuscarServidor {
         if (configuracion.cargarConfiguracion()) {
             try {
                 puerto.joinGroup(InetAddress.getByName(configuracion.getGrupo()));
-                /*Verificar si hay datos de sesión y enviarlos al admin si así es*/
-                enviarSesiones();
                 serverHost=configuracion.getServerHost();
+                /*Verificar si hay datos de sesión y enviarlos al admin si así es*/
                 this.iniciarHilo();
+                enviarSesiones();
                 orden.login();
             } catch (IOException ex) {
                 Logger.getLogger(BuscarServidor.class.getName()).log(Level.SEVERE, null, ex);
@@ -310,14 +310,14 @@ public class BuscarServidor {
             InetAddress ia = InetAddress.getByName(servidor.getGrupo());
             System.out.println(ia);
             puerto.joinGroup(ia);
-            /*Verificar si existen datos de sesión guardados de manera local y enviarlos al admin*/
-            enviarSesiones();
             grupo = servidor.getGrupo();
             serverHost=servidor.getHostName();
             configuracion.setNombre(nombre);
             configuracion.setGrupo(grupo);
             configuracion.setServerHost(serverHost);
             configuracion.archivoNuevo();
+            /*Verificar si existen datos de sesión guardados de manera local y enviarlos al admin*/
+            enviarSesiones();
             System.out.println(orden.getInfoPc());
             byte registro[] = ("cliente," + nombre + "," + dir + "," + hostname+","+orden.getInfoPc()).getBytes();
             DatagramPacket dp = new DatagramPacket(registro, registro.length, ia, 1000);
@@ -362,7 +362,10 @@ public class BuscarServidor {
                     AppSystemTray.mostrarMensaje("Archivo \""+file+"\"",AppSystemTray.INFORMATION_MESSAGE);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                if(nuevoArchivo.isAlive())
+                {
+                    System.out.println("El hilo ah muerto");
+                }
             }
         }
     };
@@ -391,7 +394,11 @@ public class BuscarServidor {
             
             for (File file1 : files) {
                 if(file1.getName().contains(BuscarServidor.configuracion.getNombre())){
-                    Monitor.enviarSesion(file1);
+                    try {
+                        Monitor.enviarSesion(file1);
+                    } catch (IOException ex) {
+                        Logger.getLogger(BuscarServidor.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
             }
             

@@ -113,9 +113,9 @@ public class MonitorWeb {
         if(page!=null){
             if(webPages.indexOf(page) == -1){
                 webPages.add(page);
-                System.out.println(page);
+//                System.out.println(page);
             }
-            System.out.println(Arrays.toString(webPages.toArray()));
+//            System.out.println(Arrays.toString(webPages.toArray()));
         }
     }
     
@@ -161,7 +161,7 @@ public class MonitorWeb {
                 }
                 else if(packet.hasHeader(http)){                                        //De lo contrario verificamos si el paquete tiene cabecera http
                     String page= http.fieldValue(Http.Request.Host);                    //guardamos la cadema obtenida por http.fieldValue que corresponde al host donde va la petición
-                    System.out.println(page);                                           
+//                    System.out.println(page);                                           
                     pageRecieved(page);                                                 //y la mandamos a pageRecieved para su almacenamiento temporal.
                 }
             }
