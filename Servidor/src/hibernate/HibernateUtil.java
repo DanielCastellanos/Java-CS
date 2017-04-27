@@ -32,7 +32,7 @@ public class HibernateUtil {
             La ruta de la base de datos, el usuario y la contraseña de la misma
             si esta se ha definido.
              */
-            config.setProperty("hibernate.connection.url", "jdbc:mysql://"+url);
+            config.setProperty("hibernate.connection.url", "jdbc:mysql://"+url+"?autoReconnect=true");
             config.setProperty("hibernate.connection.username", usr);
             if (pass != null) {
                 config.setProperty("hibernate.connection.password", pass);
@@ -42,7 +42,8 @@ public class HibernateUtil {
             try{
             sessionFactory = config.buildSessionFactory(serviceRegistry);
             }catch(JDBCConnectionException conn){
-                System.out.println("Falla en driver, estado de conexion: "+hibernate.HibernateUtil.isConnected());
+                System.out.println("***************Falla en driver, estado de conexion: "
+                        +hibernate.HibernateUtil.isConnected());
                 
             }
         }
@@ -69,7 +70,6 @@ public class HibernateUtil {
     public static void closeSessionFactory() {
         if ((sessionFactory != null) && (sessionFactory.isClosed() == false)) {
             sessionFactory.close();
-            sessionFactory = null;
         }
     }
 }

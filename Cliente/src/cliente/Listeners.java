@@ -33,7 +33,7 @@ public class Listeners implements NativeKeyListener, NativeMouseListener, Native
     static int secs=0;
     private static final Timer temp= new Timer();
     private static int limite = 300;     //Default 7200
-    private static int tiempoLogin=100;   //Default 30
+    private static int tiempoLogin=100;   //Default 30 secs
     private static aviso av = new aviso();
     static Ordenes orden= new Ordenes();
     // private Ordenes orden= new Ordenes();
@@ -44,6 +44,9 @@ public class Listeners implements NativeKeyListener, NativeMouseListener, Native
         public void run() {                 //método run
             Listeners.secs++;               //Se aumenta la variable secs de la clase Listeners
             //System.out.println("****"+secs);
+            
+            /**/
+            /**/
             if(Listeners.secs >= Listeners.limite){                 //si se alcanza el limite
                 //orden.apagar();
                 System.out.println("apagado");

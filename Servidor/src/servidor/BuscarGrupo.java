@@ -302,7 +302,7 @@ class guardarSesion implements Runnable {
         byte buffer[];
         try {
 
-            System.out.println("Guardando Sesion");
+            System.out.println("Guardando Datos");
             dis = new DataInputStream(socket.getInputStream());
             //resivimos el nombre del archivo
             String nombre = dis.readUTF();
@@ -313,10 +313,11 @@ class guardarSesion implements Runnable {
             //leemos el objeto entrante
             dis.read(buffer);
             
-            
-            if (!hibernate.HibernateUtil.isConnected()) {
-                Archivos.guardarSesion(nombre, buffer);
-            } else {
+            if(!nombre.contains("uso"))
+            if (!hibernate.HibernateUtil.isConnected()) {               //Si no se detecta conexion con BD
+                Archivos.guardarSesion(nombre, buffer);                     //LA sesión se guarda en un archivo.
+                
+            } else {                                                    //Se detecta conexion con BD
                 //preparamos la entrada de datos del array
                 ByteArrayInputStream bs = new ByteArrayInputStream(buffer);
                 //preparamos la entrada para obtener el objeto "Sesion"
@@ -340,7 +341,7 @@ class guardarSesion implements Runnable {
                     try {
                         bdUtil dataBase = new bdUtil();
                         Sesion sesion = dataBase.buildSesionObject(s, pc);
-                dataBase.saveSesion(sesion);
+                        dataBase.saveSesion(sesion);
                     } catch (HibernateException ex) {
                         System.out.println("Error en persistencia " + ex.toString());
                 }
