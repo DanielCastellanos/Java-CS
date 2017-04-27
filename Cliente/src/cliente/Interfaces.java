@@ -25,7 +25,7 @@ public class Interfaces {
             while (e.hasMoreElements()) {
                 try {
                     NetworkInterface iface = (NetworkInterface) e.nextElement();
-                    if (!iface.isLoopback() && !iface.getDisplayName().contains("Virtual") && !iface.getDisplayName().contains("Teredo") && iface.getMTU() == 1500) {
+                    if (!iface.isLoopback() && !iface.getDisplayName().contains("Virtual") && !iface.getDisplayName().contains("Teredo") && iface.getMTU() >= 1450) {
                         this.interfaces.add(iface);
                     }
                 } catch (SocketException ex) {

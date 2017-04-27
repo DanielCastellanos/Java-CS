@@ -94,13 +94,6 @@ public class SesionCliente implements Serializable {
                     taskHistory.add(t);
                 }
             }
-
-            System.out.println("**************************");
-            for (Tarea tarea : taskHistory) {
-                System.out.println(tarea.getNombreImagen()+"----->"+tarea.getTituloVentana());
-            }
-            System.out.println("**************************");
-
         }
     }
 

@@ -1,8 +1,11 @@
 package cliente;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -87,13 +90,17 @@ public class Monitor {
             //enviamos la longitud del archivo
             dos.writeLong(archivo.length());
             //preparamos el archivo para la lectura
-            RandomAccessFile raf=new RandomAccessFile(archivo, "r");
+            BufferedInputStream bis=new BufferedInputStream(new FileInputStream(archivo));
+            BufferedOutputStream bos=new BufferedOutputStream(socket.getOutputStream());
             //inicializamos el buffer
             buffer=new byte[(int)archivo.length()];
             //leemos el archivo
-            raf.readFully(buffer);
-            //enviamos el archivo
-            dos.write(buffer);
+            while((bis.read(buffer)) != -1)
+            {
+                bos.write(buffer);
+            }
+            bis.close();
+            bos.close();
             //cerramos la salida de datos
             socket.close();
             dos.close();
