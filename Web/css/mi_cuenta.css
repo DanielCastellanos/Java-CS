@@ -61,7 +61,7 @@
  src: url('../Fuentes/OpenSans-Regular.ttf') format("truetype");
 }
 body{
-    background-image: url(../img/v4e3ji7ddhi-sebastian-unrau.jpg);
+    background-image: url(../img/bg_base.jpg);
     background-color: black;
     color: white;
     background-repeat: no-repeat;
@@ -89,7 +89,7 @@ header{
 }
 header #lab 
 {
-    background: rgba(239, 6, 0,.5);
+    background: rgba(239, 6, 0,.8);
     margin-top: -10000000000000000px;
     display: inline-block;
     padding: 18px;
@@ -112,7 +112,7 @@ header nav ul {
 }
 header nav ul li:hover
 {
-    background: rgba(48,170,85,.8);
+    background: rgba(239, 6, 0,.8);
 }
 header nav ul li{
     display: inline-block;

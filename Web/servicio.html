@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="">
+
 <head>
     <script src="js/jquery-3.1.1.js"></script>
     <script src="js/jquery.dynatable.js"></script>
@@ -12,32 +13,40 @@
     <title></title>
 </head>
 <header>
-        <div id="menu_bar">
-            <a href="#" id="bt-menu"><span class="icon-menu"></span></a>
-        </div>
-    <div id="titulo">Base de datos</div>
+    <div id="menu_bar">
+        <a href="#" id="bt-menu"><span class="icon-menu"></span></a>
+    </div>
+    <div id="titulo">Base de datos Java CS</div>
     <div id="lab">CTA Cuciénega</div>
-        <nav>
-<ul>
-    <li><a href="#">Mi cuenta</a></li>
-    <li><a href="#">Salir</a></li>
-</ul>
-</nav>
+    <nav>
+        <ul>
+            <li><a href="#">Mi cuenta</a></li>
+            <li><a href="#">Salir</a></li>
+        </ul>
+    </nav>
 </header>
 
 <body>
     <div id="wrapper">
         <div id="datos">
-            <h2 id="nombre">Título de la tabla</h2>
-            <h2 id="codigo">Aula</h2>
+            <h2 id="nombre">Información de los equipos</h2>
         </div>
 
         <div id="contenedor">
-            <ul id="navegador">
-                <li><a href="#">Páginas más usadas</a></li>
+            <div id="navegador">
+                
+               <ul >
+                <li><a href="#">Información de PC's</a></li>
+                <li><a href="#">Páginas más visitadas</a></li>
                 <li><a href="#">Programas más usados</a></li>
+                <li><a href="#">Sesiones de usuarios</a></li>
+                <li><a href="#">Sesiones de administradores</a></li>
+
             </ul>
-            <table id="tabla" style="overflow-x:auto;">
+            </div>
+            <div id="tabla">
+                
+            <table  style="overflow-x:auto;">
                 <thead>
                     <tr>
                         <th>Grupo</th>
@@ -71,15 +80,13 @@
                         <td>asdasd</td>
                         <td>asdasd</td>
                     </tr>
-    </tbody>
-</table>
+                </tbody>
+            </table>
+            </div>
         </div>
 
     </div>
-    <div id="botones">
-            <button id="boton" class="Registrar">Registro</button>
-        
-            </div>
-         
+
 </body>
+
 </html>
