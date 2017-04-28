@@ -162,9 +162,15 @@ public class BuscarGrupo extends Principal {
 
     public void nombreServ() {
         //Mostranos mensaje para  ingresar el nombre del servidor
+        do{
         nombre = JOptionPane.showInputDialog(null, "Escriba un nombre para el equipo");
+        System.out.println(nombre);
+        }while (nombre == null);
         //Agregamos el nombre del servidor a la configuracion
         conf.setNombreServ(nombre);
+        if(nombre.contains(",")){
+            nombreServ();
+        }
     }
     Runnable conexion = new Runnable() {
         @Override
