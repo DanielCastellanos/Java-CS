@@ -1,0 +1,2 @@
+servidor.guardarSesion
+servidor.BuscarGrupo

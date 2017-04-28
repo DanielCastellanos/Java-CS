@@ -15,6 +15,7 @@ public class Servidor {
     public static entity.Pc pc= new Pc();
     
     public static void main(String[] args) {
+        
         comunicacion.iniciarServidor();
         Listeners ls= new Listeners();
         ls.beginListeners();

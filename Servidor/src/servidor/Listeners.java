@@ -27,8 +27,8 @@ public class Listeners implements NativeKeyListener, NativeMouseListener, Native
 
     static int secs=0;
     private static final Timer temp= new Timer();
-    private static int limite = 300;     //Default 7200
-    private static int tiempoLogin=100;   //Default 30
+    private static int limite = 30;     //Default 7200
+    private static int tiempoLogin=10;   //Default 30
     private static aviso av = new aviso();
     static FrameBlocked bloqueo= new FrameBlocked();
     // private Ordenes orden= new Ordenes();
