@@ -105,11 +105,17 @@ public class BuscarServidor {
 
     private void datos() {
         try {
+            do{
             nombre = JOptionPane.showInputDialog(null, "Ingresa el nombre de Usuario", "Inicio", JOptionPane.INFORMATION_MESSAGE);
+            }while(nombre.isEmpty() || nombre.contains(","));
             dir = InetAddress.getLocalHost().getHostAddress();
             hostname = InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException ex) {
             Logger.getLogger(BuscarServidor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        catch (NullPointerException e)
+        {
+            System.exit(0);
         }
     }
     

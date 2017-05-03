@@ -37,8 +37,8 @@ public class FrameBlocked extends javax.swing.JFrame {
         revisaConeccion();                                          //Revisa si hay conexión a internet
         carga();
         pass.setEchoChar('•');
-//        pass.setUI(new PassHint("Password"));
-//        user.setUI(new Hint("Codigo"));
+        pass.setUI(new PassHint("Password"));
+        user.setUI(new Hint("Codigo"));
     //Carga el keylistener y llama keepfocus
     }
     ////////////////////////////////////////////

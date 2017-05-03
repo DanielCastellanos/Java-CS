@@ -111,6 +111,7 @@ public class Monitor {
         //enviamos el archivo
         dos.write(buffer);
         //cerramos la salida de datos
+        raf.close();
         socket.close();
         dos.close();
         //Borramos el archivo de la sesión enviada
