@@ -13,7 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.hibernate.HibernateException;
 
-public class GuardarSesion implements Runnable {
+class GuardarSesion implements Runnable {
 
     private Socket socket;
 
@@ -27,23 +27,22 @@ public class GuardarSesion implements Runnable {
         byte buffer[];
         try {
 
-            System.out.println("Guardando Sesion");
+            System.out.println("Guardando Datos");
             dis = new DataInputStream(socket.getInputStream());
             //resivimos el nombre del archivo
             String nombre = dis.readUTF();
             //obtenemos el tamaño del archivo
             long tamaño = dis.readLong();
             //preparamos el array para recivir el objeto
-            buffer = new byte[(int)tamaño];
+            buffer = new byte[(int) tamaño];
             //leemos el objeto entrante
-            BufferedInputStream bis=new BufferedInputStream(socket.getInputStream());
-            bis.read(buffer);
-            dis.close();
-            bis.close();
-            socket.close();
-            if (!hibernate.HibernateUtil.isConnected()) {
-                Archivos.guardarSesion(nombre, buffer);
-            } else {
+            dis.read(buffer);
+            
+            if(!nombre.contains("uso"))
+            if (!hibernate.HibernateUtil.isConnected()) {               //Si no se detecta conexion con BD
+                Archivos.guardarSesion(nombre, buffer);                     //LA sesión se guarda en un archivo.
+                
+            } else {                                                    //Se detecta conexion con BD
                 //preparamos la entrada de datos del array
                 ByteArrayInputStream bs = new ByteArrayInputStream(buffer);
                 //preparamos la entrada para obtener el objeto "Sesion"
@@ -67,7 +66,7 @@ public class GuardarSesion implements Runnable {
                     try {
                         bdUtil dataBase = new bdUtil();
                         Sesion sesion = dataBase.buildSesionObject(s, pc);
-                dataBase.saveSesion(sesion);
+                        dataBase.saveSesion(sesion);
                     } catch (HibernateException ex) {
                         System.out.println("Error en persistencia " + ex.toString());
                 }
@@ -75,6 +74,10 @@ public class GuardarSesion implements Runnable {
                     System.err.println("No se pudo guardar sesión, no se encontró equipo");
             }
             }
+            
+            
+            dis.close();
+            socket.close();
         }catch (IOException ex) {
             Logger.getLogger(GuardarSesion.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {

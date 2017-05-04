@@ -26,6 +26,8 @@ public class Pc_info extends javax.swing.JPanel {
         //hacemos visible la ventana
         barEnvio.setVisible(false);
         this.setBackground(color);
+        //WakeOnLan deshabilitado
+        Encender.setVisible(false);
         //guardamos los datos recibidos
         this.cliente=cliente;
         label.setText(this.cliente.getNombre());

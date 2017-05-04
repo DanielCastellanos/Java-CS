@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.Toolkit;
 import java.io.File;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
 import java.util.Timer;
+import java.util.TimerTask;
 import javax.swing.BorderFactory;
 import servidor.bdUtil;
 
@@ -25,9 +27,12 @@ public class FrameBlocked extends javax.swing.JFrame {
 
     public static int alto;
     Robot shortcutKiller;
+    private ArrayList<String> correctos ;
     public boolean dbConnection = false;
     public static int ancho;
     Timer timer;
+    Timer fondo;
+    int foto;
 
     ////////////CONSTRUCTOR/////////////////////
     public FrameBlocked() {
@@ -37,6 +42,8 @@ public class FrameBlocked extends javax.swing.JFrame {
         initComponents();
         revisaConeccion();                                          //Revisa si hay conexión a internet
         carga();
+        fondo=new Timer();
+        fondo.schedule(cambioFondo,0,10000);
         pass.setEchoChar('•');
         pass.setUI(new PassHint("Password"));
         user.setUI(new Hint("Codigo"));
@@ -115,7 +122,7 @@ public class FrameBlocked extends javax.swing.JFrame {
         File f = new File(sDirectorio);
         if (f.exists()) {
             File[] ficheros = f.listFiles();
-            ArrayList<String> correctos = new ArrayList();
+            correctos= new ArrayList();
             for (int x = 0; x < ficheros.length; x++) {
                 String ext = ficheros[x].getName().substring(ficheros[x].getName().length() - 3, ficheros[x].getName().length());
                 if (ext.equals("jpg")) {
@@ -303,9 +310,17 @@ public class FrameBlocked extends javax.swing.JFrame {
     //envia la imagen deseada a background
 
     public void colocarImagen(String img) {
-        Background p = new Background(ancho, alto, "src/images/" + img);
-        this.add(p, BorderLayout.CENTER);
-        p.repaint();
+        try {
+            Background p = new Background(ancho, alto, "src/images/" + img);
+            this.add(p, BorderLayout.CENTER);
+            p.repaint();
+            Thread.sleep(5);
+            pass.repaint();
+            panel.repaint();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(FrameBlocked.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }
 
     public void revisaConeccion() {
@@ -331,6 +346,19 @@ public class FrameBlocked extends javax.swing.JFrame {
         panel.setBackground(c);
         panel.setBorder(BorderFactory.createLineBorder(a, 3, true));
     }
+    TimerTask cambioFondo=new TimerTask() {
+        @Override
+        public void run() {
+            foto++;
+            if(foto==correctos.size())
+            {
+                foto=0;
+            }
+            colocarImagen(correctos.get(foto));
+            
+        }
+    };
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton entrar;

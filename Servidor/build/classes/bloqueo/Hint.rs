@@ -1,2 +1,0 @@
-bloqueo.PassHint
-bloqueo.Hint

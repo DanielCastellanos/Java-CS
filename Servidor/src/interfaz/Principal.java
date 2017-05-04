@@ -45,6 +45,8 @@ public class Principal extends javax.swing.JFrame{
         this.setIconImage(logo);
         //colocamos el titulo a la ventana
         this.setTitle("Java Control Software");
+        //Funcion WakeOnLAN deshabilitada
+        Encender.setVisible(false);
         //aumentamos la velocidad de desplasamiento de la barra vertical de desplazamiento
         panelScroll.getVerticalScrollBar().setUnitIncrement(10);
         //iniciamos el icono de la barra de tareas

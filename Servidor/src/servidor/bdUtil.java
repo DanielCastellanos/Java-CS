@@ -64,7 +64,7 @@ public class bdUtil {
             
         } catch (HibernateException he) {
             System.err.println("******Error al construir sesion********");
-//            he.printStackTrace();
+            he.printStackTrace();
             try{
                 if(sesionBD.getTransaction().isActive())
                 sesionBD.getTransaction().rollback();
