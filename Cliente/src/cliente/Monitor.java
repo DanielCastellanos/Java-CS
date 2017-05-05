@@ -23,7 +23,7 @@ public class Monitor {
     String ipTarget;                                //Ip de la interfaz a monitorear
     MonitorWeb web;                                 //Clase para monitoreo de tráfico
     ListaTareas taskList = new ListaTareas();                             //Clase para monitoreo de tareas
-    static long tRegUso = 1 * 60000;
+    static long tRegUso = 1 * 10000;
     static int numUso;
     static String path = "src/temp";
     static Uso usoPc = nuevoUso();
@@ -159,7 +159,7 @@ public class Monitor {
     public static void guardarUso() {
         try {
             System.out.println("------>?" + tRegUso + "----->" + numUso);
-            RandomAccessFile raf = new RandomAccessFile(BuscarServidor.configuracion.getNombre() + "-" + "uso_" + numUso, "rw");
+            RandomAccessFile raf = new RandomAccessFile(BuscarServidor.configuracion.getNombre() + "-" + "uso_" + usoPc.getInicio(), "rw");
             byte buffer[];
             ByteArrayOutputStream bs = new ByteArrayOutputStream();
             ObjectOutputStream os = new ObjectOutputStream(bs);

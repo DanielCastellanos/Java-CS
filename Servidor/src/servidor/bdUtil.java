@@ -18,12 +18,10 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
-import org.apache.derby.client.am.SqlException;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.TransactionException;
-import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
 
 public class bdUtil {
     
@@ -288,7 +286,7 @@ public class bdUtil {
             
         } catch (HibernateException ex) {
             System.err.println("*****************Error al registrar uso \n" + ex.toString());
-            
+            ex.printStackTrace();
         }finally{
             hibernate.HibernateUtil.closeSessionAndUnbindFromThread();
         }
