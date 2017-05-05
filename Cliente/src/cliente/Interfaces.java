@@ -17,7 +17,7 @@ import java.util.logging.Logger;
  * @author Ricar
  */
 public class Interfaces {
-    private ArrayList<NetworkInterface> interfaces=new ArrayList<>();
+    private static ArrayList<NetworkInterface> interfaces=new ArrayList<>();
     public Interfaces()
     {
         try {
@@ -56,7 +56,7 @@ public class Interfaces {
         }
         return netInterface;
     }
-    public String getMAC()
+    public static String getMAC()
     {
         String directions="";
         for (int i = 0; i < interfaces.size(); i++) {

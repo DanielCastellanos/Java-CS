@@ -14,6 +14,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.ComputerSystem;
@@ -150,6 +151,7 @@ public class Ordenes {
             pantallaInicio.login();
         }
     }
+    
     
     public String getInfoPc(){
         String info=null;
