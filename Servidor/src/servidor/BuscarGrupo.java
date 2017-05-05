@@ -52,6 +52,7 @@ public class BuscarGrupo extends Principal {
     Timer t = new Timer();    //Timer para preguntar en los grupos multicast
     public static Configuracion conf = new Configuracion();        //Variable de la configuracion del servidor
     public static ArrayList<Pc> equipos = new ArrayList<>();   //Lista de clientes
+    public static ArrayList<Pc> ePendientes= new ArrayList<>();   //Lista de clientes
     public static ArrayList<SesionCliente> listaSesiones = new ArrayList<>(); //lista de pruebas para las sesiones
     DatagramPacket pregunta;    //Datagrama para enviar los mensajes multicast
     static Tareas tareas = null;  //Objeto de tipo Tarea para los procesos de los clientes

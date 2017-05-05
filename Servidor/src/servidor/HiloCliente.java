@@ -88,6 +88,8 @@ public class HiloCliente implements Runnable {
         pc.setOs(datos[11]);
         if (!verificarCliente(datos[3]))//verificamos que el usuario no este ya registrado
         {
+            if(!nombreRepetido(pc.getNombre()))
+            {
             /*Buscar pc en la BD*/
             if (hibernate.HibernateUtil.isConnected()) {
                 bdUtil bd= new bdUtil();
@@ -103,7 +105,14 @@ public class HiloCliente implements Runnable {
             equipos.add(pc);
             Archivos.guardarListaClientes(equipos);
             Principal.agregaEquipo(pc);
+            new Ordenes().avisoNombre(pc.getHostname(),"1");
             AppSystemTray.mostrarMensaje("Nuevo Cliente", AppSystemTray.PLAIN_MESSAGE);
+            }
+            else
+            {
+                ePendientes.add(pc);
+                new Ordenes().avisoNombre(pc.getHostname(),"0");
+            }
         } else {
             System.out.println("El usuario ya esta registrado");
         }
@@ -113,7 +122,7 @@ public class HiloCliente implements Runnable {
     private boolean verificarCliente(String Mac) {
         boolean existe = false;
         for (Pc clientes : equipos) {
-            if (Mac.contains(clientes.getMac())) {
+            if (Mac.equalsIgnoreCase(clientes.getMac())) {
                 existe = true;
             }
         }
@@ -138,6 +147,18 @@ public class HiloCliente implements Runnable {
         }
         return lista;
     }
+    
+    private boolean nombreRepetido(String nombre)
+    {
+        boolean encontrado=false;
+        for (Pc equipo : equipos){
+            if(nombre.equals(equipo.getNombre()))
+            {
+                encontrado=true;
+            }
+        }
+        return encontrado;
+    }
 
     private String nombreCliente(InetAddress ia) {
         String nombre = null;
@@ -150,6 +171,39 @@ public class HiloCliente implements Runnable {
         return nombre;
     }
 
+    private void nuevoCliente(String datos[])
+    {
+        Pc pc=null;
+        for (Pc ePendiente : ePendientes) {
+            if(datos[1].equals(ePendiente.getMac()))
+            {
+                pc=ePendiente;
+            }
+        }
+        if(pc!=null)
+        {
+        pc.setNombre(datos[0]);
+        /*Buscar pc en la BD*/
+            if (hibernate.HibernateUtil.isConnected()) {
+                bdUtil bd= new bdUtil();
+                Pc aux = bd.getPcByMac(pc.getMac());       //Uso la mac para verificar si existe la máquina en bd
+                if (aux == null) {
+                    pc.setIdPC(bd.savePc(pc));
+                }else{
+                    pc=aux;
+                }
+            }
+            System.out.println(pc.getIdPC());
+            /**/
+            equipos.add(pc);
+            Archivos.guardarListaClientes(equipos);
+            Principal.agregaEquipo(pc);
+            new Ordenes().avisoNombre(conf.getGrupo(),"1");
+            AppSystemTray.mostrarMensaje("Nuevo Cliente", AppSystemTray.PLAIN_MESSAGE);
+        }
+        else
+            System.err.println("..::::No se encontro el usaurio en la lista de quipos pendientes::::..");
+    }
     @Override
     public void run() {
         if (!(dp.getAddress().getHostAddress().equals(miIp.getHostAddress())))//evita la respuesta de nuestra misma pc
@@ -174,6 +228,18 @@ public class HiloCliente implements Runnable {
                 case "cliente"://cuando un nuevo usuario se une al grupo
                     System.out.println("Guardando Cliente");
                     guardarCliente(mensaje);
+                    break;
+                case "nuevoNombre":
+                    String info=mensaje.substring(mensaje.indexOf(",")+1, mensaje.length());
+                    String datos[]=info.split(",");
+                    if(!nombreRepetido(datos[1]))
+                    {
+                        nuevoCliente(datos);
+                    }
+                    else
+                    {
+                        new Ordenes().avisoNombre(conf.getGrupo(),"0");
+                    }
                     break;
                 case "Tareas"://cuando se resiven las tareas solicitadas al cliente
                     String tarea = mensaje.substring(mensaje.indexOf(",") + 1, mensaje.length());

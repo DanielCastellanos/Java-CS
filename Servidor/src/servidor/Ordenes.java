@@ -71,6 +71,11 @@ public class Ordenes {
             byte mensaje[]=("apagarAuto,"+tiempo).getBytes();
             enviarOrden(hostname,mensaje);
     }
+    public void avisoNombre(String hostname,String valido)
+    {
+        byte mensaje[]=("nombre,"+valido).getBytes();
+        enviarOrden(hostname, mensaje);
+    }
     
     //metodo para enviar un reinicio
     public void reiniciar(String hostname)
