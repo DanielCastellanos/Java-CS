@@ -90,11 +90,9 @@ class GuardarSesion implements Runnable {
                             break;
                         }
                     }
-                    if(pc!= null){
-                        
+                    if(pc!= null && hibernate.HibernateUtil.isConnected()){
                             bdUtil dataBase = new bdUtil();
                             dataBase.saveUsoPc(pc, uso.getFin(), uso.getFin());
-                            
                     }
                     
             }

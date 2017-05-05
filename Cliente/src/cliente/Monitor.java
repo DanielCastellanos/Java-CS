@@ -159,7 +159,8 @@ public class Monitor {
     public static void guardarUso() {
         try {
             System.out.println("------>?" + tRegUso + "----->" + numUso);
-            RandomAccessFile raf = new RandomAccessFile(BuscarServidor.configuracion.getNombre() + "-" + "uso_" + usoPc.getInicio(), "rw");
+            String fecha= usoPc.getInicio().toString().replace(":", "-").replace(" ", "_");
+            RandomAccessFile raf = new RandomAccessFile(BuscarServidor.configuracion.getNombre() + "-" + "uso|" + fecha, "rw");
             byte buffer[];
             ByteArrayOutputStream bs = new ByteArrayOutputStream();
             ObjectOutputStream os = new ObjectOutputStream(bs);

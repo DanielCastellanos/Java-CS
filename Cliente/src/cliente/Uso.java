@@ -1,8 +1,9 @@
 package cliente;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Uso {
+public class Uso implements Serializable{
     
     private String pcName;
     private Date inicio;

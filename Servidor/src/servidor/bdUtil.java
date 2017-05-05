@@ -24,12 +24,12 @@ import org.hibernate.Session;
 import org.hibernate.TransactionException;
 
 public class bdUtil {
-    
+
     Session sesionBD;
 
     /*Este método crea y retorna un objeto Sesion*/
     public Sesion buildSesionObject(SesionCliente sesionCliente, Pc pc) {
-        
+
         Sesion sesion = new Sesion();
         try {
             /*Inicio de sesión de hibernate*/
@@ -56,18 +56,19 @@ public class bdUtil {
             sesion.setProgramaCollection(getProgramas(sesionCliente.getTaskHistory()));
             /*Colleciones de páginas y grogramas*/
 
- /*Agregar referencia de pc en sesion*/            
+ /*Agregar referencia de pc en sesion*/
             sesion.setPCidPC(pc);
             /*----bloque en construcción*/
-            
+
         } catch (HibernateException he) {
             System.err.println("******Error al construir sesion********");
             he.printStackTrace();
-            try{
-                if(sesionBD.getTransaction().isActive())
-                sesionBD.getTransaction().rollback();
-            }catch(TransactionException te){
-                System.err.println("**********No se pudo hacer rollback "+te.toString());
+            try {
+                if (sesionBD.getTransaction().isActive()) {
+                    sesionBD.getTransaction().rollback();
+                }
+            } catch (TransactionException te) {
+                System.err.println("**********No se pudo hacer rollback " + te.toString());
             }
         } catch (NullPointerException npe) {
             System.out.println("***********Error, estado de conexion: " + hibernate.HibernateUtil.isConnected());
@@ -78,18 +79,18 @@ public class bdUtil {
             hibernate.HibernateUtil.closeSessionAndUnbindFromThread();
             /**/
         }
-        
+
         return sesion;
     }
-    
+
     private Collection<Pagina> getPages(ArrayList<String> webReport) throws HibernateException {
-        
+
         List<Pagina> pages = new ArrayList<>();                                  //Lista para guardar las páginas
         sesionBD.beginTransaction();                                            //Inicia transaccion
         Query query = sesionBD.createQuery("from Pagina where nombrePagina = :name");    //Consulta a realizar con parámetro :name
 
         for (String nameP : webReport) {                            //Loop a travez del arreglo de String con los nombres de las páginas
-            
+
             query.setParameter("name", nameP);                      //Asigna nombre a buscar en parámetro
             Pagina p = (Pagina) query.uniqueResult();                 //Ejecuta la consulta con el parámetro y obtiene un solo resultado
 
@@ -99,7 +100,7 @@ public class bdUtil {
                 sesionBD.save(p);
                 p = (Pagina) query.uniqueResult();
             }
-            
+
             pages.add(p);                                           //Guardamos la página en una lista
         }
         sesionBD.getTransaction().commit();                         //Se realiza el commit
@@ -107,7 +108,7 @@ public class bdUtil {
         Collection c = pages;                                       //Se guarda la lista en un Collection
         return c;                                                   //Y se retorna
     }
-    
+
     private Collection<Programa> getProgramas(ArrayList<Tarea> taskReport) throws HibernateException {
         List<Programa> programas = new ArrayList<>();                                  //Lista para guardar los programas
         sesionBD.beginTransaction();                                                    //Inicia transaccion
@@ -126,53 +127,53 @@ public class bdUtil {
                 sesionBD.save(p);
                 p = (Programa) query.uniqueResult();
             }
-            
+
             programas.add(p);                                           //Guardamos el programa en una lista
         }
         sesionBD.getTransaction().commit();                         //Se realiza el commit
 
         Collection c = programas;                                       //Se guarda la lista en un Collection
-        return c;        
+        return c;
     }
 
     //Obtiene un usuario de la bd según un código
-    private Usuario getUsrByName(String usr) throws HibernateException{
-        
+    private Usuario getUsrByName(String usr) throws HibernateException {
+
         Usuario objetoUsuario;                                                      //Declara un nuevo Usuario
         sesionBD.beginTransaction();                                                //Inicia transaccion en la sesion de hibernate
         Query query = sesionBD.createQuery("from Usuario where codigo = " + usr);      //Declaro una consulta HQL 
         objetoUsuario = (Usuario) query.uniqueResult();
-        
+
         sesionBD.getTransaction().commit();
-        
+
         return objetoUsuario;
     }
-    
-    public Pc getPcByMac(String mac) throws HibernateException{
+
+    public Pc getPcByMac(String mac) throws HibernateException {
         hibernate.HibernateUtil.openSessionAndBindToThread();
         sesionBD = hibernate.HibernateUtil.getSessionFactory().getCurrentSession();
         sesionBD.beginTransaction();
-        
+
         Query q = sesionBD.createQuery("from Pc where mac = '" + mac + "'");
         Pc returnedPc = (Pc) q.uniqueResult();
-        
+
         sesionBD.getTransaction().commit();
         hibernate.HibernateUtil.closeSessionAndUnbindFromThread();
-        
+
         return returnedPc;
     }
-    
+
     public int savePc(Pc pc) {
-        
+
         try {
             hibernate.HibernateUtil.openSessionAndBindToThread();
             sesionBD = hibernate.HibernateUtil.getSessionFactory().getCurrentSession();
-            
+
             sesionBD.beginTransaction();
-            
+
             sesionBD.save(pc);
             sesionBD.getTransaction().commit();
-            
+
         } catch (HibernateException ex) {
             System.err.println("Error al persistir datos de pc" + ex.toString());
             pc = null;
@@ -180,17 +181,29 @@ public class bdUtil {
         } finally {
             if (hibernate.HibernateUtil.isConnected()) {
                 hibernate.HibernateUtil.closeSessionAndUnbindFromThread();
-            }            
+            }
         }
-        pc = getPcByMac(pc.getMac());
-        int id = -1;
-        id = pc.getIdPC();
-        System.out.println("-----> " + id);
-        return id;
+        if (pc != null) {
+            try{
+                pc = getPcByMac(pc.getMac());
+            }catch(HibernateException e){
+                System.err.println("error al buscar id de Pc");
+                return -1;
+            }
+            if(pc != null){
+            int id = pc.getIdPC();
+            System.out.println("-----> " + id);
+            return id;
+            }else{
+                return -1;
+            }
+        }else{
+            return -1;
+        }
     }
-    
-    private Usuario createUsuario(String cod) throws HibernateException{
-        
+
+    private Usuario createUsuario(String cod) throws HibernateException {
+
         Usuario nuevo = new Usuario(Integer.parseInt(cod), true);        //Crea objeto usuario
         sesionBD.beginTransaction();                        //Inicia transacción en hibernate
         sesionBD.save(nuevo);                               //Guarda el objeto en la BD
@@ -198,13 +211,13 @@ public class bdUtil {
 
         return nuevo;
     }
-    
+
     private void exception() {
         hibernate.HibernateUtil.closeSessionFactory();
-        Configuracion conf= BuscarGrupo.conf;
+        Configuracion conf = BuscarGrupo.conf;
         new interfaz.BDConfig(conf, conf.getURLBD(), conf.getUserBD(), conf.getPassBD()).setVisible(true);
     }
-    
+
     public void saveSesion(Sesion s) {
         try {
             /*Abre y obtiene la sesión*/
@@ -218,7 +231,7 @@ public class bdUtil {
             sesionBD.save(s);
             /*Realiza el commit de los cambios*/
             sesionBD.getTransaction().commit();
-            
+
         } catch (HibernateException ex) {
             System.err.println("Error al registrar sesión ");
 //            ex.printStackTrace();
@@ -229,11 +242,11 @@ public class bdUtil {
             }
         }
     }
-    
+
     public boolean logginAdmin(String usr, String pass) {
-        
+
         boolean success = false;
-        
+
         try {
             Admin admin = getAdmin(usr);
             if (admin != null) {
@@ -243,13 +256,13 @@ public class bdUtil {
             }
         } catch (HibernateException ex) {
             System.err.println("****************Error al obtener datos de Administrador**************\n "
-            + ex.toString());
+                    + ex.toString());
         }
         /*Retorna la bandera*/
         return success;
     }
-    
-    public Admin getAdmin(String username) throws HibernateException{
+
+    public Admin getAdmin(String username) throws HibernateException {
         /*Abre sesión*/
         hibernate.HibernateUtil.openSessionAndBindToThread();
         sesionBD = hibernate.HibernateUtil.getSessionFactory().getCurrentSession();
@@ -269,7 +282,7 @@ public class bdUtil {
     /*Guarda un registro en BD recibiendo una Pc y hora de entrada y salida*/
     public void saveUsoPc(Pc pc, Date entrada, Date salida) {
         try {
-            
+
             UsoPc nuevoUso = new UsoPc();
             nuevoUso.setEncendido(entrada);
             nuevoUso.setApagado(salida);
@@ -283,11 +296,11 @@ public class bdUtil {
             sesionBD.save(nuevoUso);
             sesionBD.getTransaction().commit();
             /*-----------------------------*/
-            
+
         } catch (HibernateException ex) {
             System.err.println("*****************Error al registrar uso \n" + ex.toString());
             ex.printStackTrace();
-        }finally{
+        } finally {
             hibernate.HibernateUtil.closeSessionAndUnbindFromThread();
         }
     }
@@ -301,7 +314,7 @@ public class bdUtil {
         sc.setEntrada(new Date());
         sc.setSalida(new Date());
         sc.setUsr("210437652");
-        
+
         ArrayList<Tarea> taskHistory = new ArrayList();
         for (int i = 0; i < 4; i++) {
             Tarea t = new Tarea();
@@ -316,7 +329,7 @@ public class bdUtil {
         sb.append("facebook.com|es.wikipedia.org|hackstore.net|cinepremiere.com.mx");
         sc.addWebHistory(sb);
         /*-------------------------------------------------------------*/
-        
+
         Pc pc = new Pc(1);
         if (hibernate.HibernateUtil.isConnected()) {
             Sesion nueva = new bdUtil().buildSesionObject(sc, pc);
@@ -344,7 +357,6 @@ public class bdUtil {
     }
 
     /**/
-    
     public static void prueba2() {
         hibernate.HibernateUtil.buildSessionFactory("localhost:3306/javacs_bd", "root", "");
         Pc pc = new Pc();
@@ -357,7 +369,7 @@ public class bdUtil {
         } else {
             pc.setIdPC(p.getIdPC());
         }
-        
+
         hibernate.HibernateUtil.openSessionAndBindToThread();
         Session sess = hibernate.HibernateUtil.getSessionFactory().getCurrentSession();
         sess.beginTransaction();
@@ -367,7 +379,7 @@ public class bdUtil {
         sc.setEntrada(new Date());
         sc.setSalida(new Date());
         sc.setUsr("210437652");
-        
+
         ArrayList<Tarea> taskHistory = new ArrayList();
         for (int i = 0; i < 4; i++) {
             Tarea t = new Tarea();
@@ -382,19 +394,19 @@ public class bdUtil {
         sb.append("facebook.com|es.wikipedia.org|hackstore.net|cinepremiere.com.mx");
         sc.addWebHistory(sb);
         /*-------------------------------------------------------------*/
-        
+
         sess.getTransaction().commit();
         hibernate.HibernateUtil.closeSessionAndUnbindFromThread();
         Sesion s = new bdUtil().buildSesionObject(sc, pc);
         new bdUtil().saveSesion(s);
     }
-    
+
     public static void main(String[] args) {
-        /*                                              IP      Port DB name     User   Pass*/        
+        /*                                              IP      Port DB name     User   Pass*/
         hibernate.HibernateUtil.buildSessionFactory("localhost:3306/javacs_bd", "root", "");
 
 //        System.out.println("User");
-        Scanner sc= new Scanner(System.in);
+        Scanner sc = new Scanner(System.in);
 //        String usr= sc.next();
 //        System.out.println("Pass");
 //        String pass= sc.next();
