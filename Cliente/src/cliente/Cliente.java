@@ -9,7 +9,7 @@ import java.io.File;
 public class Cliente {
     
     public static AppSystemTray notIcon= new AppSystemTray();               //Icono de bandeja del sistema
-    public static SesionCliente sesion= new SesionCliente();                //Manejo de datos de sesión
+    public static SesionCliente sesion= null;                               //Manejo de datos de sesión
     public static Monitor monitor;      
     
     public static void main(String[] args) {

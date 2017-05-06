@@ -68,7 +68,10 @@ public class Ordenes {
     /*Apagar equipo inmediatamente*/
     public void apagar() {
         try {
-            Cliente.sesion.cerrarSesion();                              //Cerrar sesión
+            if(Cliente.sesion != null){
+                Cliente.sesion.cerrarSesion();                              //Cerrar sesión
+                Cliente.sesion = null;
+            }
             Process proceso = Runtime.getRuntime().exec("shutdown /p"); //Enviar comando de apagado
             System.exit(0);
         } catch (IOException e) {
@@ -94,7 +97,10 @@ public class Ordenes {
     /*Método para mandar la orden de reiniciar el equipo*/
     public void reiniciar() {
         try {
-            Cliente.sesion.cerrarSesion();          //Cierra sesión de uso
+            if(Cliente.sesion != null){
+                Cliente.sesion.cerrarSesion();          //Cierra sesión de uso
+                Cliente.sesion = null;
+            }
             Process proceso = Runtime.getRuntime().exec("shutdown /r");     //Envía orden de reinicio a consola
         } catch (IOException e) {
             System.out.println("Excepción: ");
@@ -119,6 +125,11 @@ public class Ordenes {
             this.tiempo = tiempo;
             this.bloqueo=new Timer();
             this.bloqueo.schedule(new Task(), 1000, 1000);//poner 60000 para medir en minutos
+            //Cerrado de sesión
+            if(Cliente.sesion != null){
+                Cliente.sesion.cerrarSesion();
+                Cliente.sesion= null;
+            }
         } else if (pantallaInicio.isVisible() && pantallaInicio.estaBloqueado()) {
             pantallaInicio.bloqueoCompleto();
             this.tiempo = tiempo;
@@ -151,7 +162,6 @@ public class Ordenes {
             pantallaInicio.login();
         }
     }
-    
     
     public String getInfoPc(){
         String info=null;
