@@ -49,11 +49,14 @@ public class Programa implements Serializable {
     @Basic(optional = false)
     @Column(name = "proceso")
     private String proceso;
-    @Column(name = "Descripci\u00f3n")
+    @Column(name = "Descripcion")
     private String descripción;
     @ManyToMany(mappedBy = "programaCollection")
     private Collection<Sesion> sesionCollection;
-
+    
+    @XmlTransient
+    private final byte limitNombre = 20;
+    
     public Programa() {
     }
 
@@ -80,6 +83,9 @@ public class Programa implements Serializable {
     }
 
     public void setNombre(String nombre) {
+        if(nombre.length() > limitNombre){
+            nombre=nombre.substring(0, limitNombre);
+        }
         this.nombre = nombre;
     }
 

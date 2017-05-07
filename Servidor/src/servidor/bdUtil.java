@@ -112,12 +112,11 @@ public class bdUtil {
     private Collection<Programa> getProgramas(ArrayList<Tarea> taskReport) throws HibernateException {
         List<Programa> programas = new ArrayList<>();                                  //Lista para guardar los programas
         sesionBD.beginTransaction();                                                    //Inicia transaccion
-        Query query = sesionBD.createQuery("from Programa where proceso = :name and nombre = :frame");   //Consulta a realizar con parámetro :name
+        Query query = sesionBD.createQuery("from Programa where proceso = :name");   //Consulta a realizar con parámetro :name
 
         for (Tarea task : taskReport) {                            //Loop a travez del arreglo de Tarea con la info de los programas
             System.out.println(task.getNombreImagen());
             query.setParameter("name", task.getNombreImagen());                      //Asigna nombre a buscar en parámetro
-            query.setParameter("frame", task.getTituloVentana());                      //Asigna nombre a buscar en parámetro
             Programa p = (Programa) query.uniqueResult();                 //Ejecuta la consulta con el parámetro y obtiene un solo resultado
 
             if (p == null) {                                          //Si la consulta no arrojó resultado el programa no existe en bd
