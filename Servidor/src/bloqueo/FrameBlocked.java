@@ -21,6 +21,7 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.BorderFactory;
+import servidor.Cifrado;
 import servidor.bdUtil;
 
 public class FrameBlocked extends javax.swing.JFrame {
@@ -40,7 +41,7 @@ public class FrameBlocked extends javax.swing.JFrame {
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);  //Evita cierre con ALT+F4
         tamaño();                                                   //Obtiene tamaño de pantalla
         initComponents();
-        revisaConeccion();                                          //Revisa si hay conexión a internet
+//        revisaConeccion();                                          //Revisa si hay conexión a internet
         carga();
         fondo=new Timer();
         fondo.schedule(cambioFondo,0,10000);
@@ -277,7 +278,7 @@ public class FrameBlocked extends javax.swing.JFrame {
             //VALIDACION DE CODIGO Y NIP
             Login log = new Login();
             String username= this.user.getText();
-            String password= this.pass.getText();
+            String password= Cifrado.cifrarMD5(this.pass.getText());
             if (log.login(username, password)) {
                 try {
                     Thread.sleep(1000);

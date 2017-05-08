@@ -86,7 +86,7 @@ public class HiloCliente implements Runnable {
         pc.setDiscoDuro(datos[9]);
         pc.setRam(datos[10]);
         pc.setOs(datos[11]);
-        if (!verificarCliente(datos[3]))//verificamos que el usuario no este ya registrado
+        if (!verificarCliente(pc.getMac()))//verificamos que el usuario no este ya registrado
         {
             if(!nombreRepetido(pc.getNombre()))
             {
@@ -105,13 +105,13 @@ public class HiloCliente implements Runnable {
             equipos.add(pc);
             Archivos.guardarListaClientes(equipos);
             Principal.agregaEquipo(pc);
-            new Ordenes().avisoNombre(pc.getHostname(),"1");
+            new Ordenes().avisoNombre(pc.getDireccion(),true);
             AppSystemTray.mostrarMensaje("Nuevo Cliente", AppSystemTray.PLAIN_MESSAGE);
             }
             else
             {
                 ePendientes.add(pc);
-                new Ordenes().avisoNombre(pc.getHostname(),"0");
+                new Ordenes().avisoNombre(pc.getDireccion(),false);
             }
         } else {
             System.out.println("El usuario ya esta registrado");
@@ -171,18 +171,27 @@ public class HiloCliente implements Runnable {
         return nombre;
     }
 
-    private void nuevoCliente(String datos[])
+    private void nuevoCliente(InetAddress direccion,String host,String nombre)
     {
-        Pc pc=null;
+        System.out.println("Nuevo Cliente:---->"+direccion.toString()+"::::"+host);
+        String auxDir=direccion.toString();
+        Pc pc=new Pc();
         for (Pc ePendiente : ePendientes) {
-            if(datos[1].equals(ePendiente.getMac()))
-            {
-                pc=ePendiente;
+                System.out.println(auxDir+"-----"+ePendiente.getDireccion()+"/"+ePendiente.getHostname());
+                if(auxDir.equalsIgnoreCase(ePendiente.getHostname()+"/"+ePendiente.getDireccion()))
+                {
+                    pc=ePendiente;
+                    System.out.println(ePendiente.getDireccion());
+                    System.out.println(ePendiente.getHostname());
+                    System.out.println(ePendiente.getMarca());
+                    System.out.println(ePendiente.getNombre());
+                    System.out.println(ePendiente.getProcesador());
+                    System.out.println(ePendiente.getMac());
+                }
             }
-        }
         if(pc!=null)
         {
-        pc.setNombre(datos[0]);
+        pc.setNombre(nombre);
         /*Buscar pc en la BD*/
             if (hibernate.HibernateUtil.isConnected()) {
                 bdUtil bd= new bdUtil();
@@ -193,16 +202,18 @@ public class HiloCliente implements Runnable {
                         pc.setIdPC(id);
                     }
                 }else{
-                    pc=aux;
+                    pc.setIdPC(aux.getIdPC());
                 }
             }
             System.out.println(pc.getIdPC());
+            System.out.println(pc.getHostname());
+            System.out.println(pc.getNombre());
             /**/
             
             equipos.add(pc);
             Archivos.guardarListaClientes(equipos);
             Principal.agregaEquipo(pc);
-            new Ordenes().avisoNombre(conf.getGrupo(),"1");
+            new Ordenes().avisoNombre(direccion.getHostAddress(),true);
             AppSystemTray.mostrarMensaje("Nuevo Cliente", AppSystemTray.PLAIN_MESSAGE);
         }
         else
@@ -234,15 +245,14 @@ public class HiloCliente implements Runnable {
                     guardarCliente(mensaje);
                     break;
                 case "nuevoNombre":
-                    String info=mensaje.substring(mensaje.indexOf(",")+1, mensaje.length());
-                    String datos[]=info.split(",");
-                    if(!nombreRepetido(datos[1]))
+                    String nombre=mensaje.substring(mensaje.indexOf(",")+1, mensaje.length());
+                    if(!nombreRepetido(nombre))
                     {
-                        nuevoCliente(datos);
+                        nuevoCliente(dp.getAddress(),dp.getAddress().getHostName(),nombre);
                     }
                     else
                     {
-                        new Ordenes().avisoNombre(conf.getGrupo(),"0");
+                        new Ordenes().avisoNombre(dp.getAddress().getHostAddress(),false);
                     }
                     break;
                 case "Tareas"://cuando se resiven las tareas solicitadas al cliente

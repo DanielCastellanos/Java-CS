@@ -34,7 +34,7 @@ public class Archivos {
             ByteArrayOutputStream bos=new ByteArrayOutputStream();
             ObjectOutputStream os=new ObjectOutputStream(bos);
             os.writeObject(conf);
-            byte salida[]=new Cifrado().cifrar(bos.toByteArray());
+            byte salida[]=new Cifrado().cifrarAES(bos.toByteArray());
             escribir.write(salida);
             escribir.close();
         } catch (FileNotFoundException ex) {
@@ -53,7 +53,7 @@ public class Archivos {
             RandomAccessFile leer = new RandomAccessFile(configuracion, "rw");
             byte buffer[]=new byte[(int)leer.length()];
             leer.readFully(buffer);
-            buffer=new Cifrado().descifrar(buffer);
+            buffer=new Cifrado().descifrarAES(buffer);
             ByteArrayInputStream bis=new ByteArrayInputStream(buffer);
             ObjectInputStream ois=new ObjectInputStream(bis);
             conf=(Configuracion)ois.readObject();
@@ -97,7 +97,7 @@ public class Archivos {
             ByteArrayOutputStream bos=new ByteArrayOutputStream();
             ObjectOutputStream os=new ObjectOutputStream(bos);
             os.writeObject(lista);
-            byte salida[]=Cifrado.cifrar(bos.toByteArray());
+            byte salida[]=Cifrado.cifrarAES(bos.toByteArray());
             escribir.write(salida);
             escribir.close();
             bos.close();
@@ -116,7 +116,7 @@ public class Archivos {
             RandomAccessFile leer=new RandomAccessFile(archivo,"r");
             byte clientes[]=new byte[(int)leer.length()];
             leer.readFully(clientes);
-            clientes=Cifrado.descifrar(clientes);
+            clientes=Cifrado.descifrarAES(clientes);
             ByteArrayInputStream bis=new ByteArrayInputStream(clientes);
             ObjectInputStream is=new ObjectInputStream(bis);
             lista=(ArrayList<Pc>)is.readObject();
@@ -170,7 +170,7 @@ public class Archivos {
             RandomAccessFile leer=new RandomAccessFile(archivo,"r");
             byte buffer[]=new byte[(int)leer.length()];
             leer.readFully(buffer);
-            buffer=Cifrado.descifrar(buffer);
+            buffer=Cifrado.descifrarAES(buffer);
             ByteArrayInputStream bis=new ByteArrayInputStream(buffer);
             ObjectInputStream is=new ObjectInputStream(bis);
             sesion=(SesionCliente)is.readObject();

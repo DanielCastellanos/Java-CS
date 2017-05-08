@@ -71,10 +71,19 @@ public class Ordenes {
             byte mensaje[]=("apagarAuto,"+tiempo).getBytes();
             enviarOrden(hostname,mensaje);
     }
-    public void avisoNombre(String hostname,String valido)
+    public void avisoNombre(String direccion,boolean valido)
     {
-        byte mensaje[]=("nombre,"+valido).getBytes();
-        enviarOrden(hostname, mensaje);
+        try {
+            byte mensaje[]=("nombre,"+valido).getBytes();
+            Socket socket=new Socket(InetAddress.getByName(direccion), 4401);
+            DataOutputStream dos=new DataOutputStream(socket.getOutputStream());
+            dos.writeUTF("nombre");
+            dos.writeBoolean(valido);
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     //metodo para enviar un reinicio

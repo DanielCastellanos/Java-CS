@@ -1,5 +1,6 @@
 package servidor;
 import java.security.InvalidKeyException;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,7 +36,7 @@ public class Cifrado {
         "gT8CNvYL1i2M9oCn",
         "3SdSE0A7LXsfjjgy",
         "RrElEMnVxqLt7JP1"};
-    public static byte[] cifrar(byte texto[])
+    public static byte[] cifrarAES(byte texto[])
     {
         byte cifrado[]=null;
         try {
@@ -55,7 +56,7 @@ public class Cifrado {
         }
         return cifrado;
     }
-    public static byte[] descifrar(byte cifrado[])
+    public static byte[] descifrarAES(byte cifrado[])
     {
         byte texto[]=null;
         try {
@@ -74,5 +75,26 @@ public class Cifrado {
             Logger.getLogger(Cifrado.class.getName()).log(Level.SEVERE, null, ex);
         }
         return texto;
+    }
+    public static String cifrarMD5(String pass)
+    {
+        byte text[]=pass.getBytes();
+        String md5 = "";
+        try {
+            MessageDigest md =MessageDigest.getInstance("MD5");
+            md.reset();
+            md.update(text);
+            byte bytes[] = md.digest();
+            for (int i = 0; i < bytes.length; i++) {
+                String hex = Integer.toHexString(0xff & bytes[i]);
+                if (hex.length() == 1)
+                    md5+='0';
+                md5+=hex;
+            }
+            System.out.println(md5);
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(Cifrado.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return md5;
     }
 }
