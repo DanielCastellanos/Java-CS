@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Icon;
@@ -27,7 +29,7 @@ import javax.swing.JOptionPane;
 
 public class BuscarServidor {
 
-    MulticastSocket puerto;
+    static MulticastSocket puerto;
     int ip = 2;
     String nombre,
             dir,
@@ -239,17 +241,6 @@ public class BuscarServidor {
                             String pagina = mensaje.substring(mensaje.indexOf(",") + 1, mensaje.length());
                             abrirPagina(pagina);
                             break;
-                        case "nombre":
-                            byte valido=Byte.parseByte(mensaje.substring(mensaje.indexOf(",")+1,mensaje.length()));
-                            if(valido==1)
-                            {
-                                orden.login();
-                            }
-                            else
-                            {
-                                cambioNombre(nombre);
-                            }
-                            break;
                         case "cerrar":
                             orden.cerrar(obtenerTiempo(mensaje) + "");
                             break;
@@ -345,20 +336,6 @@ public class BuscarServidor {
             Logger.getLogger(BuscarServidor.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    public void cambioNombre(String nombre)
-    {
-        try {
-            String nuevo="";
-            do
-            {
-                nuevo=JOptionPane.showInputDialog(null,"Nombre de Usuario repetido","Ingresa el nuevo nombre",JOptionPane.WARNING_MESSAGE);
-            }while(nuevo.equals(nombre) || nuevo.contains(",") || nuevo.isEmpty());
-            byte mensaje[]=("nuevoNombre ,"+nuevo+","+Interfaces.getMAC()).getBytes();
-            DatagramPacket dp=new DatagramPacket(mensaje, mensaje.length,InetAddress.getByName(grupo),1000);
-        } catch (UnknownHostException ex) {
-            Logger.getLogger(BuscarServidor.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
 
     Runnable archivo = new Runnable() {
 
@@ -405,10 +382,11 @@ public class BuscarServidor {
         @Override
         public void run() {
             try {
+                ExecutorService executor=Executors.newCachedThreadPool();
                 ServerSocket ss = new ServerSocket(4401);
                 while (true) {
-                    Socket socket = ss.accept();
-                    socket.close();
+                    System.out.println("Cliente conectando");
+                    executor.submit(new HiloTCP(ss.accept()));
                 }
             } catch (IOException ex) {
                 Logger.getLogger(BuscarServidor.class.getName()).log(Level.SEVERE, null, ex);
