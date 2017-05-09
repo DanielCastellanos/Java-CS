@@ -200,19 +200,7 @@ public class BDConfig extends javax.swing.JFrame {
                                                             Intentará realizar la conexión con esos datos
             */
             try {
-                HibernateUtil.buildSessionFactory(URL, usr, pass);          /*Invoca al método de construir la sesión
-                                        Si en este punto no se ha obtenido una HibernateException significa que se
-                                        creó exitosamente la session factory con los datos ingresados, así que los escribiremos
-                                        en el objeto de configuración
-                */
-                settingsFile.setURLBD(URL);
-                settingsFile.setUserBD(usr);
-                settingsFile.setPassBD(pass);       
-                Archivos.guardarConf(settingsFile);        //Y le diremos que guarde esa configuración en el archivo
-                //Después notificaremos al usuario que la conexión fue realizada
-                JOptionPane.showMessageDialog(null, "Conexión con BD establecida", "Conexión establecida", JOptionPane.INFORMATION_MESSAGE);
-                //Y se cerrará este frame.
-                this.dispose();
+                connect(URL, usr, pass);
 
             } catch (HibernateException ex) {           /*Si la conexión falla
                                                 Avisamos al usuario y le pedimos que rectifique los datos
@@ -228,6 +216,23 @@ public class BDConfig extends javax.swing.JFrame {
         }
     }
 
+    private void connect(String url, String user, String pass)throws HibernateException{
+        
+        HibernateUtil.buildSessionFactory(url, user, pass);          /*Invoca al método de construir la sesión
+                                        Si en este punto no se ha obtenido una HibernateException significa que se
+                                        creó exitosamente la session factory con los datos ingresados, así que los escribiremos
+                                        en el objeto de configuración
+                */
+                settingsFile.setURLBD(url);
+                settingsFile.setUserBD(user);
+                settingsFile.setPassBD(pass);       
+                Archivos.guardarConf(settingsFile);        //Y le diremos que guarde esa configuración en el archivo
+                //Después notificaremos al usuario que la conexión fue realizada
+                JOptionPane.showMessageDialog(null, "Conexión con BD establecida", "Conexión establecida", JOptionPane.INFORMATION_MESSAGE);
+                //Y se cerrará este frame.
+                this.dispose();
+    }
+    
     private void editable(boolean flag) {
         UrlField.setEditable(flag);
         usrField.setEditable(flag);

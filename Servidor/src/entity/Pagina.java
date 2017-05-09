@@ -13,8 +13,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -40,7 +38,7 @@ public class Pagina implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "idPagina")
-    private Integer idPagina;
+    private Long idPagina;
     @Column(name = "nombrePagina")
     private String nombrePagina;
     @ManyToMany(mappedBy = "paginaCollection")
@@ -49,15 +47,15 @@ public class Pagina implements Serializable {
     public Pagina() {
     }
 
-    public Pagina(Integer idPagina) {
+    public Pagina(Long idPagina) {
         this.idPagina = idPagina;
     }
 
-    public Integer getIdPagina() {
+    public Long getIdPagina() {
         return idPagina;
     }
 
-    public void setIdPagina(Integer idPagina) {
+    public void setIdPagina(Long idPagina) {
         this.idPagina = idPagina;
     }
 

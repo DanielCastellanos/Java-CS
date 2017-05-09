@@ -80,7 +80,7 @@ class GuardarSesion implements Runnable {
                     ByteArrayInputStream bs = new ByteArrayInputStream(buffer);
                     //preparamos la entrada para obtener el objeto "Sesion"
                     ObjectInputStream ois = new ObjectInputStream(bs);
-                    //obtenemos el objeto "Sesion"
+                    //obtenemos el objeto "Uso"
                     Uso uso = (Uso) ois.readObject();
                     String nombreEquipo = nombre.substring(0, nombre.indexOf("-"));
                     Pc pc= null;

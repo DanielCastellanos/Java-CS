@@ -7,7 +7,6 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

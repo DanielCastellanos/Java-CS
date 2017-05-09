@@ -5,9 +5,12 @@
  */
 package entity;
 
+import cliente.Tarea;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.StringTokenizer;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
@@ -25,6 +28,8 @@ import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.persistence.Entity;
+import org.hibernate.HibernateException;
+import servidor.bdUtil;
 
 /**
  *
@@ -45,7 +50,7 @@ public class Sesion implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "idSesion")
-    private Integer idSesion;
+    private Long idSesion;
     @Column(name = "entrada")
     @Temporal(TemporalType.TIMESTAMP)
     private Date entrada;
@@ -75,15 +80,15 @@ public class Sesion implements Serializable {
     public Sesion() {
     }
 
-    public Sesion(Integer idSesion) {
+    public Sesion(Long idSesion) {
         this.idSesion = idSesion;
     }
 
-    public Integer getIdSesion() {
+    public Long getIdSesion() {
         return idSesion;
     }
 
-    public void setIdSesion(Integer idSesion) {
+    public void setIdSesion(Long idSesion) {
         this.idSesion = idSesion;
     }
 
@@ -116,7 +121,7 @@ public class Sesion implements Serializable {
     public Collection<Pagina> getPaginaCollection() {
         return paginaCollection;
     }
-
+    
     public void setPaginaCollection(Collection<Pagina> paginaCollection) {
         this.paginaCollection = paginaCollection;
     }
@@ -145,6 +150,42 @@ public class Sesion implements Serializable {
         this.usuarioidUsuario = usuarioidUsuario;
     }
 
+    /***************************************************/
+    
+    @XmlTransient
+    public void addWebHistory(ArrayList<String> webs) {
+        bdUtil dataB= new bdUtil();
+        try {
+            for (String web : webs) {
+                Pagina pagina= dataB.getPage(web);
+                if(!this.paginaCollection.contains(pagina)){
+                    this.paginaCollection.add(pagina);
+                }
+            }
+        } catch (HibernateException e) {
+            System.err.println("******************Error al agregar historial web a sesion actual obteniendo página");
+            e.printStackTrace();
+        }
+
+    }
+
+    @XmlTransient
+    public void saveNewTasks(ArrayList<Tarea> newT) {
+
+        bdUtil dataB= new bdUtil();
+        try {
+            for (Tarea task : newT) {
+                Programa programa= dataB.getPrograma(task);
+                if(!this.programaCollection.contains(programa)){
+                    this.programaCollection.add(programa);
+                }
+            }
+        } catch (HibernateException e) {
+            System.err.println("******************Error al agregar historial de programas a sesion actual obteniendo programa");
+            e.printStackTrace();
+        }
+    }
+/********************************************************/
     @Override
     public int hashCode() {
         int hash = 0;
@@ -169,5 +210,5 @@ public class Sesion implements Serializable {
     public String toString() {
         return "entity.Sesion[ idSesion=" + idSesion + " ]";
     }
-    
+
 }

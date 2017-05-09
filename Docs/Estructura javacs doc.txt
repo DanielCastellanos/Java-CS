@@ -15,8 +15,8 @@ Tecnologías implementadas
 				Recepcion de ordenes
 				Manejo de sesiones y control de acceso
 			Aplicación Administrador
-				Control de acceso
-				Manejo de clientes (ordenes)
+				Manejo de sesiones y control de acceso
+				Manejo de clientes (ordenes) y envío de archivos
 				Monitoreo de clientes
 				Persistencia de datos.
 			Base de datos
@@ -24,5 +24,4 @@ Tecnologías implementadas
 			Página web de consulta
 	Implementación
 Conclusiones
-Bibliografía
-				
+Bibliografía				

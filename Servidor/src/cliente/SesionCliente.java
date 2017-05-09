@@ -17,17 +17,6 @@ public class SesionCliente implements Serializable{
     
     public SesionCliente() {
     }
-
-//    public SesionCliente(String usr) {
-//        this.usr = usr;
-//        this.Entrada = new Date();
-//        try {
-//            Cliente.monitor=new Monitor(InetAddress.getLocalHost().getHostAddress(),5000L);
-//        } catch (UnknownHostException ex) {
-//            Logger.getLogger(SesionCliente.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//    }
-    
     public String getUsr() {
         return usr;
     }

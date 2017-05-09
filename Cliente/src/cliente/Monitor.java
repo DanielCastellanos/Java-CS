@@ -24,8 +24,7 @@ public class Monitor {
     MonitorWeb web;                                 //Clase para monitoreo de tráfico
     ListaTareas taskList = new ListaTareas();                             //Clase para monitoreo de tareas
     static long tRegUso = 1 * 10000;
-    static int numUso;
-    static String path = "src/temp";
+    static String path = "./";
     static Uso usoPc = nuevoUso();
 
     TimerTask task = new TimerTask() {
@@ -67,7 +66,7 @@ public class Monitor {
         web.initMonitor();
         timer.schedule(task, 0, sendReportTime);
         if (usoPc != null) {
-            timer.schedule(task2, tRegUso, tRegUso);
+            timer2.schedule(task2, tRegUso, tRegUso);
         }
     }
 
@@ -132,7 +131,7 @@ public class Monitor {
                 }
             };      //Se crea un filtro de nombre 
             File usoFiles[] = file.listFiles(filter);                        //Obtenemos un arreglo de archivos con los resultador del filtro de nombre
-            numUso = usoFiles.length + 1;                                      //obtenemos el consecutivo que nombraremos al archivo de uso actual.
+            
 
             if (BuscarServidor.connectionStatus()) //Si hay conexion con el Admin de grupo
             {
@@ -140,7 +139,7 @@ public class Monitor {
                     
                     try {
                         enviarSesion(usoFile);                                              //Intentamos enviar los elementos del arreglo.
-                        numUso--;
+            
                     } catch (IOException ex) {
                         System.err.println("Error al enviar archivo\n"+ ex.toString());
                     }
@@ -158,9 +157,9 @@ public class Monitor {
 
     public static void guardarUso() {
         try {
-            System.out.println("------>?" + tRegUso + "----->" + numUso);
+            System.out.println("------>?" + tRegUso + "----->");
             String fecha= usoPc.getInicio().toString().replace(":", "-").replace(" ", "_");
-            RandomAccessFile raf = new RandomAccessFile(BuscarServidor.configuracion.getNombre() + "-" + "uso|" + fecha, "rw");
+            RandomAccessFile raf = new RandomAccessFile(BuscarServidor.configuracion.getNombre() + "-" + "uso." + fecha+".jacs", "rw");
             byte buffer[];
             ByteArrayOutputStream bs = new ByteArrayOutputStream();
             ObjectOutputStream os = new ObjectOutputStream(bs);
