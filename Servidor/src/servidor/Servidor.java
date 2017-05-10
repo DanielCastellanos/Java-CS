@@ -26,7 +26,6 @@ public class Servidor {
 
     static BuscarGrupo comunicacion = new BuscarGrupo();
     public static entity.Sesion sesion = new Sesion();
-    public static entity.Pc pc = new Pc();
 
     /**
      * *************************************
@@ -40,7 +39,7 @@ public class Servidor {
     static entity.UsoPc usoPc = nuevoUso();
     static Timer timerUso = new Timer();
 
-    static TimerTask task2 = new TimerTask() {                          //TimerTask del monitoreo de tiempo de uso de la máquina
+    static TimerTask updateUsage = new TimerTask() {                          //TimerTask del monitoreo de tiempo de uso de la máquina
 
         @Override
         public void run() {
@@ -52,7 +51,6 @@ public class Servidor {
 
     public static void main(String[] args) {
 
-        timerUso.schedule(task2, tRegUso, tRegUso);
         comunicacion.iniciarServidor();
         Listeners ls = new Listeners();
         ls.beginListeners();
@@ -67,7 +65,7 @@ public class Servidor {
         
         UsoPc uso = new UsoPc();
         uso.setEncendido(new Date());
-        uso.setPCidPC(servidor.Servidor.pc);
+        uso.setPCidPC(BuscarGrupo.conf.getPcServidor());
 
         return uso;
     }
@@ -110,12 +108,13 @@ public class Servidor {
             {
                 
                 bdUtil bd= new bdUtil();
-                for (File usoFile : usoFiles) {             //iteramos sobre el arreglo usoFiles
+                int cont=-1;
+                while (++cont < usoFiles.length) {             //iteramos sobre el arreglo usoFiles
                 
                     try {
                 
                         //Aquí se persistirán los archivos de Uso que pudieron ser guardados de manera local.
-                        RandomAccessFile raf = new RandomAccessFile(usoFile, "rw");                    //Declara RAF para leer todo el archivo 
+                        RandomAccessFile raf = new RandomAccessFile(usoFiles[cont], "rw");                    //Declara RAF para leer todo el archivo 
                         byte[] bytes = new byte[(int) raf.length()];                                //Declara arreglo del tamaño del archivo
 
                         raf.readFully(bytes);                                           //Guarda el archivo en el arreglo
@@ -128,10 +127,14 @@ public class Servidor {
                         UsoPc uso = (UsoPc) ois.readObject();
 
                         //Guarda el uso en la base de datos
-                        bd.saveUsoPc(Servidor.pc, uso.getEncendido(), uso.getApagado());
-
-                        raf.close();                                            //Cierra RAF
-
+                        bd.saveUsoPc(BuscarGrupo.conf.getPcServidor(), uso.getEncendido(), uso.getApagado());
+                        //Se cierra el Random Access File
+                        raf.close();                     
+                        if(usoFiles[cont].delete()){
+                            cont--;
+                        }else{
+                            System.out.println("No se borró archivo "+usoFiles[cont].getName()+"tras persistir datos");
+                        }
                     } catch (IOException ex) {
                         System.err.println("Error al enviar archivo\n" + ex.toString());
                         return false;

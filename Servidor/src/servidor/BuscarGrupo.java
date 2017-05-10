@@ -2,17 +2,13 @@ package servidor;
 
 import cliente.SesionCliente;
 import entity.Pc;
-import entity.Sesion;
 import interfaz.AppSystemTray;
 import interfaz.BDConfig;
 import interfaz.Principal;
 import interfaz.Tareas;
 import interfaz.VentanaPropiedades;
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
@@ -34,7 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
 import javax.xml.bind.DatatypeConverter;
-import org.hibernate.HibernateException;
+import static servidor.Servidor.timerUso;
 
 /**
  *
@@ -91,6 +87,8 @@ public class BuscarGrupo extends Principal {
                 this.inicarHilos();
                 //pasamos la configuracion a Principal(Interfaz)
                 Principal.setConf(conf);
+                //Inicia el monitoreo del uso del pc
+                Servidor.timerUso.schedule(Servidor.updateUsage, Servidor.tRegUso, Servidor.tRegUso);
             } catch (IOException ex) {
                 System.out.println("Error");
             }
@@ -114,6 +112,7 @@ public class BuscarGrupo extends Principal {
 
     public void buscarGrupo() {
         conf.setPcServidor(new Ordenes().getInfoPc());
+        
         nombreServ();
         inicarHilos();
         //iniciamos la busqueda y preguntamos cada segundo
@@ -137,6 +136,8 @@ public class BuscarGrupo extends Principal {
                 
                 //pasamos la configuracion a Principal(Interfaz)
                 Principal.setConf(conf);
+                //Iniciamos el monitoreo del tiempo de uso
+                Servidor.timerUso.schedule(Servidor.updateUsage, Servidor.tRegUso, Servidor.tRegUso);
             } else {
                 //si no estalibre seguimos con la siguiente direccion
                 try {

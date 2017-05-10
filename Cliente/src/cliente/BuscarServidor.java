@@ -44,21 +44,21 @@ public class BuscarServidor {
     Timer t = new Timer();
     private ArrayList<Servidor_Inf> servidores = new ArrayList<>();
     GroupsProgressBar gi;
-    Icon ico= new ImageIcon(AppSystemTray.imagen.getScaledInstance(30, 30, Image.SCALE_DEFAULT));
-    
-    public static boolean connectionStatus(){//codigo en pruebas
-    boolean flag= false;
+    Icon ico = new ImageIcon(AppSystemTray.imagen.getScaledInstance(30, 30, Image.SCALE_DEFAULT));
+
+    public static boolean connectionStatus() {//codigo en pruebas
+        boolean flag = false;
         try {
-            Socket socket=new Socket();
-            socket.connect(new InetSocketAddress(serverHost,4500), 500);
+            Socket socket = new Socket();
+            socket.connect(new InetSocketAddress(serverHost, 4500), 500);
             socket.close();
-            flag=true;
-        } catch (Exception e){
+            flag = true;
+        } catch (Exception e) {
             System.out.println("Error al conectar");
         }
-    return flag;
-}
-    
+        return flag;
+    }
+
     public BuscarServidor() {
         try {
             Listeners ls = new Listeners();
@@ -76,8 +76,12 @@ public class BuscarServidor {
     public void iniciarCliente() {
         if (configuracion.cargarConfiguracion()) {
             try {
+                //Aquí se inicia el monitor de uso regularmente
+                if (Cliente.usoPc != null) {
+                    Cliente.UpdateUsage.schedule(Cliente.task2, Cliente.tRegUso, Cliente.tRegUso);
+                }
                 puerto.joinGroup(InetAddress.getByName(configuracion.getGrupo()));
-                serverHost=configuracion.getServerHost();
+                serverHost = configuracion.getServerHost();
                 /*Verificar si hay datos de sesión y enviarlos al admin si así es*/
                 this.iniciarHilo();
                 enviarSesiones();
@@ -107,20 +111,18 @@ public class BuscarServidor {
 
     private void datos() {
         try {
-            do{
-            nombre = JOptionPane.showInputDialog(null, "Ingresa el nombre de Usuario", "Inicio", JOptionPane.INFORMATION_MESSAGE);
-            }while(nombre.isEmpty() || nombre.contains(","));
+            do {
+                nombre = JOptionPane.showInputDialog(null, "Ingresa el nombre de Usuario", "Inicio", JOptionPane.INFORMATION_MESSAGE);
+            } while (nombre.isEmpty() || nombre.contains(","));
             dir = InetAddress.getLocalHost().getHostAddress();
             hostname = InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException ex) {
             Logger.getLogger(BuscarServidor.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        catch (NullPointerException e)
-        {
+        } catch (NullPointerException e) {
             System.exit(0);
         }
     }
-    
+
     TimerTask tt = new TimerTask() {
         @Override
         public void run() {
@@ -178,7 +180,7 @@ public class BuscarServidor {
             }
         }
     };
-    
+
     Runnable escucha = new Runnable() {
         @Override
         public void run() {
@@ -199,7 +201,7 @@ public class BuscarServidor {
                     int tiempo;
                     switch (aux) {
                         case "serv":
-                            extDatosServ(mensaje,dp.getAddress().getHostName());
+                            extDatosServ(mensaje, dp.getAddress().getHostName());
                             break;
                         case "apagar":
                             System.out.println("El sistema se apagará");
@@ -291,7 +293,7 @@ public class BuscarServidor {
         return t;
     }
 
-    private void extDatosServ(String mensaje,String hostName) {
+    private void extDatosServ(String mensaje, String hostName) {
         int cont = 0;
         Servidor_Inf serv = new Servidor_Inf();
         String datos[] = new String[3];
@@ -319,7 +321,7 @@ public class BuscarServidor {
             System.out.println(ia);
             puerto.joinGroup(ia);
             grupo = servidor.getGrupo();
-            serverHost=servidor.getHostName();
+            serverHost = servidor.getHostName();
             configuracion.setNombre(nombre);
             configuracion.setGrupo(grupo);
             configuracion.setServerHost(serverHost);
@@ -327,7 +329,7 @@ public class BuscarServidor {
             /*Verificar si existen datos de sesión guardados de manera local y enviarlos al admin*/
             enviarSesiones();
             System.out.println(orden.getInfoPc());
-            byte registro[] = ("cliente," + nombre + "," + dir + "," + hostname+","+orden.getInfoPc()).getBytes();
+            byte registro[] = ("cliente," + nombre + "," + dir + "," + hostname + "," + orden.getInfoPc()).getBytes();
             DatagramPacket dp = new DatagramPacket(registro, registro.length, ia, 1000);
             puerto.send(dp);
         } catch (UnknownHostException ex) {
@@ -366,11 +368,10 @@ public class BuscarServidor {
                     }
                     bos.close();
                     dis.close();
-                    AppSystemTray.mostrarMensaje("Archivo \""+file+"\"",AppSystemTray.INFORMATION_MESSAGE);
+                    AppSystemTray.mostrarMensaje("Archivo \"" + file + "\"", AppSystemTray.INFORMATION_MESSAGE);
                 }
             } catch (Exception e) {
-                if(nuevoArchivo.isAlive())
-                {
+                if (nuevoArchivo.isAlive()) {
                     System.out.println("El hilo ah muerto");
                 }
             }
@@ -382,7 +383,7 @@ public class BuscarServidor {
         @Override
         public void run() {
             try {
-                ExecutorService executor=Executors.newCachedThreadPool();
+                ExecutorService executor = Executors.newCachedThreadPool();
                 ServerSocket ss = new ServerSocket(4401);
                 while (true) {
                     System.out.println("Cliente conectando");
@@ -393,15 +394,15 @@ public class BuscarServidor {
             }
         }
     };
-    
-    public void enviarSesiones(){
-        String path= "src";
-        File file= new File(path);
-        if(file.exists()){
-            File[] files= file.listFiles();
-            
+
+    public void enviarSesiones() {
+        String path = "src";
+        File file = new File(path);
+        if (file.exists()) {
+            File[] files = file.listFiles();
+
             for (File file1 : files) {
-                if(file1.getName().contains(BuscarServidor.configuracion.getNombre())){
+                if (file1.getName().contains(BuscarServidor.configuracion.getNombre())) {
                     try {
                         Monitor.enviarSesion(file1);
                     } catch (IOException ex) {
@@ -409,8 +410,8 @@ public class BuscarServidor {
                     }
                 }
             }
-            
-        }else{
+
+        } else {
             System.err.println("No hay sesiones");
         }
     }

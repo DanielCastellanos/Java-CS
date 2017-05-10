@@ -18,14 +18,11 @@ import java.util.logging.Logger;
 public class Monitor {
 
     Timer timer = new Timer();
-    Timer timer2 = new Timer();
     long sendReportTime;
     String ipTarget;                                //Ip de la interfaz a monitorear
     MonitorWeb web;                                 //Clase para monitoreo de tráfico
     ListaTareas taskList = new ListaTareas();                             //Clase para monitoreo de tareas
-    static long tRegUso = 1 * 10000;
-    static String path = "./";
-    static Uso usoPc = nuevoUso();
+
 
     TimerTask task = new TimerTask() {
         @Override
@@ -47,15 +44,6 @@ public class Monitor {
 
         }
     };          //TmerTask del monitoreo de procesos y tráfico web
-    TimerTask task2 = new TimerTask() {                          //TimerTask del monitoreo de tiempo de uso de la máquina
-
-        @Override
-        public void run() {
-
-            Monitor.usoPc.setFin();
-            Monitor.guardarUso();
-        }
-    };
 
     public Monitor(String ip, Long t) {
 
@@ -65,9 +53,7 @@ public class Monitor {
         web = new MonitorWeb(ip);
         web.initMonitor();
         timer.schedule(task, 0, sendReportTime);
-        if (usoPc != null) {
-            timer2.schedule(task2, tRegUso, tRegUso);
-        }
+        
     }
 
     public static void guardarSesion(SesionCliente sesion, String nombreCliente) throws IOException {
@@ -117,65 +103,7 @@ public class Monitor {
         archivo.delete();
 
     }
-
-    private static Uso nuevoUso() {
-
-        File file = new File(path);                                      //Declaramos un File con el directorio temporal
-
-        if (file.exists()) {                                              //Si el directorio existe.
-
-            FilenameFilter filter = new FilenameFilter() {
-                @Override
-                public boolean accept(File dir, String name) {
-                    return name.contains("uso");                                //el nombre contiene la cadena 'uso'?
-                }
-            };      //Se crea un filtro de nombre 
-            File usoFiles[] = file.listFiles(filter);                        //Obtenemos un arreglo de archivos con los resultador del filtro de nombre
-            
-
-            if (BuscarServidor.connectionStatus()) //Si hay conexion con el Admin de grupo
-            {
-                for (File usoFile : usoFiles) {             //iteramos sobre el arreglo usoFiles
-                    
-                    try {
-                        enviarSesion(usoFile);                                              //Intentamos enviar los elementos del arreglo.
-            
-                    } catch (IOException ex) {
-                        System.err.println("Error al enviar archivo\n"+ ex.toString());
-                    }
-
-                }                                           //Fin del loop sobre uso Files
-            }
-
-        } else {
-            System.err.println("*************El directorio temporal no existe");
-            return null;
-        }
-
-        return new Uso(BuscarServidor.configuracion.getNombre());
-    }
-
-    public static void guardarUso() {
-        try {
-            System.out.println("------>?" + tRegUso + "----->");
-            String fecha= usoPc.getInicio().toString().replace(":", "-").replace(" ", "_");
-            RandomAccessFile raf = new RandomAccessFile(BuscarServidor.configuracion.getNombre() + "-" + "uso." + fecha+".jacs", "rw");
-            byte buffer[];
-            ByteArrayOutputStream bs = new ByteArrayOutputStream();
-            ObjectOutputStream os = new ObjectOutputStream(bs);
-            os.writeObject(Monitor.usoPc);
-            buffer = bs.toByteArray();
-            raf.write(buffer);
-            raf.close();
-            bs.close();
-            os.close();
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(Ordenes.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(Monitor.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
+    
     public void detenerMonitoreoWeb() {
         web.stop();
     }

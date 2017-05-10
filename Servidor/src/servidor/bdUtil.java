@@ -199,6 +199,18 @@ public class bdUtil {
 
         return returnedPc;
     }
+    
+    public Pc getPcById(int id){
+        if(!sesionBD.getTransaction().isActive()){
+            sesionBD.beginTransaction();
+        }
+        Query select= sesionBD.createQuery("from Pc where idPC = "+id);
+        
+        Pc pc= (Pc)select.uniqueResult();
+        sesionBD.getTransaction().commit();
+        
+        return pc;
+    }
 
     public int savePc(Pc pc) {
 
@@ -324,13 +336,13 @@ public class bdUtil {
             nuevoUso.setEncendido(entrada);
             nuevoUso.setApagado(salida);
             nuevoUso.setPCidPC(pc);
-
+            pc.getUsoPcCollection().add(nuevoUso);
+            
             /*Percistencia con hibernate*/
             hibernate.HibernateUtil.openSessionAndBindToThread();
             sesionBD = hibernate.HibernateUtil.getSessionFactory().getCurrentSession();
             sesionBD.beginTransaction();
-            sesionBD.saveOrUpdate(pc);
-            sesionBD.save(nuevoUso);
+            sesionBD.saveOrUpdate(nuevoUso);
             sesionBD.getTransaction().commit();
             /*-----------------------------*/
 
@@ -354,7 +366,7 @@ public class bdUtil {
             switch(opc){
                 
                 case 1:
-                    Servidor.pc.setIdPC(1);
+                    
                     System.out.println(Servidor.usoPc.toString());
                     Servidor.guardarUso();
                     break;
