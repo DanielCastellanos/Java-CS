@@ -3,12 +3,14 @@
  */
 package interfaz;
 
+import entity.Pc;
 import hibernate.HibernateUtil;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import org.hibernate.HibernateException;
 import servidor.Archivos;
 import servidor.Configuracion;
+import servidor.bdUtil;
 
 public class BDConfig extends javax.swing.JFrame {
 
@@ -201,7 +203,15 @@ public class BDConfig extends javax.swing.JFrame {
             */
             try {
                 connect(URL, usr, pass);
-
+                if (hibernate.HibernateUtil.isConnected()) {
+                bdUtil bd= new bdUtil();
+                Pc aux = bd.getPcByMac(settingsFile.getPcServidor().getMac());       //Uso la mac para verificar si existe la máquina en bd
+                if (aux == null) {
+                    settingsFile.getPcServidor().setIdPC(bd.savePc(settingsFile.getPcServidor()));
+                }else{
+                    settingsFile.getPcServidor().setIdPC(aux.getIdPC());
+                }
+            }
             } catch (HibernateException ex) {           /*Si la conexión falla
                                                 Avisamos al usuario y le pedimos que rectifique los datos
                 */

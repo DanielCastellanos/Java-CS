@@ -19,6 +19,7 @@ import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -81,6 +82,7 @@ public class BuscarGrupo extends Principal {
         conf = Archivos.cargarConf();
         if (conf != null) {
             try {
+                conf.pcToString();
                 //mostramos mensaje de carga de configuracion
                 AppSystemTray.mostrarMensaje("Cargando configuración", AppSystemTray.INFORMATION_MESSAGE);
                 //nos unimos al grupo multicast
@@ -94,6 +96,7 @@ public class BuscarGrupo extends Principal {
             }
         } else {
             conf = new Configuracion();
+            
             //mostramos mensaje de que no se encontro configuracion
             AppSystemTray.mostrarMensaje("no se encontro configuración", AppSystemTray.INFORMATION_MESSAGE);
             this.buscarGrupo();
@@ -110,6 +113,7 @@ public class BuscarGrupo extends Principal {
     }
 
     public void buscarGrupo() {
+        conf.setPcServidor(new Ordenes().getInfoPc());
         nombreServ();
         inicarHilos();
         //iniciamos la busqueda y preguntamos cada segundo
@@ -130,6 +134,7 @@ public class BuscarGrupo extends Principal {
                 new BDConfig(conf).setVisible(true);
                 //Creamos el nuevo archivo de configuracion
                 new Archivos().guardarConf(conf);
+                
                 //pasamos la configuracion a Principal(Interfaz)
                 Principal.setConf(conf);
             } else {
@@ -169,9 +174,16 @@ public class BuscarGrupo extends Principal {
         } while (nombre == null);
         //Agregamos el nombre del servidor a la configuracion
         conf.setNombreServ(nombre);
+        conf.getPcServidor().setNombre(nombre);
+        try {
+            conf.getPcServidor().setHostname(InetAddress.getLocalHost().getHostName());
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(BuscarGrupo.class.getName()).log(Level.SEVERE, null, ex);
+        }
         if (nombre.contains(",")) {
             nombreServ();
         }
+        conf.pcToString();
     }
     Runnable conexion = new Runnable() {
         @Override

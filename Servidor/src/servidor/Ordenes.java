@@ -1,5 +1,6 @@
 package servidor;
 
+import entity.Pc;
 import interfaz.Pc_info;
 import interfaz.Principal;
 import java.awt.Color;
@@ -184,34 +185,49 @@ public class Ordenes {
         }
         return MAC;
     }
-    public Runnable getInfoPc=new Runnable() {
-        
-
-        @Override
-        public void run() {
-            //falta agregar la direccion MAC
+    public Pc getInfoPc(){
+        Pc pc=new Pc();
+            //inicializamos la variable de informacion del sistema
             SystemInfo si = new SystemInfo();
-        HardwareAbstractionLayer hal = si.getHardware();
-        OperatingSystem os = si.getOperatingSystem();
-        CentralProcessor cp = hal.getProcessor();
-        ComputerSystem cs = hal.getComputerSystem();
-        GlobalMemory gm = hal.getMemory();
-        HWDiskStore disks[] = hal.getDiskStores();
-        String marca=cs.getManufacturer();
-        String modelo=cs.getModel();
-        String nSerie=cs.getSerialNumber();
-        String hdd=null;
-        for (int i = 0; i < disks.length; i++) {
-            if (disks[i].getModel().contains("SATA")) {
-                hdd += (i > 0 ? "," : "") + (((disks[i].getSize()/1024)/1024)/1024)+" GB";
+            //inicializamos la variable para la informacion del Hardware
+            HardwareAbstractionLayer hal = si.getHardware();
+            //iniciamos la variable para la informacion del Sistema Operativo
+            OperatingSystem os = si.getOperatingSystem();
+            //obtenemos la informacion del Procesador
+            CentralProcessor cp = hal.getProcessor();
+            //Obtenemos la informacion general del PC
+            ComputerSystem cs = hal.getComputerSystem();
+            //Obtenemos la memoria RAM total 
+            GlobalMemory gm = hal.getMemory();
+            //Obtenemos los discos
+            HWDiskStore disks[] = hal.getDiskStores();
+            //Obtenemos la marca de la pc
+            pc.setMarca(cs.getManufacturer());
+            //Obtenemos el modelo de la PC
+            pc.setModelo(cs.getModel());
+            //Obtenemos el Numero de serie
+            pc.setNoSerie(cs.getSerialNumber());
+            //Obtenemos los discos duros del sistema
+            String hdd ="";
+            File[] discos=File.listRoots();
+        for (File disco : discos) {
+            if(disco.getPath().contains("C:\\"))
+            {
+                hdd=(((disco.getTotalSpace()/ 1024) / 1024) / 1024) + " GB";
             }
         }
-        String ram=((((gm.getTotal()/1024)/1024)/1024)+1)+" GB";
-        String procesador=cp.getName();
-        String sistema=os.getFamily()+" "+os.getVersion().getVersion();
-        String inf=marca+"|"+modelo+"|"+nSerie+"|"+hdd+"|"+ram+"|"+procesador+"|"+sistema;
-        }
-    };
+        pc.setDiscoDuro(hdd);
+            //Calculamos la memoria RAM y la comvertimos en GB
+            String ram = ((((gm.getTotal() / 1024) / 1024) / 1024) + 1) + " GB";
+            pc.setRam(ram);
+            //Obtenemos el nombre del procesador
+            pc.setProcesador(cp.getName());
+            //Obtenemos el nombre del S.O
+            pc.setOs(os.getFamily() + " " + os.getVersion().getVersion());
+            //Obtenemos las direcciones mac de las Tarjetas de red
+            pc.setMac(new Interfaces().getMAC());
+        return pc;
+    }
     public void enviarOrden(String hostname,byte mensaje[])
     {
         try {

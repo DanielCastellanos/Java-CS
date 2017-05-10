@@ -1,14 +1,13 @@
 package servidor;
 
-import java.io.File;
+import entity.Pc;
 import java.io.Serializable;
 
 public class Configuracion implements Serializable{
 
     private static final long serialVersionUID=2180L;
-    //variable del archivo de configuracion
-    private File configuracion;
     //variables configurables
+    private Pc pcServidor=new Pc();
     private String nombreServ;           //Nombre del servidor
     private String grupo;                //Grupo multicast usado por este Admin
     private String URLBD="null";                //Dirección de la base de datos
@@ -55,5 +54,27 @@ public class Configuracion implements Serializable{
         if (passBD != null) {
             this.passBD = passBD;
         }
+    }
+    public Pc getPcServidor() {
+        return pcServidor;
+    }
+
+    public void setPcServidor(Pc pcServidor) {
+        this.pcServidor = pcServidor;
+    }
+    public void pcToString()
+    {
+        System.out.println("**************************************\n"+
+                pcServidor.getNombre()+"\n"+
+                pcServidor.getHostname()+"\n"+
+                pcServidor.getMarca()+"\n"+
+                pcServidor.getModelo()+"\n"+
+                pcServidor.getNoSerie()+"\n"+
+                pcServidor.getDiscoDuro()+"\n"+
+                pcServidor.getMac()+"\n"+
+                pcServidor.getOs()+"\n"+
+                pcServidor.getProcesador()+"\n"+
+                pcServidor.getRam()+"\n"
+        +"**************************************");
     }
 }
