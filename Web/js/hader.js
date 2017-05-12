@@ -40,9 +40,15 @@ $(document).ready(function(){
                               alert("eliminado!");
                               break;
                   }
-                   
+                       
             });
-             
+    
+            $("#consulta").click(function(e){
+
+            $("#lista").load("consultas.html"); 
+            }
+            );
+                 
                          
       });
 
