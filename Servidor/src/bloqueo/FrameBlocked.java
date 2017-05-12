@@ -11,7 +11,6 @@ import javax.swing.JOptionPane;
 import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.Toolkit;
 import java.io.File;
@@ -21,7 +20,9 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.BorderFactory;
+import servidor.BuscarGrupo;
 import servidor.Cifrado;
+import servidor.Monitor;
 import servidor.bdUtil;
 
 public class FrameBlocked extends javax.swing.JFrame {
@@ -81,6 +82,7 @@ public class FrameBlocked extends javax.swing.JFrame {
 
     //Activa el bloqueo con login
     public void login() {
+        
         this.setVisible(true);
         revisaConeccion();
         panel.setVisible(true);
@@ -274,7 +276,7 @@ public class FrameBlocked extends javax.swing.JFrame {
 
             JOptionPane.showMessageDialog(this, "Ingresa tu código y Nip", ".::ERROR::.", JOptionPane.ERROR_MESSAGE);
 
-        } else if (dbConnection == true) {
+        } else if (dbConnection) {
             //VALIDACION DE CODIGO Y NIP
             Login log = new Login();
             String username= this.user.getText();
@@ -283,10 +285,17 @@ public class FrameBlocked extends javax.swing.JFrame {
                 try {
                     Thread.sleep(1000);
                     this.dispose();
-                    Sesion sesion= servidor.Servidor.sesion;
-                    sesion.setAdminidAdmin(new bdUtil().getAdmin(username));
-                    sesion.setEntrada(new Date());
-//                    sesion.setPCidPC(pCidPC); //Agregar pc
+                    
+                    ///////////////////////////////////
+//                    servidor.Servidor.sesion= new Sesion();
+//                    servidor.Servidor.sesion.setAdminidAdmin(new bdUtil().getAdmin(username));
+//                    servidor.Servidor.sesion.setEntrada(new Date());
+//                    if(BuscarGrupo.conf != null){
+//                        servidor.Servidor.sesion.setPCidPC(BuscarGrupo.conf.getPcServidor());
+//                        servidor.Servidor.monitor= new Monitor(, Long.MIN_VALUE);
+//                    }
+                    ///////////////////////////////
+                    
                     this.user.setText("");
                     this.pass.setText("");
                     ((Hint) this.user.getUI()).setVisible(true);
@@ -329,6 +338,7 @@ public class FrameBlocked extends javax.swing.JFrame {
 
         if (hibernate.HibernateUtil.isConnected()) {
             dbConnection = true;
+                   this.pass.setVisible(true);
         } else {
             dbConnection = false;
             borrarComp();

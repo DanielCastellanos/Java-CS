@@ -24,20 +24,20 @@ public class BDConfig extends javax.swing.JFrame {
     public BDConfig(Configuracion conf) {
         initComponents();
         this.setIconImage(icon.getImage());
-        this.settingsFile= conf;
+        this.settingsFile = conf;
     }
-    
+
     //Este constructor tiene el propósito de mostrar al usuario configuración previamente definida
     public BDConfig(Configuracion conf, String ur, String u, String p) {
-        
+
         initComponents();
         this.setIconImage(icon.getImage());
-        this.settingsFile= conf;
-        
+        this.settingsFile = conf;
+
         UrlField.setText(ur);
         usrField.setText(u);
         passField.setText(p);
-        
+
     }
 
     @SuppressWarnings("unchecked")
@@ -192,29 +192,23 @@ public class BDConfig extends javax.swing.JFrame {
 
         //inhabilita la edición de los campos y botones
         editable(false);
-        
-        //Obtiene información de los campos
-        URL = UrlField.getText();
-        usr = usrField.getText();
-        pass = passField.getText();
 
-        if (URL.length() * usr.length() != 0) {                 /*Si no estan vacíos los campos de usuario o url
+        //Obtiene información de los campos
+        URL = UrlField.getText().trim();
+        usr = usrField.getText().trim();
+        pass = passField.getText().trim();
+
+        if (URL.length() * usr.length() != 0) {
+            /*Si no estan vacíos los campos de usuario o url
                                                             Intentará realizar la conexión con esos datos
-            */
+             */
             try {
                 connect(URL, usr, pass);
-                if (hibernate.HibernateUtil.isConnected()) {
-                bdUtil bd= new bdUtil();
-                Pc aux = bd.getPcByMac(settingsFile.getPcServidor().getMac());       //Uso la mac para verificar si existe la máquina en bd
-                if (aux == null) {
-                    settingsFile.getPcServidor().setIdPC(bd.savePc(settingsFile.getPcServidor()));
-                }else{
-                    settingsFile.getPcServidor().setIdPC(aux.getIdPC());
-                }
-            }
-            } catch (HibernateException ex) {           /*Si la conexión falla
+                
+            } catch (HibernateException ex) {
+                /*Si la conexión falla
                                                 Avisamos al usuario y le pedimos que rectifique los datos
-                */
+                 */
                 errorLabel.setText("Error de conexión: Verifique sus datos");
                 //Habilitamos los controles para que el usuario vuelva a ingresar datos.
                 editable(true);
@@ -226,23 +220,33 @@ public class BDConfig extends javax.swing.JFrame {
         }
     }
 
-    private void connect(String url, String user, String pass)throws HibernateException{
-        
-        HibernateUtil.buildSessionFactory(url, user, pass);          /*Invoca al método de construir la sesión
+    private void connect(String url, String user, String pass) throws HibernateException {
+
+        HibernateUtil.buildSessionFactory(url, user, pass);
+        /*Invoca al método de construir la sesión
                                         Si en este punto no se ha obtenido una HibernateException significa que se
                                         creó exitosamente la session factory con los datos ingresados, así que los escribiremos
                                         en el objeto de configuración
-                */
-                settingsFile.setURLBD(url);
-                settingsFile.setUserBD(user);
-                settingsFile.setPassBD(pass);       
-                Archivos.guardarConf(settingsFile);        //Y le diremos que guarde esa configuración en el archivo
-                //Después notificaremos al usuario que la conexión fue realizada
-                JOptionPane.showMessageDialog(null, "Conexión con BD establecida", "Conexión establecida", JOptionPane.INFORMATION_MESSAGE);
-                //Y se cerrará este frame.
-                this.dispose();
+         */
+        if (hibernate.HibernateUtil.isConnected()) {
+                    bdUtil bd = new bdUtil();
+                    Pc aux = bd.getPcByMac(settingsFile.getPcServidor().getMac());       //Uso la mac para verificar si existe la máquina en bd
+                    if (aux == null) {
+                        settingsFile.getPcServidor().setIdPC(bd.savePc(settingsFile.getPcServidor()));
+                    } else {
+                        settingsFile.getPcServidor().setIdPC(aux.getIdPC());
+                    }
+                }
+        settingsFile.setURLBD(url);
+        settingsFile.setUserBD(user);
+        settingsFile.setPassBD(pass);
+        Archivos.guardarConf(settingsFile);        //Y le diremos que guarde esa configuración en el archivo
+        //Después notificaremos al usuario que la conexión fue realizada
+        JOptionPane.showMessageDialog(null, "Conexión con BD establecida", "Conexión establecida", JOptionPane.INFORMATION_MESSAGE);
+        //Y se cerrará este frame.
+        this.dispose();
     }
-    
+
     private void editable(boolean flag) {
         UrlField.setEditable(flag);
         usrField.setEditable(flag);

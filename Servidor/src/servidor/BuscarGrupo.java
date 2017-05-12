@@ -30,7 +30,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
 import javax.xml.bind.DatatypeConverter;
-import static servidor.Servidor.timerUso;
 
 /**
  *
@@ -38,7 +37,7 @@ import static servidor.Servidor.timerUso;
  */
 public class BuscarGrupo extends Principal {
 
-    InetAddress miIp;           //ip del servidor
+    public InetAddress miIp;           //ip del servidor
     String nombre;              //nombre del servidor
     MulticastSocket puerto;     //puerto multicast
     Thread escucha, //Hilo para mensajes multicast

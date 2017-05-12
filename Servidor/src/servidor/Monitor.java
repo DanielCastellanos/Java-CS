@@ -1,20 +1,13 @@
 package servidor;
 
 import cliente.Tarea;
-import cliente.Uso;
 import entity.Sesion;
-import entity.UsoPc;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
@@ -60,7 +53,7 @@ public class Monitor {
     }
     public static void guardarSesion(Sesion sesion, String nombreCliente) throws IOException {
         try {
-            //System.out.println("------>?" + sesion.getWebHistory().size());
+            
             RandomAccessFile raf = new RandomAccessFile(sesion.getAdminidAdmin().getUsrName(), "rw");
             byte buffer[];
             ByteArrayOutputStream bs = new ByteArrayOutputStream();
@@ -79,5 +72,7 @@ public class Monitor {
     
     public void detenerMonitoreoWeb() {
         web.stop();
+        timer.cancel();
+        timer= new Timer();
     }
 }

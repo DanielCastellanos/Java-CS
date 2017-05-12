@@ -64,6 +64,9 @@ public class Pc implements Serializable {
     private String os;
     @Column(name = "mac")
     private String mac;
+    @Column(name = "grupo")
+    private byte grupo;
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "pCidPC")
     private Collection<Sesion> sesionCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "pCidPC")
@@ -142,6 +145,14 @@ public class Pc implements Serializable {
         this.os = os;
     }
 
+    public byte getGrupo() {
+        return grupo;
+    }
+
+    public void setGrupo(byte grupo) {
+        this.grupo = grupo;
+    }
+
     @XmlTransient
     public Collection<Sesion> getSesionCollection() {
         return sesionCollection;
@@ -153,6 +164,7 @@ public class Pc implements Serializable {
 
     @XmlTransient
     public Collection<UsoPc> getUsoPcCollection() {
+      
         return usoPcCollection;
     }
 

@@ -322,6 +322,7 @@ public class FrameBlocked extends javax.swing.JFrame {
         CheckConnection internet = new CheckConnection();
         if (internet.isConnected()) {
             inter = true;
+            this.pass.setVisible(true);
         } else {
             inter = false;
             borrarComp();

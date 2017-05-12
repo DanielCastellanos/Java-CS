@@ -336,7 +336,6 @@ public class bdUtil {
             nuevoUso.setEncendido(entrada);
             nuevoUso.setApagado(salida);
             nuevoUso.setPCidPC(pc);
-            pc.getUsoPcCollection().add(nuevoUso);
             
             /*Percistencia con hibernate*/
             hibernate.HibernateUtil.openSessionAndBindToThread();

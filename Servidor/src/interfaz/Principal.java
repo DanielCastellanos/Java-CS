@@ -296,7 +296,8 @@ public class Principal extends javax.swing.JFrame{
     }//GEN-LAST:event_opcionesMouseClicked
 
     private void SalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SalirActionPerformed
-        System.exit(0);
+        //System.exit(0);
+        
     }//GEN-LAST:event_SalirActionPerformed
 
     private void ApagarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ApagarActionPerformed

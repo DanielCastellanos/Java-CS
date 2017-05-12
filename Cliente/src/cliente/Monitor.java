@@ -106,5 +106,7 @@ public class Monitor {
     
     public void detenerMonitoreoWeb() {
         web.stop();
+        timer.cancel();
+        timer= new Timer();
     }
 }

@@ -86,6 +86,7 @@ public class HiloCliente implements Runnable {
         pc.setDiscoDuro(datos[9]);
         pc.setRam(datos[10]);
         pc.setOs(datos[11]);
+        
         if (!verificarCliente(pc.getMac()))//verificamos que el usuario no este ya registrado
         {
             if(!nombreRepetido(pc.getNombre()))

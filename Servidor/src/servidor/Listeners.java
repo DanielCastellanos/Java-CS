@@ -30,7 +30,7 @@ public class Listeners implements NativeKeyListener, NativeMouseListener, Native
     private static int limite = 300;     //Default 7200
     private static int tiempoLogin=100;   //Default 30
     private static aviso av = new aviso();
-    static FrameBlocked bloqueo= new FrameBlocked();
+    
     // private Ordenes orden= new Ordenes();
     
     // Aquí se escribe la variable task
@@ -43,8 +43,8 @@ public class Listeners implements NativeKeyListener, NativeMouseListener, Native
                 //orden.apagar();
                 System.out.println("apagado");
             }else if(Listeners.secs == Listeners.limite-Listeners.tiempoLogin){         //si falta un tiempo
-                if(!bloqueo.isVisible()){
-                    bloqueo.login();
+                if(!Servidor.bloqueo.isVisible()){
+                    Servidor.bloqueo.login();
                 }
                 av.dispose();
                 System.out.println("login");
