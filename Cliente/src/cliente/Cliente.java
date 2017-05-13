@@ -26,7 +26,7 @@ public class Cliente {
     static Timer UpdateUsage = new Timer();
     static long tRegUso = 1 * 10000;
     static String path = "./";
-    static Uso usoPc = nuevoUso();
+    static Uso usoPc;
     
     static TimerTask task2 = new TimerTask() {                          //TimerTask del monitoreo de tiempo de uso de la máquina
 
@@ -46,7 +46,7 @@ public class Cliente {
 
     }
     
-        private static Uso nuevoUso() {
+        public static Uso nuevoUso() {
 
         File file = new File(path);                                      //Declaramos un File con el directorio temporal
 

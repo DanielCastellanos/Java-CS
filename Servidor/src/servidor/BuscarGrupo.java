@@ -200,66 +200,66 @@ public class BuscarGrupo extends Principal {
             }
         }
     };
-    Runnable webSocket = new Runnable() {
-        @Override
-        public void run() {
-            try {
-                ServerSocket ss = new ServerSocket(4500);
-                while (true) {
-                    System.out.println("esperando mensaje web");
-                    Socket s = ss.accept();
-                    InputStream in = s.getInputStream();
-                    OutputStream out = s.getOutputStream();
-                    String data = new Scanner(in, "UTF-8").useDelimiter("\\r\\n\\r\\n").next();
-                    Matcher get = Pattern.compile("^GET").matcher(data);
-                    if (get.find()) {
-                        Matcher match = Pattern.compile("Sec-WebSocket-Key: (.*)").matcher(data);
-                        match.find();
-                        byte[] response = ("HTTP/1.1 101 Switching Protocols\r\n"
-                                + "Connection: Upgrade\r\n"
-                                + "Upgrade: websocket\r\n"
-                                + "Sec-WebSocket-Accept: "
-                                + DatatypeConverter
-                                        .printBase64Binary(
-                                                MessageDigest
-                                                        .getInstance("SHA-1")
-                                                        .digest((match.group(1) + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11")
-                                                                .getBytes("UTF-8")))
-                                + "\r\n\r\n")
-                                .getBytes("UTF-8");
-
-                        out.write(response, 0, response.length);
-
-                        System.out.println(new String("*_*_*_*_*_*_*_").trim());
-                        byte bufer[] = new byte[500];
-                        in.read(bufer);
-
-                        ArrayList<Byte> encoded = new ArrayList<>();
-                        byte[] decoded;
-                        byte[] key = new byte[4];
-                        int j = 0;
-                        for (int i = 2; i < 6; i++) {
-                            key[j] = bufer[i];
-                            j++;
-                        }
-                        for (int i = 6; i < bufer.length; i++) {
-                            if (bufer[i] != 0) {
-                                encoded.add(bufer[i]);
-                            }
-                        }
-                        decoded = new byte[encoded.size()];
-
-                        for (int i = 0; i < decoded.length; i++) {
-                            decoded[i] = (byte) (encoded.get(i) ^ key[i & 0x3]);
-                        }
-                        System.out.println(new String(decoded));
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    };
+//    Runnable webSocket = new Runnable() {
+//        @Override
+//        public void run() {
+//            try {
+//                ServerSocket ss = new ServerSocket(4500);
+//                while (true) {
+//                    System.out.println("esperando mensaje web");
+//                    Socket s = ss.accept();
+//                    InputStream in = s.getInputStream();
+//                    OutputStream out = s.getOutputStream();
+//                    String data = new Scanner(in, "UTF-8").useDelimiter("\\r\\n\\r\\n").next();
+//                    Matcher get = Pattern.compile("^GET").matcher(data);
+//                    if (get.find()) {
+//                        Matcher match = Pattern.compile("Sec-WebSocket-Key: (.*)").matcher(data);
+//                        match.find();
+//                        byte[] response = ("HTTP/1.1 101 Switching Protocols\r\n"
+//                                + "Connection: Upgrade\r\n"
+//                                + "Upgrade: websocket\r\n"
+//                                + "Sec-WebSocket-Accept: "
+//                                + DatatypeConverter
+//                                        .printBase64Binary(
+//                                                MessageDigest
+//                                                        .getInstance("SHA-1")
+//                                                        .digest((match.group(1) + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11")
+//                                                                .getBytes("UTF-8")))
+//                                + "\r\n\r\n")
+//                                .getBytes("UTF-8");
+//
+//                        out.write(response, 0, response.length);
+//
+//                        System.out.println(new String("*_*_*_*_*_*_*_").trim());
+//                        byte bufer[] = new byte[500];
+//                        in.read(bufer);
+//
+//                        ArrayList<Byte> encoded = new ArrayList<>();
+//                        byte[] decoded;
+//                        byte[] key = new byte[4];
+//                        int j = 0;
+//                        for (int i = 2; i < 6; i++) {
+//                            key[j] = bufer[i];
+//                            j++;
+//                        }
+//                        for (int i = 6; i < bufer.length; i++) {
+//                            if (bufer[i] != 0) {
+//                                encoded.add(bufer[i]);
+//                            }
+//                        }
+//                        decoded = new byte[encoded.size()];
+//
+//                        for (int i = 0; i < decoded.length; i++) {
+//                            decoded[i] = (byte) (encoded.get(i) ^ key[i & 0x3]);
+//                        }
+//                        System.out.println(new String(decoded));
+//                    }
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    };
     Runnable r = new Runnable() {
         @Override
         public void run() {

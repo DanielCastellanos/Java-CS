@@ -50,6 +50,7 @@ public class BuscarServidor {
         boolean flag = false;
         try {
             Socket socket = new Socket();
+            System.out.println(serverHost);
             socket.connect(new InetSocketAddress(serverHost, 4500), 500);
             socket.close();
             flag = true;
@@ -77,11 +78,14 @@ public class BuscarServidor {
         if (configuracion.cargarConfiguracion()) {
             try {
                 //Aquí se inicia el monitor de uso regularmente
+                
+                puerto.joinGroup(InetAddress.getByName(configuracion.getGrupo()));
+                serverHost = configuracion.getServerHost();
+                Cliente.usoPc=Cliente.nuevoUso();
                 if (Cliente.usoPc != null) {
                     Cliente.UpdateUsage.schedule(Cliente.task2, Cliente.tRegUso, Cliente.tRegUso);
                 }
-                puerto.joinGroup(InetAddress.getByName(configuracion.getGrupo()));
-                serverHost = configuracion.getServerHost();
+                System.out.println(serverHost+"kkk");
                 /*Verificar si hay datos de sesión y enviarlos al admin si así es*/
                 this.iniciarHilo();
                 enviarSesiones();
