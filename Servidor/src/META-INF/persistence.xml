@@ -4,12 +4,12 @@
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <class>entity.UsoPc</class>
     <class>entity.Pagina</class>
-    <class>entity.Admin</class>
     <class>entity.Pc</class>
     <class>entity.Programa</class>
     <class>entity.Sesion</class>
     <class>entity.Usuario</class>
     <class>entity.AccesoPagina</class>
+    <class>entity.Admin</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/javacs_bd?zeroDateTimeBehavior=convertToNull"/>
       <property name="javax.persistence.jdbc.user" value="root"/>

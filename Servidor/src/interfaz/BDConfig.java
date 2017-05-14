@@ -204,7 +204,7 @@ public class BDConfig extends javax.swing.JFrame {
              */
             try {
                 connect(URL, usr, pass);
-                
+
             } catch (HibernateException ex) {
                 /*Si la conexión falla
                                                 Avisamos al usuario y le pedimos que rectifique los datos
@@ -212,6 +212,7 @@ public class BDConfig extends javax.swing.JFrame {
                 errorLabel.setText("Error de conexión: Verifique sus datos");
                 //Habilitamos los controles para que el usuario vuelva a ingresar datos.
                 editable(true);
+                ex.printStackTrace();
             }
         } else {                //Advertimos al usuario sobre los valores vacíos
             JOptionPane.showMessageDialog(null, "Valores inválidos", "Error de valores nulos", JOptionPane.WARNING_MESSAGE);
@@ -222,6 +223,7 @@ public class BDConfig extends javax.swing.JFrame {
 
     private void connect(String url, String user, String pass) throws HibernateException {
 
+        System.out.println("Intentando conección...");
         HibernateUtil.buildSessionFactory(url, user, pass);
         /*Invoca al método de construir la sesión
                                         Si en este punto no se ha obtenido una HibernateException significa que se
@@ -229,20 +231,25 @@ public class BDConfig extends javax.swing.JFrame {
                                         en el objeto de configuración
          */
         if (hibernate.HibernateUtil.isConnected()) {
-                    bdUtil bd = new bdUtil();
-                    Pc aux = bd.getPcByMac(settingsFile.getPcServidor().getMac());       //Uso la mac para verificar si existe la máquina en bd
-                    if (aux == null) {
-                        settingsFile.getPcServidor().setIdPC(bd.savePc(settingsFile.getPcServidor()));
-                    } else {
-                        settingsFile.getPcServidor().setIdPC(aux.getIdPC());
-                    }
-                }
+            System.out.println("si se conecta");
+            bdUtil bd = new bdUtil();
+            Pc aux = bd.getPcByMac(settingsFile.getPcServidor().getMac());       //Uso la mac para verificar si existe la máquina en bd
+            
+            if (aux == null) {
+                settingsFile.getPcServidor().setIdPC(bd.savePc(settingsFile.getPcServidor()));
+            } else {
+                settingsFile.getPcServidor().setIdPC(aux.getIdPC());
+            }
+            //Después notificaremos al usuario que la conexión fue realizada
+            JOptionPane.showMessageDialog(null, "Conexión con BD establecida", "Conexión establecida", JOptionPane.INFORMATION_MESSAGE);
+            if (!servidor.Servidor.bloqueo.isActive()) {
+                servidor.Servidor.bloqueo.setVisible(true);
+            }
+        }
         settingsFile.setURLBD(url);
         settingsFile.setUserBD(user);
         settingsFile.setPassBD(pass);
         Archivos.guardarConf(settingsFile);        //Y le diremos que guarde esa configuración en el archivo
-        //Después notificaremos al usuario que la conexión fue realizada
-        JOptionPane.showMessageDialog(null, "Conexión con BD establecida", "Conexión establecida", JOptionPane.INFORMATION_MESSAGE);
         //Y se cerrará este frame.
         this.dispose();
     }

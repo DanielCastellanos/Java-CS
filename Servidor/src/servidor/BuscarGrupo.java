@@ -8,17 +8,13 @@ import interfaz.Principal;
 import interfaz.Tareas;
 import interfaz.VentanaPropiedades;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.security.MessageDigest;
 import java.util.ArrayList;
-import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
@@ -26,10 +22,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
-import javax.xml.bind.DatatypeConverter;
+import static servidor.Servidor.bloqueo;
 
 /**
  *
@@ -37,7 +31,7 @@ import javax.xml.bind.DatatypeConverter;
  */
 public class BuscarGrupo extends Principal {
 
-    public InetAddress miIp;           //ip del servidor
+    public static InetAddress miIp;           //ip del servidor
     String nombre;              //nombre del servidor
     MulticastSocket puerto;     //puerto multicast
     Thread escucha, //Hilo para mensajes multicast
@@ -88,6 +82,9 @@ public class BuscarGrupo extends Principal {
                 Principal.setConf(conf);
                 //Inicia el monitoreo del uso del pc
                 Servidor.timerUso.schedule(Servidor.updateUsage, Servidor.tRegUso, Servidor.tRegUso);
+                if(!bloqueo.isActive()){
+                    bloqueo.setVisible(true);
+                }
             } catch (IOException ex) {
                 System.out.println("Error");
             }
@@ -126,6 +123,7 @@ public class BuscarGrupo extends Principal {
                 t.cancel();
                 //Agregamos la direccion a la configuracion
                 conf.setGrupo(ia.getHostAddress());
+                conf.getPcServidor().setGrupo(Byte.parseByte(ia.getHostAddress().substring(ia.getHostAddress().lastIndexOf(".")+1)));
                 //mostramos mensaje de que se esta uniendo al grupo
                 AppSystemTray.mostrarMensaje("Uniendose al grupo 224.0.0." + ip, AppSystemTray.INFORMATION_MESSAGE);
                 //Mostramos la configuracion de la BD

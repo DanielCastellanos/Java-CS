@@ -13,11 +13,22 @@ import entity.Programa;
 import entity.Sesion;
 import entity.UsoPc;
 import entity.Usuario;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -56,7 +67,7 @@ public class bdUtil {
             sesion.setProgramaCollection(getProgramas(sesionCliente.getTaskHistory()));
             /*Colleciones de páginas y grogramas*/
 
-            /*Agregar referencia de pc en sesion*/
+ /*Agregar referencia de pc en sesion*/
             sesion.setPCidPC(pc);
 
         } catch (HibernateException he) {
@@ -82,24 +93,13 @@ public class bdUtil {
         return sesion;
     }
 
-    public Pagina getPage(String domain) throws HibernateException {
-        Pagina p;
-        sesionBD.beginTransaction();
-        Query query = sesionBD.createQuery("from Pagina where nombrePagina = :name");    //Consulta a realizar con parámetro :name
-        query.setParameter("name", domain);                      //Asigna nombre a buscar en parámetro
-        p = (Pagina) query.uniqueResult();
-        if (p == null) {                                          //Si la consulta no arrojó resultado la página no existe en bd
-            p = new Pagina();                                    //Creamos una nueva instancia de Pagina para guardar
-            p.setNombrePagina(domain);                           //Y le asignamos el nombre
-            sesionBD.save(p);
-            p = (Pagina) query.uniqueResult();
+    public Collection<Pagina> getPages(ArrayList<String> webReport) throws HibernateException {
+
+        boolean nullSesion = sesionBD == null;
+        if (nullSesion) {
+            hibernate.HibernateUtil.openSessionAndBindToThread();
+            sesionBD = hibernate.HibernateUtil.getSessionFactory().getCurrentSession();
         }
-        sesionBD.getTransaction().commit();
-
-        return p;
-    }
-
-    private Collection<Pagina> getPages(ArrayList<String> webReport) throws HibernateException {
 
         List<Pagina> pages = new ArrayList<>();                                  //Lista para guardar las páginas
         sesionBD.beginTransaction();                                            //Inicia transaccion
@@ -120,33 +120,22 @@ public class bdUtil {
             pages.add(p);                                           //Guardamos la página en una lista
         }
         sesionBD.getTransaction().commit();                         //Se realiza el commit
+        if (nullSesion) {
+            hibernate.HibernateUtil.closeSessionAndUnbindFromThread();
+            sesionBD = null;
+        }
 
         Collection c = pages;                                       //Se guarda la lista en un Collection
         return c;                                                   //Y se retorna
     }
 
-    public Programa getPrograma(Tarea t) throws HibernateException {
-        Programa p;
-        sesionBD.beginTransaction();
+    public Collection<Programa> getProgramas(ArrayList<Tarea> taskReport) throws HibernateException {
 
-        Query query = sesionBD.createQuery("from Programa where proceso = :name");   //Consulta a realizar con parámetro :name
-
-        query.setParameter("name", t.getNombreImagen());                      //Asigna nombre a buscar en parámetro
-        p = (Programa) query.uniqueResult();                 //Ejecuta la consulta con el parámetro y obtiene un solo resultado
-
-        if (p == null) {                                          //Si la consulta no arrojó resultado el programa no existe en bd
-            p = new Programa();                                    //Creamos una nueva instancia de Programa para guardar
-            p.setNombre(t.getTituloVentana());
-            p.setProceso(t.getNombreImagen());
-            sesionBD.save(p);
-            p = (Programa) query.uniqueResult();
+        boolean nullSesion = sesionBD == null;
+        if (nullSesion) {
+            hibernate.HibernateUtil.openSessionAndBindToThread();
+            sesionBD = hibernate.HibernateUtil.getSessionFactory().getCurrentSession();
         }
-        
-        sesionBD.getTransaction().commit();
-        return p;
-    }
-
-    private Collection<Programa> getProgramas(ArrayList<Tarea> taskReport) throws HibernateException {
 
         List<Programa> programas = new ArrayList<>();                                  //Lista para guardar los programas
         sesionBD.beginTransaction();                                                    //Inicia transaccion
@@ -168,7 +157,10 @@ public class bdUtil {
             programas.add(p);                                           //Guardamos el programa en una lista
         }
         sesionBD.getTransaction().commit();                         //Se realiza el commit
-
+        if (nullSesion) {
+            hibernate.HibernateUtil.closeSessionAndUnbindFromThread();
+            sesionBD = null;
+        }
         Collection c = programas;                                       //Se guarda la lista en un Collection
         return c;
     }
@@ -199,16 +191,16 @@ public class bdUtil {
 
         return returnedPc;
     }
-    
-    public Pc getPcById(int id){
-        if(!sesionBD.getTransaction().isActive()){
+
+    public Pc getPcById(int id) {
+        if (!sesionBD.getTransaction().isActive()) {
             sesionBD.beginTransaction();
         }
-        Query select= sesionBD.createQuery("from Pc where idPC = "+id);
-        
-        Pc pc= (Pc)select.uniqueResult();
+        Query select = sesionBD.createQuery("from Pc where idPC = " + id);
+
+        Pc pc = (Pc) select.uniqueResult();
         sesionBD.getTransaction().commit();
-        
+
         return pc;
     }
 
@@ -292,23 +284,90 @@ public class bdUtil {
         }
     }
 
-    public boolean logginAdmin(String usr, String pass) {
-
-        boolean success = false;
-
+    public void getListOfAdmins() {
+        File fileAdmin = new File("data/loginData");
         try {
-            Admin admin = getAdmin(usr);
-            if (admin != null) {
-                if (admin.getPass().equals(pass) && admin.getStatus()) {
-                    success = true;
+            RandomAccessFile afAdmin = new RandomAccessFile(fileAdmin, "rw");
+            hibernate.HibernateUtil.openSessionAndBindToThread();
+            sesionBD = hibernate.HibernateUtil.getSessionFactory().getCurrentSession();
+
+            System.out.println("Getting admins");
+
+            Query q = sesionBD.createQuery("from Admin");
+            sesionBD.beginTransaction();
+            List<Admin> listAdmin = q.list();
+            sesionBD.getTransaction().commit();
+            hibernate.HibernateUtil.closeSessionAndUnbindFromThread();
+
+            for (Admin admin : listAdmin) {
+                System.out.println(admin.toString());
+            }
+
+            byte buffer[];
+            ByteArrayOutputStream bs = new ByteArrayOutputStream();
+            ObjectOutputStream os = new ObjectOutputStream(bs);
+            os.writeObject(listAdmin);
+            buffer = bs.toByteArray();
+            afAdmin.write(buffer);
+
+            afAdmin.close();
+            bs.close();
+            os.close();
+
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(bdUtil.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(bdUtil.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    public Admin logginAdmin(String usr, String pass) {
+        System.out.println("Llega a logginAdmin");
+        File fileAdmin = new File("data/loginData");
+        try {
+            if (hibernate.HibernateUtil.isConnected()) {
+                System.out.println("Obtener lista de admins...");
+                getListOfAdmins();
+            }
+
+            RandomAccessFile afAdmin = new RandomAccessFile(fileAdmin, "rw");
+            if (afAdmin.length() > 0) {
+                System.out.println("Entra a leer archivo");
+                byte[] bytes = new byte[(int) afAdmin.length()];                                //Declara arreglo del tamaño del archivo
+                System.out.println(afAdmin.length());
+                afAdmin.read(bytes);                                           //Guarda el archivo en el arreglo
+
+                //preparamos la entrada de datos del array
+                ByteArrayInputStream bs = new ByteArrayInputStream(bytes);
+                //preparamos la entrada para obtener el objeto "Sesion"
+                ObjectInputStream ois = new ObjectInputStream(bs);
+                //obtenemos el objeto "Uso"
+                servidor.Servidor.admins = (List<Admin>) ois.readObject();
+                //Se cierra el Random Access File
+                afAdmin.close();
+            } else {
+                JOptionPane.showMessageDialog(null, "No se pudieron comprobar credenciales");
+            }
+
+            //Comprobación
+            System.out.println("Comprueba... " + servidor.Servidor.admins.size() + " Admins en lista");
+            for (Admin admin : servidor.Servidor.admins) {
+                System.out.println(admin.getUsrName() + " == " + usr + "?\n"
+                        + admin.getPass() + " == " + pass);
+                if (usr.equals(admin.getUsrName()) && pass.equals(admin.getPass())) {
+                    System.out.println("Encontrado: " + admin.getUsrName());
+                    return admin;
                 }
             }
-        } catch (HibernateException ex) {
-            System.err.println("****************Error al obtener datos de Administrador**************\n "
-                    + ex.toString());
+
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(bdUtil.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(bdUtil.class.getName()).log(Level.SEVERE, null, ex);
         }
-        /*Retorna la bandera*/
-        return success;
+
+        return null;
     }
 
     public Admin getAdmin(String username) throws HibernateException {
@@ -336,7 +395,7 @@ public class bdUtil {
             nuevoUso.setEncendido(entrada);
             nuevoUso.setApagado(salida);
             nuevoUso.setPCidPC(pc);
-            
+
             /*Percistencia con hibernate*/
             hibernate.HibernateUtil.openSessionAndBindToThread();
             sesionBD = hibernate.HibernateUtil.getSessionFactory().getCurrentSession();
@@ -359,24 +418,36 @@ public class bdUtil {
 
         Scanner sc = new Scanner(System.in);
         System.out.println("Tell me what to try ;)");
-        int opc= sc.nextByte();
-        while (opc != 0){
-            
-            switch(opc){
-                
+        int opc = sc.nextByte();
+        while (opc != 0) {
+
+            switch (opc) {
+
                 case 1:
-                    
+
                     System.out.println(Servidor.usoPc.toString());
                     Servidor.guardarUso();
                     break;
-                
+                case 2:
+                    System.out.println("echale");
+                    String usr = sc.next();
+                    System.out.println("ahora pass");
+                    String pass = sc.next();
+                    Admin a = new bdUtil().logginAdmin(usr, pass);
+                    if (a != null) {
+                        System.out.println("Entra con el admin " + a.getIdAdmin() + " de nombre " + a.getUsrName());
+                    } else {
+                        System.out.println("Devolvió null");
+                    }
+                    break;
                 case 0:
                     System.out.println("Salir");
+                    System.exit(0);
                     break;
-                    
+
             }
-            
-            opc= sc.nextByte();
+
+            opc = sc.nextByte();
         }
     }
 }

@@ -30,7 +30,6 @@ public class FrameBlocked extends javax.swing.JFrame {
     public static int alto;
     Robot shortcutKiller;
     private ArrayList<String> correctos ;
-    public boolean dbConnection = false;
     public static int ancho;
     Timer timer;
     Timer fondo;
@@ -84,7 +83,7 @@ public class FrameBlocked extends javax.swing.JFrame {
     public void login() {
         
         this.setVisible(true);
-        revisaConeccion();
+//        revisaConeccion();
         panel.setVisible(true);
         estilos();
     }
@@ -276,12 +275,14 @@ public class FrameBlocked extends javax.swing.JFrame {
 
             JOptionPane.showMessageDialog(this, "Ingresa tu código y Nip", ".::ERROR::.", JOptionPane.ERROR_MESSAGE);
 
-        } else if (dbConnection) {
+        } else {
             //VALIDACION DE CODIGO Y NIP
             Login log = new Login();
             String username= this.user.getText();
             String password= Cifrado.cifrarMD5(this.pass.getText());
+            
             if (log.login(username, password)) {
+                
                 try {
                     Thread.sleep(1000);
                     this.dispose();
@@ -307,15 +308,7 @@ public class FrameBlocked extends javax.swing.JFrame {
             } else {
                 JOptionPane.showMessageDialog(this, "Datos Incorrectos", ".::ERROR::.", JOptionPane.ERROR_MESSAGE);
             }
-        } else {
-            try {
-                Thread.sleep(1000);
-                this.dispose();
-                Thread.sleep(1000);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(FrameBlocked.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+        } 
     }
     //envia la imagen deseada a background
 
@@ -333,17 +326,17 @@ public class FrameBlocked extends javax.swing.JFrame {
         
     }
 
-    public void revisaConeccion() {
-        //VERIFICA CONECCIÓN A BASE DE DATOS
-
-        if (hibernate.HibernateUtil.isConnected()) {
-            dbConnection = true;
-                   this.pass.setVisible(true);
-        } else {
-            dbConnection = false;
-            borrarComp();
-        }
-    }
+//    public void revisaConeccion() {
+//        //VERIFICA CONECCIÓN A BASE DE DATOS
+//
+//        if (hibernate.HibernateUtil.isConnected()) {
+//            dbConnection = true;
+//                   this.pass.setVisible(true);
+//        } else {
+//            dbConnection = false;
+//            borrarComp();
+//        }
+//    }
 
     //borra el campo de contraseña
     public void borrarComp() {

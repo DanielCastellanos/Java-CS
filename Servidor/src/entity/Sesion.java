@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.StringTokenizer;
+import java.util.Iterator;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
@@ -151,41 +151,7 @@ public class Sesion implements Serializable {
     }
 
     /***************************************************/
-    
-    @XmlTransient
-    public void addWebHistory(ArrayList<String> webs) {
-        bdUtil dataB= new bdUtil();
-        try {
-            for (String web : webs) {
-                Pagina pagina= dataB.getPage(web);
-                if(!this.paginaCollection.contains(pagina)){
-                    this.paginaCollection.add(pagina);
-                }
-            }
-        } catch (HibernateException e) {
-            System.err.println("******************Error al agregar historial web a sesion actual obteniendo página");
-            e.printStackTrace();
-        }
-
-    }
-
-    @XmlTransient
-    public void saveNewTasks(ArrayList<Tarea> newT) {
-
-        bdUtil dataB= new bdUtil();
-        try {
-            for (Tarea task : newT) {
-                Programa programa= dataB.getPrograma(task);
-                if(!this.programaCollection.contains(programa)){
-                    this.programaCollection.add(programa);
-                }
-            }
-        } catch (HibernateException e) {
-            System.err.println("******************Error al agregar historial de programas a sesion actual obteniendo programa");
-            e.printStackTrace();
-        }
-    }
-/********************************************************/
+    /********************************************************/
     @Override
     public int hashCode() {
         int hash = 0;

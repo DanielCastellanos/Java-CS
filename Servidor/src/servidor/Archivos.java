@@ -67,11 +67,11 @@ public class Archivos {
                     /* De generarse un error 
                                                         Se preguntará al usuario si desea verificar los datos de conexión
                      */
-                    int opc = JOptionPane.showConfirmDialog(null, "No se pudo realizar la consexión con la base de datos\n¿Desea revisar los ajustes?",
-                            "Desconectado de BD", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-                    if (opc == 0) {
+//                    int opc = JOptionPane.showConfirmDialog(null, "No se pudo realizar la consexión con la base de datos\n¿Desea revisar los ajustes?",
+//                            "Desconectado de BD", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+//                    if (opc == 0) {
                         new BDConfig(conf, conf.getURLBD(), conf.getUserBD(), conf.getPassBD()).setVisible(true);
-                    }
+//                    }
                 }
                 //Impresión en consola de la carga
                 System.out.println("Nombre Serv: " + conf.getNombreServ() + " Grupo: " + conf.getGrupo());

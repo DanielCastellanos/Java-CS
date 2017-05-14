@@ -108,9 +108,8 @@ public class MonitorWeb {
         if(page!=null){
             if(webPages.indexOf(page) == -1){
                 webPages.add(page);
-//                System.out.println(page);
+                System.out.println(page);
             }
-//            System.out.println(Arrays.toString(webPages.toArray()));
         }
     }
     

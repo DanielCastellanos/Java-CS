@@ -96,6 +96,7 @@ public class HiloCliente implements Runnable {
                 bdUtil bd= new bdUtil();
                 Pc aux = bd.getPcByMac(pc.getMac());       //Uso la mac para verificar si existe la máquina en bd
                 if (aux == null) {
+                    pc.setGrupo(Byte.parseByte(servidor.BuscarGrupo.conf.getGrupo()));
                     pc.setIdPC(bd.savePc(pc));
                 }else{
                     pc=aux;

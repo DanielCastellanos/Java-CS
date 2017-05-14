@@ -8,10 +8,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.ImageIcon;
 import servidor.Configuracion;
-import servidor.BuscarGrupo;
 import servidor.Ordenes;
 import cliente.Tarea;
 import entity.Pc;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import servidor.Archivos;
 import servidor.BuscarGrupo;
@@ -296,8 +298,13 @@ public class Principal extends javax.swing.JFrame{
     }//GEN-LAST:event_opcionesMouseClicked
 
     private void SalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SalirActionPerformed
-        //System.exit(0);
-        
+        try {
+            servidor.Servidor.cerrarSesion();
+            servidor.Servidor.bloqueo.setVisible(true);
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null, "Error al cerrar sesión", "Error", JOptionPane.WARNING_MESSAGE);
+            ex.printStackTrace();
+        }
     }//GEN-LAST:event_SalirActionPerformed
 
     private void ApagarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ApagarActionPerformed
