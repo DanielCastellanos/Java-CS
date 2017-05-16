@@ -1,8 +1,8 @@
 $(document).ready(function(){
-             
+            var enable=false;
             //Ocultamos el menú al cargar la página
             $("#menu").hide();
-             
+            $("#consultas").hide();
             /* mostramos el menú si hacemos click derecho
             con el ratón */
             $(document).bind("contextmenu", function(e){
@@ -24,7 +24,7 @@ $(document).ready(function(){
                         $("#menu").css("display", "none");
                   }
             });
-             
+                         
             //controlamos los botones del menú
             $("#menu").click(function(e){
                    
@@ -36,20 +36,23 @@ $(document).ready(function(){
                         case "mover":
                               alert("movido!");
                               break;
-                        case "eliminar":
-                              alert("eliminado!");
-                              break;
+                  case "eliminar":
+                      alert("eliminado!");
+                  break;
                   }
-                       
-            });
-    
-            $("#consulta").click(function(e){
 
-            $("#lista").load("consultas.html"); 
-            }
-            );
-                 
-                         
+                  });
+    
+                     $("#consulta").on("click", function () {
+                          if (enable) {
+                              $("#consultas").hide();
+                              enable=false;
+                          } else {
+                              $("#consultas").show();
+                              enable=true;
+                          }
+                      });
+                      
       });
 
 
