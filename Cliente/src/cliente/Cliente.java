@@ -27,7 +27,7 @@ public class Cliente {
     static long tRegUso = 1 * 10000;
     static String path = "./";
     static Uso usoPc;
-    
+
     static TimerTask task2 = new TimerTask() {                          //TimerTask del monitoreo de tiempo de uso de la máquina
 
         @Override
@@ -45,8 +45,8 @@ public class Cliente {
         b.iniciarCliente();
 
     }
-    
-        public static Uso nuevoUso() {
+
+    public static Uso nuevoUso() {
 
         File file = new File(path);                                      //Declaramos un File con el directorio temporal
 
@@ -59,23 +59,22 @@ public class Cliente {
                 }
             };      //Se crea un filtro de nombre 
             File usoFiles[] = file.listFiles(filter);                        //Obtenemos un arreglo de archivos con los resultador del filtro de nombre
-            
 
             if (BuscarServidor.connectionStatus()) //Si hay conexion con el Admin de grupo
             {
-                int cont= -1;
-                while(++cont < usoFiles.length){             //iteramos sobre el arreglo usoFiles
-                    
+                int cont = -1;
+                while (++cont < usoFiles.length) {             //iteramos sobre el arreglo usoFiles
+
                     try {
                         enviarSesion(usoFiles[cont]);                                              //Intentamos enviar los elementos del arreglo.
-                        if(usoFiles[cont].delete()){
+                        if (usoFiles[cont].delete()) {
                             cont--;
-                        }else{
-                            System.out.println("No se eliminó archivo "+usoFiles[cont].getName());
+                        } else {
+                            System.out.println("No se eliminó archivo " + usoFiles[cont].getName());
                         }
-            
+
                     } catch (IOException ex) {
-                        System.err.println("Error al enviar archivo\n"+ ex.toString());
+                        System.err.println("Error al enviar archivo\n" + ex.toString());
                     }
 
                 }//Fin de ciclo sobre files
@@ -92,8 +91,8 @@ public class Cliente {
     public static void guardarUso() {
         try {
             System.out.println("------>?" + tRegUso + "----->");
-            String fecha= usoPc.getInicio().toString().replace(":", "-").replace(" ", "_");
-            RandomAccessFile raf = new RandomAccessFile(BuscarServidor.configuracion.getNombre() + "-" + "uso." + fecha+".jacs", "rw");
+            String fecha = usoPc.getInicio().toString().replace(":", "-").replace(" ", "_");
+            RandomAccessFile raf = new RandomAccessFile(BuscarServidor.configuracion.getNombre() + "-" + "uso." + fecha + ".jacs", "rw");
             byte buffer[];
             ByteArrayOutputStream bs = new ByteArrayOutputStream();
             ObjectOutputStream os = new ObjectOutputStream(bs);
@@ -109,6 +108,5 @@ public class Cliente {
             Logger.getLogger(Monitor.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
 
 }

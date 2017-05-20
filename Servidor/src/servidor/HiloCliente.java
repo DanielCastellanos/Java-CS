@@ -95,8 +95,11 @@ public class HiloCliente implements Runnable {
             if (hibernate.HibernateUtil.isConnected()) {
                 bdUtil bd= new bdUtil();
                 Pc aux = bd.getPcByMac(pc.getMac());       //Uso la mac para verificar si existe la máquina en bd
+                System.out.println(aux);
                 if (aux == null) {
-                    pc.setGrupo(Byte.parseByte(servidor.BuscarGrupo.conf.getGrupo()));
+                    System.out.println("Reonoce null");
+                    //pc.setGrupo(Byte.parseByte(servidor.BuscarGrupo.conf.getGrupo()));
+                    System.out.println("asigno grupo "+pc.getGrupo());
                     pc.setIdPC(bd.savePc(pc));
                 }else{
                     pc=aux;

@@ -207,12 +207,14 @@ public class bdUtil {
     public int savePc(Pc pc) {
 
         try {
+            System.out.println("entra a try save");
             hibernate.HibernateUtil.openSessionAndBindToThread();
             sesionBD = hibernate.HibernateUtil.getSessionFactory().getCurrentSession();
-
+            System.out.println("obtiene seción");
             sesionBD.beginTransaction();
-
+            System.out.println("Sesion "+sesionBD.getTransaction().isActive());
             sesionBD.save(pc);
+            System.out.println("Pasa por save");
             sesionBD.getTransaction().commit();
 
         } catch (HibernateException ex) {
@@ -347,7 +349,7 @@ public class bdUtil {
                 //Se cierra el Random Access File
                 afAdmin.close();
             } else {
-                JOptionPane.showMessageDialog(null, "No se pudieron comprobar credenciales");
+                //JOptionPane.showMessageDialog(null, "No se pudieron comprobar credenciales");
             }
 
             //Comprobación

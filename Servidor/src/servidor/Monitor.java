@@ -20,11 +20,11 @@ public class Monitor {
     ListaTareas taskList = new ListaTareas();                             //Clase para monitoreo de tareas
     public static ArrayList<String> webReport;
     public static ArrayList<Tarea> procesos;
-
+    static int cont = 0;
     TimerTask task = new TimerTask() {
         @Override
         public void run() {
-
+            
             //Obtiene lista de tareas
             taskList.escribirLista();
             ArrayList<Tarea> newTasks = taskList.getLista();
@@ -39,6 +39,13 @@ public class Monitor {
             ArrayList<String> webPages = web.getReport();
             updateWebReport(webPages);
 
+            if(++cont == 60){
+                try{
+                guardarSesion(servidor.Servidor.sesion);
+                }catch (IOException e){
+                    System.err.println("Error al guardar sesión en archivo");
+                }
+            }
         }
     };          //TmerTask del monitoreo de procesos y tráfico web
 

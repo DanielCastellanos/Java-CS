@@ -277,7 +277,7 @@ public class BuscarGrupo extends Principal {
                     //recivimos el paquete
                     puerto.receive(dp);
                     //mandamos el paquete a un hilo para su procesado
-                    executor.submit(new HiloCliente(dp, ia, puerto));
+                    executor.submit(new HiloCliente(dp,InetAddress.getByName(conf.getGrupo()), puerto));
                 }
             } catch (IOException ex) {
                 ex.printStackTrace();
