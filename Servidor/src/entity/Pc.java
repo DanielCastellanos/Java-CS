@@ -6,16 +6,23 @@
 package entity;
 
 import java.io.Serializable;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -39,6 +46,7 @@ public class Pc implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "idPC")
     private Integer idPC;
@@ -54,11 +62,26 @@ public class Pc implements Serializable {
     private String noSerie;
     @Column(name = "os")
     private String os;
+    @Column(name = "mac")
+    private String mac;
+    @Column(name = "grupo")
+    private byte grupo;
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "pCidPC")
     private Collection<Sesion> sesionCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "pCidPC")
     private Collection<UsoPc> usoPcCollection;
 
+    //Atributos no mapeados
+    @Transient
+    private String nombre= null;
+    @Transient
+    private String direccion= null;
+    @Transient
+    private String hostname= null;
+    @Transient
+    private String marca= null;
+    
     public Pc() {
     }
 
@@ -122,6 +145,14 @@ public class Pc implements Serializable {
         this.os = os;
     }
 
+    public byte getGrupo() {
+        return grupo;
+    }
+
+    public void setGrupo(byte grupo) {
+        this.grupo = grupo;
+    }
+
     @XmlTransient
     public Collection<Sesion> getSesionCollection() {
         return sesionCollection;
@@ -133,6 +164,7 @@ public class Pc implements Serializable {
 
     @XmlTransient
     public Collection<UsoPc> getUsoPcCollection() {
+      
         return usoPcCollection;
     }
 
@@ -140,6 +172,47 @@ public class Pc implements Serializable {
         this.usoPcCollection = usoPcCollection;
     }
 
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getDireccion() {
+        return direccion;
+    }
+
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
+
+    public String getHostname() {
+        return hostname;
+    }
+
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
+    }
+
+    public String getMarca() {
+        return marca;
+    }
+
+    public void setMarca(String marca) {
+        this.marca = marca;
+    }
+
+    public String getMac() {
+        return mac;
+    }
+
+    public void setMac(String mac) {
+        this.mac = mac;
+    }
+
+    
     @Override
     public int hashCode() {
         int hash = 0;
@@ -162,7 +235,22 @@ public class Pc implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.Pc[ idPC=" + idPC + " ]";
+        return "entity.Pc[ idPC=" + idPC + " ]"+
+                "[ Nombre= " +nombre+ "]"+
+                "[ Dirección= "+direccion+"]"+
+                "[ Nombre de la pc= "+hostname;
+    }
+        private boolean revisarHost()
+    {
+        boolean host=false;
+        try {
+            if(hostname.equals(InetAddress.getByName(direccion).getHostName())){
+                host=true;
+            }
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(Pc.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return host;
     }
     
 }

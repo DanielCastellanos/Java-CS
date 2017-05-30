@@ -2,11 +2,8 @@ package servidor;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import javax.swing.JTextField;
 import javax.swing.plaf.basic.BasicTextFieldUI;
 import javax.swing.text.JTextComponent;
 
@@ -16,15 +13,19 @@ import javax.swing.text.JTextComponent;
  */
 public class Hint extends BasicTextFieldUI implements KeyListener{
 
-    String hint;
-    String auxHint;
-    Color color;
-    Color hintColor=Color.gray;
-    boolean visible=true;
+    String hint;    //texto que aparecera como pista
+    Color hintColor=Color.gray; //color de la pista/Hint
+    boolean visible=true;   //booleando para saber cuando hacer visible la psta
+    
+    //contructor simple 
     public Hint(String hint)
     {
         this.hint=hint;
-        this.auxHint=this.hint;
+    }
+    public Hint(String hint,Color hintColor)
+    {
+        this.hint=hint;
+        this.hintColor=hintColor;
     }
     @Override
     protected void paintSafely(Graphics g) {
@@ -32,14 +33,7 @@ public class Hint extends BasicTextFieldUI implements KeyListener{
         JTextComponent comp=getComponent();
         if(visible)
         {
-        if(hint.equals(""))
-        {
-            g.setColor(color);
-        }
-        else
-        {
             g.setColor(hintColor);
-        }
         int padding=(comp.getHeight()-comp.getFont().getSize())/2;
         g.drawString(hint, 2,comp.getHeight()-padding-1);
         }
@@ -58,22 +52,25 @@ public class Hint extends BasicTextFieldUI implements KeyListener{
 
     @Override
     public void keyReleased(KeyEvent ke) {
+        //verificamos si el campo esta vacio
         if(getComponent().getText().length() == 0)
         {
-            this.hint=this.auxHint;
+            //si esta vacio hacemos la pista visible
             visible=true;
         }
         else
         {
-            this.hint="";
+            //si no lo esta hacemos invisible la pista
             visible=false;
         }
+        //repintamos el componente
         getComponent().repaint();
     }
 
     @Override
     protected void installListeners() {
-        super.installListeners(); //To change body of generated methods, choose Tools | Templates.
+        //insatalamos los listeners al campo de texto
+        super.installListeners();
         getComponent().addKeyListener(this);
     }
     

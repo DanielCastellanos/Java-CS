@@ -144,8 +144,34 @@ th{
 #titulo_tabla h2{
     text-align: center;
 
+}#menu ul {
+    list-style: none;
+    list-style-type: none;
+    list-style-position: outside;
+}
+#menu li {
+    line-height: 30px;
+    font-size: 16px;
+    cursor: pointer;
 }
 
+#menu li:hover {
+    background-color: rgb(32,53,141);
+    color: white;
+}
+
+#menu {
+    width: 250px;
+    position: absolute;
+    border: 1px solid black;
+    background-color: white;
+    color: black;
+    border-radius: 5px;
+    border-top-left-radius: 0px;
+    -moz-box-shadow: 0 0 5px #888;
+    -webkit-box-shadow: 0 0 5px#888;
+    box-shadow: 0 0 5px #888;
+}
 /*//////////////////////////MOBILES//////////////////////////////////////////*/
 @media screen and (max-width:800px){
     header #titulo p

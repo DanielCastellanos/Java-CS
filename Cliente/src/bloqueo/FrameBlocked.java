@@ -1,5 +1,7 @@
 package bloqueo;
 
+import cliente.Cliente;
+import cliente.SesionCliente;
 import java.awt.BorderLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -12,17 +14,23 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Robot;
 import java.awt.Toolkit;
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Timer;
+import java.util.TimerTask;
 import javax.swing.BorderFactory;
 
 public class FrameBlocked extends javax.swing.JFrame {
 
     public static int alto;
     Robot shortcutKiller;
+    private ArrayList<String> correctos ;
     public boolean inter = false;
     public static int ancho;
     Timer timer;
+    Timer fondo;
+    int foto;
     ////////////CONSTRUCTOR/////////////////////
     public FrameBlocked()
     {
@@ -32,8 +40,10 @@ public class FrameBlocked extends javax.swing.JFrame {
         initComponents();
         revisaConeccion();                                          //Revisa si hay conexión a internet
         carga();
+        fondo=new Timer();
+        fondo.schedule(cambioFondo,0,10000);
         pass.setEchoChar('•');
-        pass.setUI(new passHint("Password"));
+        pass.setUI(new PassHint("Password"));
         user.setUI(new Hint("Codigo"));
     //Carga el keylistener y llama keepfocus
     }
@@ -78,8 +88,10 @@ public class FrameBlocked extends javax.swing.JFrame {
     public void bloqueoCompleto()
     {
         this.setVisible(true);
+        panel.setEnabled(false);
         panel.setVisible(false);
         estilos();
+        this.repaint();
     }
     public boolean estaBloqueado()
     {
@@ -89,9 +101,8 @@ public class FrameBlocked extends javax.swing.JFrame {
     //Coloca la imagen de fondo, mantiene el focus en el panel e inicia el keylistener
     private void carga()
     {
-        
-        Random r=new Random();
-        colocarImagen((r.nextInt(2)+1) + ".jpg");
+        revisaAvisos();
+        colocarImagen(revisaAvisos());
         this.setExtendedState(MAXIMIZED_BOTH);    //maximizado
         this.setAlwaysOnTop(true);                //siempre al frente       
         new KeepFocus(this).block();              //Envia este frame y lo pone al frente cada 50 milisegundos para evitar perder el focus
@@ -101,13 +112,33 @@ public class FrameBlocked extends javax.swing.JFrame {
         } catch (AWTException e) {
             e.printStackTrace();
         }
-
+        
         pass.addKeyListener(listen);
         user.addKeyListener(listen);
         entrar.addKeyListener(listen);
         this.addKeyListener(listen);
     }
-    
+
+    public String revisaAvisos() {
+        String sDirectorio = "src/images";
+        File f = new File(sDirectorio);
+        if (f.exists()) {
+            File[] ficheros = f.listFiles();
+            correctos=new ArrayList();
+            for (int x = 0; x < ficheros.length; x++) {
+                String ext=ficheros[x].getName().substring(ficheros[x].getName().length()-3, ficheros[x].getName().length());
+                if (ext.equals("jpg")) {
+                    correctos.add(ficheros[x].getName());
+                }
+            }
+            
+            Random r = new Random();
+            return correctos.get(r.nextInt(correctos.size()));
+        } else {
+            System.err.println("Directorio de avisos inexistente");
+            return "1.jpg";
+        }
+    }
     //Este metodo detiene los atajos de teclado ALT, HOME y CTRL
     public void detector(KeyEvent evt) {
         if (evt.getKeyCode() == 524) {
@@ -145,7 +176,7 @@ public class FrameBlocked extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setBackground(new java.awt.Color(0, 0, 0));
 
-        panel.setBackground(new java.awt.Color(153, 153, 153));
+        panel.setBackground(new java.awt.Color(204, 204, 204));
         panel.setToolTipText("");
         panel.setFocusable(false);
 
@@ -153,6 +184,7 @@ public class FrameBlocked extends javax.swing.JFrame {
 
         entrar.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         entrar.setText("Entrar");
+        entrar.setFocusPainted(false);
         entrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 entrarActionPerformed(evt);
@@ -165,7 +197,9 @@ public class FrameBlocked extends javax.swing.JFrame {
             }
         });
 
+        jButton1.setBackground(new java.awt.Color(255, 255, 255));
         jButton1.setText("jButton1");
+        jButton1.setFocusPainted(false);
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -245,9 +279,12 @@ public class FrameBlocked extends javax.swing.JFrame {
             if (log.login(this.user.getText(), this.pass.getText())) {
                 try {
                     Thread.sleep(1000);
+                    this.dispose();
+                    Cliente.sesion = new SesionCliente(user.getText());
                     this.user.setText("");
                     this.pass.setText("");
-                    this.dispose();
+                    ((Hint)this.user.getUI()).setVisible(true);
+                    ((PassHint)this.pass.getUI()).setVisible(true);
                     Thread.sleep(1000);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(FrameBlocked.class.getName()).log(Level.SEVERE, null, ex);
@@ -266,10 +303,18 @@ public class FrameBlocked extends javax.swing.JFrame {
         }
     }
         //envia la imagen deseada a background
-    public void colocarImagen(String img) {
-        Background p = new Background(ancho, alto, "src/images/" + img);
-        this.add(p, BorderLayout.CENTER);
-        p.repaint();
+   public void colocarImagen(String img) {
+        try {
+            Background p = new Background(ancho, alto, "src/images/" + img);
+            this.add(p, BorderLayout.CENTER);
+            p.repaint();
+            Thread.sleep(5);
+            pass.repaint();
+            panel.repaint();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(FrameBlocked.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }
 
     public void revisaConeccion() {
@@ -277,6 +322,7 @@ public class FrameBlocked extends javax.swing.JFrame {
         CheckConnection internet = new CheckConnection();
         if (internet.isConnected()) {
             inter = true;
+            this.pass.setVisible(true);
         } else {
             inter = false;
             borrarComp();
@@ -292,8 +338,20 @@ public class FrameBlocked extends javax.swing.JFrame {
         Color c=new Color(145,145,145);
         Color a=new Color(235,37,37,150);
         panel.setBackground(c);
-        panel.setBorder( BorderFactory.createLineBorder(a, 3, true));
+        panel.setBorder( BorderFactory.createLineBorder(a, 1, true));
     }
+    TimerTask cambioFondo=new TimerTask() {
+        @Override
+        public void run() {
+            foto++;
+            if(foto==correctos.size())
+            {
+                foto=0;
+            }
+            colocarImagen(correctos.get(foto));
+            
+        }
+    };
     /**
      * @param args the command line arguments
      */
@@ -336,4 +394,6 @@ public class FrameBlocked extends javax.swing.JFrame {
     private javax.swing.JPasswordField pass;
     private javax.swing.JTextField user;
     // End of variables declaration//GEN-END:variables
+ 
 }
+

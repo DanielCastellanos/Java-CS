@@ -3,12 +3,14 @@
  */
 package interfaz;
 
+import entity.Pc;
 import hibernate.HibernateUtil;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
-import static javax.swing.JOptionPane.showMessageDialog;
 import org.hibernate.HibernateException;
-import servidor.ArchivoConf;
+import servidor.Archivos;
+import servidor.Configuracion;
+import servidor.bdUtil;
 
 public class BDConfig extends javax.swing.JFrame {
 
@@ -16,25 +18,26 @@ public class BDConfig extends javax.swing.JFrame {
     private String URL;
     private String usr;
     private String pass;
-    ArchivoConf settingsFile;
+    Configuracion settingsFile;
     ImageIcon icon = new ImageIcon("src/iconos/logo chico.png");
 
-    public BDConfig(ArchivoConf conf) {
+    public BDConfig(Configuracion conf) {
         initComponents();
         this.setIconImage(icon.getImage());
-        this.settingsFile= conf;
+        this.settingsFile = conf;
     }
-    
+
     //Este constructor tiene el propósito de mostrar al usuario configuración previamente definida
-    public BDConfig(ArchivoConf conf, String ur, String u, String p) {
+    public BDConfig(Configuracion conf, String ur, String u, String p) {
+
         initComponents();
         this.setIconImage(icon.getImage());
-        this.settingsFile= conf;
-        
+        this.settingsFile = conf;
+
         UrlField.setText(ur);
         usrField.setText(u);
         passField.setText(p);
-        
+
     }
 
     @SuppressWarnings("unchecked")
@@ -189,42 +192,66 @@ public class BDConfig extends javax.swing.JFrame {
 
         //inhabilita la edición de los campos y botones
         editable(false);
-        
+
         //Obtiene información de los campos
-        URL = UrlField.getText();
-        usr = usrField.getText();
-        pass = passField.getText();
+        URL = UrlField.getText().trim();
+        usr = usrField.getText().trim();
+        pass = passField.getText().trim();
 
-        if (URL.length() * usr.length() != 0) {                 /*Si no estan vacíos los campos de usuario o url
+        if (URL.length() * usr.length() != 0) {
+            /*Si no estan vacíos los campos de usuario o url
                                                             Intentará realizar la conexión con esos datos
-            */
+             */
             try {
-                HibernateUtil.buildSessionFactory(URL, usr, pass);          /*Invoca al método de construir la sesión
-                                        Si en este punto no se ha obtenido una HibernateException significa que se
-                                        creó exitosamente la session factory con los datos ingresados, así que los escribiremos
-                                        en el objeto de configuración
-                */
-                settingsFile.setURLBD(URL);
-                settingsFile.setUserBD(usr);
-                settingsFile.setPassBD(pass);       
-                settingsFile.nuevoArchivo();        //Y le diremos que guarde esa configuración en el archivo
-                //Después notificaremos al usuario que la conexión fue realizada
-                JOptionPane.showMessageDialog(null, "Conexión con BD establecida", "Conexión establecida", JOptionPane.INFORMATION_MESSAGE);
-                //Y se cerrará este frame.
-                this.dispose();
+                connect(URL, usr, pass);
 
-            } catch (HibernateException ex) {           /*Si la conexión falla
+            } catch (HibernateException ex) {
+                /*Si la conexión falla
                                                 Avisamos al usuario y le pedimos que rectifique los datos
-                */
+                 */
                 errorLabel.setText("Error de conexión: Verifique sus datos");
                 //Habilitamos los controles para que el usuario vuelva a ingresar datos.
                 editable(true);
+                ex.printStackTrace();
             }
         } else {                //Advertimos al usuario sobre los valores vacíos
             JOptionPane.showMessageDialog(null, "Valores inválidos", "Error de valores nulos", JOptionPane.WARNING_MESSAGE);
             //Habilitamos los controles.
             editable(true);
         }
+    }
+
+    private void connect(String url, String user, String pass) throws HibernateException {
+
+        System.out.println("Intentando conección...");
+        HibernateUtil.buildSessionFactory(url, user, pass);
+        /*Invoca al método de construir la sesión
+                                        Si en este punto no se ha obtenido una HibernateException significa que se
+                                        creó exitosamente la session factory con los datos ingresados, así que los escribiremos
+                                        en el objeto de configuración
+         */
+        if (hibernate.HibernateUtil.isConnected()) {
+            System.out.println("si se conecta");
+            bdUtil bd = new bdUtil();
+            Pc aux = bd.getPcByMac(settingsFile.getPcServidor().getMac());       //Uso la mac para verificar si existe la máquina en bd
+            
+            if (aux == null) {
+                settingsFile.getPcServidor().setIdPC(bd.savePc(settingsFile.getPcServidor()));
+            } else {
+                settingsFile.getPcServidor().setIdPC(aux.getIdPC());
+            }
+            //Después notificaremos al usuario que la conexión fue realizada
+            JOptionPane.showMessageDialog(null, "Conexión con BD establecida", "Conexión establecida", JOptionPane.INFORMATION_MESSAGE);
+            if (!servidor.Servidor.bloqueo.isActive()) {
+                servidor.Servidor.bloqueo.setVisible(true);
+            }
+        }
+        settingsFile.setURLBD(url);
+        settingsFile.setUserBD(user);
+        settingsFile.setPassBD(pass);
+        Archivos.guardarConf(settingsFile);        //Y le diremos que guarde esa configuración en el archivo
+        //Y se cerrará este frame.
+        this.dispose();
     }
 
     private void editable(boolean flag) {

@@ -8,13 +8,14 @@ package entity;
 import java.io.Serializable;
 import java.util.Collection;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -34,26 +35,27 @@ public class Pagina implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "idPagina")
-    private Integer idPagina;
+    private Long idPagina;
     @Column(name = "nombrePagina")
     private String nombrePagina;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "paginaidPagina")
-    private Collection<AccesoPagina> accesoPaginaCollection;
+    @ManyToMany(mappedBy = "paginaCollection")
+    private Collection<Sesion> sesionCollection;
 
     public Pagina() {
     }
 
-    public Pagina(Integer idPagina) {
+    public Pagina(Long idPagina) {
         this.idPagina = idPagina;
     }
 
-    public Integer getIdPagina() {
+    public Long getIdPagina() {
         return idPagina;
     }
 
-    public void setIdPagina(Integer idPagina) {
+    public void setIdPagina(Long idPagina) {
         this.idPagina = idPagina;
     }
 
@@ -66,12 +68,12 @@ public class Pagina implements Serializable {
     }
 
     @XmlTransient
-    public Collection<AccesoPagina> getAccesoPaginaCollection() {
-        return accesoPaginaCollection;
+    public Collection<Sesion> getSesionCollection() {
+        return sesionCollection;
     }
 
-    public void setAccesoPaginaCollection(Collection<AccesoPagina> accesoPaginaCollection) {
-        this.accesoPaginaCollection = accesoPaginaCollection;
+    public void setSesionCollection(Collection<Sesion> sesionCollection) {
+        this.sesionCollection = sesionCollection;
     }
 
     @Override

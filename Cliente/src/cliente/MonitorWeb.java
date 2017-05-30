@@ -4,10 +4,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jnetpcap.*;
@@ -25,41 +24,19 @@ public class MonitorWeb {
     List<PcapIf> allDevs = new ArrayList<>();               //Lista para almacenar las interfaces
     Pcap pcap;                                              //Variable Pcap para capturar los paquetes entrantes
     String ipTarget;                                        //Cadena correspondiente a la ip de la interfaz que se va a escuchar
-    StringBuffer webPages;                                  //Para guardar temporalmente las páginas
-    Timer timer= new Timer();                               //Para controlar el tiempo de envío de historial al admin.
-    long sendReportTime;                                    /*Variable para guardar el tiempo en que se va a ejecutar la tarea de 
-                                                            envío del registro de trafico en el buffer en segundos*/
-    long seconds;                                           //Contador de tiempo transcurrido desde el envío anterior en segundos
-    /*Tarea para el timer que realizará el guardado de la información en el String buffer webPages*/
-    TimerTask task= new TimerTask(){                        
-        @Override
-        public void run() {
-            if(!BuscarServidor.connectionStatus()){                                 //Si la conexión con admin está abajo
-                writeInTemporalFile();
-            }
-            else{
-                sendInfo();
-            }
-            seconds= 0;
-        }  
-    };
+    ArrayList<String> webPages=new ArrayList<>();                                  //Para guardar temporalmente las páginas
     
     //Constructor de la clase
-    public MonitorWeb(String ip, long t) {
-        
+    public MonitorWeb(String ip) {
         ipTarget= ip;                       //Recibe una cadena como parámetro que representa la ip de la interfaz a monitorear
-        sendReportTime = t;                 //Recibe un long que será el tiempo entre cada guardado de historial
-        initMonitor();                      //Realiza configuraciones iniciales
         
     }
     
-    private void initMonitor(){
-        webPages= new StringBuffer();
-        timer.schedule(task, sendReportTime);
+    public void initMonitor(){
         if(!findDevices()){
             System.err.printf("No se pudo obtener lista de interfaces %s", errorBuffer
             .toString());
-            AppSystemTray.mostrarMensaje("Error al obtener interfaces de red", 4);
+            AppSystemTray.mostrarMensaje("Error al obtener interfaces de red", AppSystemTray.ERROR_MESSAGE);
         }else{
             int indexDev= pickDevice(ipTarget);
             if(indexDev == -1){
@@ -67,10 +44,20 @@ public class MonitorWeb {
                 AppSystemTray.mostrarMensaje("No hay dispositivos viables", AppSystemTray.ERROR_MESSAGE);
             }else{
                 openDevice(indexDev);
-                pcap.loop(-1, handler,"Paquete capturado");
+                new Thread(escucha).start();
             }
         }
     }
+    
+    Runnable escucha=new Runnable()
+    {
+
+        @Override
+        public void run() {
+            pcap.loop(-1, handler,"Paquete capturado");
+        }
+        
+    };
     /*Éste método encuentra las interfaces de red de las cuales se puede escuchar el tráfico. se retorna false si hay algún error, sino retorna true*/
     private boolean findDevices(){
         
@@ -125,41 +112,22 @@ public class MonitorWeb {
     private void pageRecieved(String page){
         if(page!=null){
             if(webPages.indexOf(page) == -1){
-                webPages.append(page).append("\r\n");
-                System.out.println(page);
+                webPages.add(page);
+//                System.out.println(page);
             }
+//            System.out.println(Arrays.toString(webPages.toArray()));
         }
     }
     
-    
-    /*Si el programa cliente está corriendo sin conexión con la máquina admin
-    El historial web se almacenará en un archivo.
-    */
-    private void writeInTemporalFile(){
-        
-            try {                       
-                                                                                //Declaramos un RandomAccessFile del archivo temp.wt
-                RandomAccessFile temp= new RandomAccessFile("temp.wt", "rw");           //Y colocamos el puntero en donde vamos a escribir
-                if(temp.length()!=0){
-                    temp.seek(temp.length()-1);
-                }
-                                                                                //Vaciamos el contenido de webPages en el archivo temporal
-                temp.writeBytes(webPages.toString());                           //Y borramos su contenido.
-                webPages.setLength(0);
-                
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(MonitorWeb.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(MonitorWeb.class.getName()).log(Level.SEVERE, null, ex);
-            }
+    public ArrayList<String> getReport(){
+        return webPages;
     }
-    
     /*De haber conexión se enviará la información al equipo administrador dek grupo
     para su análisis y persistencia*/
-    private void sendInfo(){
-        
+
+    public void stop(){
+        pcap.breakloop();
     }
-    
     //Manejador de paquetes recibidos.
     PcapPacketHandler<String> handler = new PcapPacketHandler<String>(){
         
@@ -193,7 +161,7 @@ public class MonitorWeb {
                 }
                 else if(packet.hasHeader(http)){                                        //De lo contrario verificamos si el paquete tiene cabecera http
                     String page= http.fieldValue(Http.Request.Host);                    //guardamos la cadema obtenida por http.fieldValue que corresponde al host donde va la petición
-                    System.out.println(page);                                           
+//                    System.out.println(page);                                           
                     pageRecieved(page);                                                 //y la mandamos a pageRecieved para su almacenamiento temporal.
                 }
             }

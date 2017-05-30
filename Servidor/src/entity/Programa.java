@@ -13,8 +13,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -49,14 +47,11 @@ public class Programa implements Serializable {
     @Basic(optional = false)
     @Column(name = "proceso")
     private String proceso;
-    @Column(name = "Descripci\u00f3n")
+    @Column(name = "Descripcion")
     private String descripción;
-    @JoinTable(name = "uso_programa", joinColumns = {
-        @JoinColumn(name = "PROGRAMA_idPROGRAMA", referencedColumnName = "idPROGRAMA")}, inverseJoinColumns = {
-        @JoinColumn(name = "SESION_idSesion", referencedColumnName = "idSesion")})
-    @ManyToMany
+    @ManyToMany(mappedBy = "programaCollection")
     private Collection<Sesion> sesionCollection;
-
+    
     public Programa() {
     }
 
@@ -83,6 +78,9 @@ public class Programa implements Serializable {
     }
 
     public void setNombre(String nombre) {
+        if(nombre.length() > 20){
+            nombre=nombre.substring(0, 20);
+        }
         this.nombre = nombre;
     }
 

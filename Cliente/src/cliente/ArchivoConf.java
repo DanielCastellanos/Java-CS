@@ -50,7 +50,7 @@ public class ArchivoConf
             escribir=new RandomAccessFile(configuracion,"rw");
             escribir.write(("nombre="+nombre+"\r\n"
                     + "grupo="+grupo
-                    +"\r\n server hostname="+serverHost).getBytes());
+                    +"\r\nserver hostname="+serverHost).getBytes());
             escribir.close();
         } catch (FileNotFoundException ex) {
             Logger.getLogger(ArchivoConf.class.getName()).log(Level.SEVERE, null, ex);
@@ -69,9 +69,11 @@ public class ArchivoConf
             {
                 existe=true;
                 String linea=escribir.readLine();
-                nombre=linea.substring(linea.indexOf("=")+1,linea.indexOf("#"));
+                nombre=linea.substring(linea.indexOf("=")+1,linea.length());
                 linea=escribir.readLine();
                 grupo=linea.substring(linea.indexOf("=")+1,linea.length());
+                linea=escribir.readLine();
+                serverHost=linea.substring(linea.indexOf("=")+1,linea.length());
             }
             escribir.close();
         } catch (FileNotFoundException ex) {

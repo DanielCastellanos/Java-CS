@@ -1,0 +1,27 @@
+Intro
+Problema-solución
+Objetivos
+Requerimientos del sistema
+Tecnologías implementadas
+--Analisis y modelado
+	Requisitos funcionales y no funcionales
+	Análisis de requisitos
+		modelado de casos de uso
+		casos de uso detallados?
+	Diseño del sistema
+		Componentes del sistema
+			Aplicación Cliente
+				Monitoreo web y tareas y tiempo de uso.
+				Recepcion de ordenes
+				Manejo de sesiones y control de acceso
+			Aplicación Administrador
+				Manejo de sesiones y control de acceso
+				Manejo de clientes (ordenes) y envío de archivos
+				Monitoreo de clientes
+				Persistencia de datos.
+			Base de datos
+				Modelo relacional
+			Página web de consulta
+	Implementación
+Conclusiones
+Bibliografía				

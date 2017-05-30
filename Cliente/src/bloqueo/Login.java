@@ -1,5 +1,7 @@
 package bloqueo;
 
+import cliente.Cliente;
+import cliente.SesionCliente;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
@@ -41,7 +43,8 @@ public class Login {
 //imprimimos el resultado 
             String res = pageResultado.asText();
             if (res.equals("Untitled Document")) {
-                log = true;
+                log = true; 
+                
             }
 //cerramos el navegador emulado, para liberar todo esto de la memoria 
             webClient.close();

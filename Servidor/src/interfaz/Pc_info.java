@@ -1,51 +1,49 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package interfaz;
 
+import entity.Pc;
 import java.awt.Color;
 import java.awt.Image;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import servidor.BuscarGrupo;
 import servidor.Ordenes;
 
 public class Pc_info extends javax.swing.JPanel {
 
     ImageIcon verde = new ImageIcon(new ImageIcon("src/iconos/verde.png").getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH));
     ImageIcon rojo = new ImageIcon(new ImageIcon("src/iconos/rojo.png").getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH));
-    private String nombre = "Nombre";
-    private String hostname;
-    Principal p;
-    Socket conexion;
+    Pc cliente;
+    Socket conexion;    //socket  para enviar mensajes
     Ordenes ordenes=new Ordenes();
     //constructor recive toda la infomacion del usario 
-    public Pc_info(String nombre ,String hostname) {
+    public Pc_info(Pc cliente) {
         initComponents();
         Color color = new Color(255, 255, 255, 255);
+        //hacemos visible la ventana
         barEnvio.setVisible(false);
         this.setBackground(color);
-        this.nombre=nombre;
-        this.hostname=hostname;
-        label.setText(nombre);
+        //WakeOnLan deshabilitado
+        Encender.setVisible(false);
+        //guardamos los datos recibidos
+        this.cliente=cliente;
+        label.setText(this.cliente.getNombre());
         iconos();
     }
-    public void conexion()
+    public boolean conexion()
     {
+        boolean con=false;
         try {
             conexion=new Socket();
+            SocketAddress sa=new InetSocketAddress(cliente.getHostname(), 4401);
             //intentamos la coneccion a la direccion ip y puerto con un tiempo maximo de 200milisegundos
-            SocketAddress sa=new InetSocketAddress(hostname, 4401);
             conexion.connect(sa,200);
             //si hay conexion con el destino colocamos el icono verde
             estado.setIcon(verde);
-            
+            con=true;
         } catch (IOException e) {
             //si el tiempo de conexion se agoto ponemos el inono rojo
             estado.setIcon(rojo);
@@ -60,6 +58,7 @@ public class Pc_info extends javax.swing.JPanel {
                 System.err.println("Error al cerrar coneccion en Pc_info Linea 52");
             }
         }
+        return con;
     }
     public void estadoRojo() {
         label.setIcon(rojo);
@@ -68,12 +67,23 @@ public class Pc_info extends javax.swing.JPanel {
         label.setIcon(verde);
     }
     public void setNombre(String nombre) {
-        this.nombre = nombre;
+        this.cliente.setNombre(nombre);
         label.setText(nombre);
     }
-
+    public void bloquearEnviar()
+    {
+        Enviar.setEnabled(false);
+    }
+    public void desBloqEnviar()
+    {
+        Enviar.setEnabled(true);
+    }
+    public boolean estaEnviarBloq()
+    {
+        return !Enviar.isEnabled();
+    }
     public String getNombre() {
-        return nombre;
+        return cliente.getNombre();
     }
     public void iconos(){
     ImageIcon configuracion = new ImageIcon(new ImageIcon("src/iconos/configuracion.png").getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH));
@@ -97,6 +107,8 @@ public class Pc_info extends javax.swing.JPanel {
         Cpagina = new javax.swing.JMenuItem();
         reiniciar = new javax.swing.JMenuItem();
         Tareas = new javax.swing.JMenuItem();
+        Propiedades = new javax.swing.JMenuItem();
+        Encender = new javax.swing.JMenuItem();
         estado = new javax.swing.JLabel();
         conf = new javax.swing.JLabel();
         label = new javax.swing.JLabel();
@@ -157,6 +169,22 @@ public class Pc_info extends javax.swing.JPanel {
             }
         });
         menu.add(Tareas);
+
+        Propiedades.setText("Propiedades");
+        Propiedades.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                PropiedadesActionPerformed(evt);
+            }
+        });
+        menu.add(Propiedades);
+
+        Encender.setText("Encender");
+        Encender.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                EncenderActionPerformed(evt);
+            }
+        });
+        menu.add(Encender);
 
         setBackground(new java.awt.Color(255, 255, 255));
         setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
@@ -232,41 +260,55 @@ public class Pc_info extends javax.swing.JPanel {
     }//GEN-LAST:event_confMouseClicked
 
     private void EnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EnviarActionPerformed
-        new EnviarArchivo(this.nombre,hostname);
+        new EnviarArchivo(this.cliente.getNombre(),this.cliente.getHostname());
     }//GEN-LAST:event_EnviarActionPerformed
 
     private void ApagarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ApagarActionPerformed
-        new Apagar(this.nombre,hostname);//Ingresar IP de la pc que se apagará
+        new Apagar(this.cliente.getNombre(),this.cliente.getHostname());//Ingresar IP de la pc que se apagará
     }//GEN-LAST:event_ApagarActionPerformed
 
     private void BloquearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BloquearActionPerformed
-        new Bloquear(this.nombre,hostname);//Ingresar IP de la pc que se bloqueará
+        new Bloquear(this.cliente.getNombre(),this.cliente.getHostname());//Ingresar IP de la pc que se bloqueará
     }//GEN-LAST:event_BloquearActionPerformed
 
     private void desbloquearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_desbloquearActionPerformed
-        new Desbloquear(this.nombre, hostname);
+        new Desbloquear(this.cliente.getNombre(),this.cliente.getHostname());
     }//GEN-LAST:event_desbloquearActionPerformed
 
     private void reiniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reiniciarActionPerformed
-        new Reiniciar(this.nombre,hostname);
+        new Reiniciar(this.cliente.getNombre(),this.cliente.getHostname());
     }//GEN-LAST:event_reiniciarActionPerformed
 
     private void TareasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TareasActionPerformed
-        ordenes.pedirProcesos(hostname);
-        System.out.println("orden pc_info"+hostname);
+        ordenes.pedirProcesos(this.cliente.getHostname());
+        System.out.println("orden pc_info"+this.cliente.getHostname());
     }//GEN-LAST:event_TareasActionPerformed
 
     private void CpaginaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CpaginaActionPerformed
-        
-        new Desbloquear(this.nombre, hostname);
+        new CompartirPagina(this.cliente.getNombre(),this.cliente.getHostname());
     }//GEN-LAST:event_CpaginaActionPerformed
+
+    private void PropiedadesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PropiedadesActionPerformed
+        BuscarGrupo.propiedades=new VentanaPropiedades(this.cliente);
+    }//GEN-LAST:event_PropiedadesActionPerformed
+
+    private void EncenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EncenderActionPerformed
+        int opc=JOptionPane.showConfirmDialog(null, "Esta Seguro de que quiere encender\r\n el equipo "+this.cliente.getNombre()+" ?",
+                "Encendido Remoto", JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE,new ImageIcon(Principal.getLogo()));
+        if(opc==0)
+        {
+            ordenes.WakeOnLAN(this.cliente.getMac(),this.cliente.getDireccion());
+        }
+    }//GEN-LAST:event_EncenderActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem Apagar;
     private javax.swing.JMenuItem Bloquear;
     private javax.swing.JMenuItem Cpagina;
+    private javax.swing.JMenuItem Encender;
     private javax.swing.JMenuItem Enviar;
+    private javax.swing.JMenuItem Propiedades;
     private javax.swing.JMenuItem Tareas;
     public javax.swing.JProgressBar barEnvio;
     private javax.swing.JLabel conf;

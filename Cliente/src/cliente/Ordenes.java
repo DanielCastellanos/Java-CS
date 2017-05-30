@@ -2,15 +2,19 @@ package cliente;
 
 import bloqueo.FrameBlocked;
 import java.io.DataInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.ComputerSystem;
@@ -18,7 +22,6 @@ import oshi.hardware.GlobalMemory;
 import oshi.hardware.HWDiskStore;
 import oshi.hardware.HardwareAbstractionLayer;
 import oshi.software.os.OperatingSystem;
-
 public class Ordenes {
 
     int contTiempo, tiempo;
@@ -62,33 +65,50 @@ public class Ordenes {
         }
     }
 
+    /*Apagar equipo inmediatamente*/
     public void apagar() {
         try {
-            Process proceso = Runtime.getRuntime().exec("shutdown /p");
+            if(Cliente.sesion != null){
+                Cliente.sesion.cerrarSesion();                              //Cerrar sesión
+                Cliente.sesion = null;
+            }
+            Process proceso = Runtime.getRuntime().exec("shutdown /p"); //Enviar comando de apagado
+            System.exit(0);
         } catch (IOException e) {
             System.out.println("Excepción: ");
             e.printStackTrace();
         }
     }
 
+    /*Para apagar equipo dentro de un tiempo determinado*/
     public void apagarAutomatico(int minutos) {
-        try {
-            Process proceso = Runtime.getRuntime().exec("shutdown -s -t " + minutos);
-        } catch (IOException e) {
-            System.out.println("Excepción: ");
-            e.printStackTrace();
-        }
+        
+        Timer apagado= new Timer();                 //Se declara un timer;
+        
+        TimerTask shutdownTask= new TimerTask() {   //Tarea de apagado
+            @Override
+            public void run() {
+                apagar();                           //Método para apagar el equipo
+            }
+        };
+        apagado.schedule(shutdownTask, minutos);     //Se programa la tarea
     }
 
+    /*Método para mandar la orden de reiniciar el equipo*/
     public void reiniciar() {
         try {
-            Process proceso = Runtime.getRuntime().exec("shutdown /r");
+            if(Cliente.sesion != null){
+                Cliente.sesion.cerrarSesion();          //Cierra sesión de uso
+                Cliente.sesion = null;
+            }
+            Process proceso = Runtime.getRuntime().exec("shutdown /r");     //Envía orden de reinicio a consola
         } catch (IOException e) {
             System.out.println("Excepción: ");
             e.printStackTrace();
         }
     }
 
+//    Método para cerrar una tarea
     public void cerrar(String pid) {
         try {
             Process proceso = Runtime.getRuntime().exec("taskkill /pid " + pid);
@@ -99,11 +119,17 @@ public class Ordenes {
     }
 
     public void bloquear(int tiempo) {
-        TimerTask t;
+        
         if (!(pantallaInicio.isVisible())) {
             pantallaInicio.bloqueoCompleto();
             this.tiempo = tiempo;
+            this.bloqueo=new Timer();
             this.bloqueo.schedule(new Task(), 1000, 1000);//poner 60000 para medir en minutos
+            //Cerrado de sesión
+            if(Cliente.sesion != null){
+                Cliente.sesion.cerrarSesion();
+                Cliente.sesion= null;
+            }
         } else if (pantallaInicio.isVisible() && pantallaInicio.estaBloqueado()) {
             pantallaInicio.bloqueoCompleto();
             this.tiempo = tiempo;
@@ -122,7 +148,12 @@ public class Ordenes {
         if (pantallaInicio.isVisible()) {
             pantallaInicio.dispose();
             Listeners.secs=0;
-            //agregar codigo de Sesion 
+            //Sesion de invitado
+            Cliente.sesion= new SesionCliente(
+                    BuscarServidor.configuracion.getGrupo()+
+                    "Invitado"+
+                    BuscarServidor.configuracion.getNombre());
+            ////////////////
         }
     }
 
@@ -131,33 +162,52 @@ public class Ordenes {
             pantallaInicio.login();
         }
     }
-    public Runnable getInfoPc = new Runnable() {
-
-        @Override
-        public void run() {
-            //falta agregar la direccion MAC
+    
+    public String getInfoPc(){
+        String info=null;
+            //inicializamos la variable de informacion del sistema
             SystemInfo si = new SystemInfo();
+            //inicializamos la variable para la informacion del Hardware
             HardwareAbstractionLayer hal = si.getHardware();
+            //iniciamos la variable para la informacion del Sistema Operativo
             OperatingSystem os = si.getOperatingSystem();
+            //obtenemos la informacion del Procesador
             CentralProcessor cp = hal.getProcessor();
+            //Obtenemos la informacion general del PC
             ComputerSystem cs = hal.getComputerSystem();
+            //Obtenemos la memoria RAM total 
             GlobalMemory gm = hal.getMemory();
+            //Obtenemos los discos
             HWDiskStore disks[] = hal.getDiskStores();
+            //Obtenemos la marca de la pc
             String marca = cs.getManufacturer();
+            //Obtenemos el modelo de la PC
             String modelo = cs.getModel();
+            //Obtenemos el Numero de serie
             String nSerie = cs.getSerialNumber();
-            String hdd = null;
-            for (int i = 0; i < disks.length; i++) {
-                if (disks[i].getModel().contains("SATA")) {
-                    hdd += (i > 0 ? "," : "") + (((disks[i].getSize() / 1024) / 1024) / 1024) + " GB";
-                }
+            //Obtenemos los discos duros del sistema
+            String hdd ="";
+            File[] discos=File.listRoots();
+        for (File disco : discos) {
+            if(disco.getPath().contains("C:\\"))
+            {
+                hdd=(((disco.getTotalSpace()/ 1024) / 1024) / 1024) + " GB";
             }
-            String ram = ((((gm.getTotal() / 1024) / 1024) / 1024) + 1) + " GB";
-            String procesador = cp.getName();
-            String sistema = os.getFamily() + " " + os.getVersion().getVersion();
-            String inf = marca + "|" + modelo + "|" + nSerie + "|" + hdd + "|" + ram + "|" + procesador + "|" + sistema;
         }
-    };
+            //Calculamos la memoria RAM y la comvertimos en GB
+            String ram = ((((gm.getTotal() / 1024) / 1024) / 1024) + 1) + " GB";
+            //Obtenemos el nombre del procesador
+            String procesador = cp.getName();
+            //Obtenemos el nombre del S.O
+            String sistema = os.getFamily() + " " + os.getVersion().getVersion();
+            //Obtenemos las direcciones mac de las Tarjetas de red
+            String MAC=new Interfaces().getMAC();
+            //preparamos la informacion para su envio
+            info = marca + "," + modelo + "," + nSerie + ","+ MAC +","+ procesador +","+hdd+ "," + ram + "," + sistema;
+            
+            System.out.println("Propiedades Enviadas");
+        return info;
+    }
 
     public void archivo() {
         try {
@@ -177,6 +227,7 @@ public class Ordenes {
         } catch (Exception e) {
         }
     }
+    
     private class Task extends TimerTask
 {
 

@@ -1,38 +1,25 @@
 package interfaz;
 
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.nio.charset.StandardCharsets;
 import javax.swing.JOptionPane;
+import servidor.Archivos;
+import servidor.Configuracion;
 
 public class VConf extends javax.swing.JFrame {
     
     //class variables
     private String name;
     private String group;
-    RandomAccessFile conFile;
+    private Configuracion configuracion;
     //Constructor
-    public VConf() {
-        
-        try{
-            conFile = new RandomAccessFile("Configuracion.txt","rw");      //Lee archivo de configuración con RandomAccessFile
-            
-            if(conFile.length() > 0 ){
-                
-                name=conFile.readLine().substring(8);
-                group= conFile.readLine().substring(7);
-                
-            }
-        }catch(IOException e){
-            System.err.println(e.toString());
-            this.dispose();
-            JOptionPane.showMessageDialog(null, "Error al cargar configuración");
-        }
+    public VConf(Configuracion conf) {
+        configuracion=conf;
+        name = conf.getNombreServ();
+        group = conf.getGrupo();
         initComponents();
         nameField.setText(name);
         groupField.setText(group);
         groupField.setEditable(false);
-        
+
     }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -148,13 +135,8 @@ public class VConf extends javax.swing.JFrame {
         }
         
         if(modify){
-            try {
-                conFile.setLength(0);
-                conFile.write(StandardCharsets.UTF_8.encode("#nombre="+name+
-                                  "\r\n#Grupo="+group).array());
-            } catch (IOException ex) {
-                System.err.println(ex.toString());
-            }
+            new Archivos().guardarConf(configuracion);
+            Principal.setConf(configuracion);
         } 
         this.dispose();
         JOptionPane.showMessageDialog(null, "Cambios realizados");
@@ -167,7 +149,7 @@ public class VConf extends javax.swing.JFrame {
         
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new VConf().setVisible(true);
+                new VConf(null).setVisible(true);
             }
         });
     }
